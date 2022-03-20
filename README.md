@@ -3,7 +3,7 @@
 電子書籍「M5StackとJavascriptではじめるIoTデバイス制御」のサポートサイトです。<br>
 https://poruruba.booth.pm/items/3735175
 
-## 修正履歴
+## 更新履歴
 無し
 
 ## 誤記訂正
