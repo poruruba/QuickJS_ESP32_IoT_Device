@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src * 'unsafe-inline'; media-src *; img-src * data: content: blob:;">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="css/start.css">
+  <script src="js/methods_bootstrap.js"></script>
+  <script src="js/comp_bootstrap.js"></script>
+  <script src="js/comp_utils.js"></script>
+  <script src="js/vue_utils.js"></script>
+  <script src="js/gql_utils.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <title>QuickJS_ESP32</title>
+</head>
+
+<body>
+  <!--
+    <div id="loader-background">
+      <div class="sk-plane sk-center"></div>
+    </div>
+-->
+  <div id="top" class="container">
+    <h1>QuickJS_ESP32</h1>
+
+    <div class="form-inline">
+      <label>base_url</label> <input type="text" class="form-control" v-model="base_url"><button class="btn btn-default btn-sm" v-on:click="seturl">変更</button>
+    </div>
+    <br>
+    
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#editor" data-toggle="tab">エディタ</a></li>
+      <li><a href="#operate" data-toggle="tab">デバイス操作</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="editor" class="tab-pane fade in active">
+        <br>
+
+        <div class="form-inline">
+          <label>ライブラリファイルのリスト</label>
+          <button class="btn btn-primary" v-on:click="get_module_list">取得</button>
+          <select class="form-control" v-model="target_module">
+            <option v-for="(item, index) in module_list" v-bind:value="item">{{item}}</option>
+          </select>
+          <button class="btn btn-primary" v-on:click="delete_module">削除</button>
+        </div>
+        <br>
+        <div class="form-inline">
+          <label>実行中Javascriptをダウンロード</label>
+          <button class="btn btn-primary" v-on:click="download_text">ダウンロード</button>
+        </div>
+
+        <hr>
+        <span class="form-inline">
+          <select class="form-control" v-model="upload_mode">
+            <option value="main">main.js</option>
+            <option value="module">Library</option>
+          </select>
+          <input v-if="upload_mode=='module'" type="text" class="form-control" v-model="module_name">
+        </span>
+        <button class="btn btn-primary" v-on:click="upload_textarea">アップロード</button>&nbsp;
+        <button class="btn btn-primary float-end" v-on:click="save_textarea">保存</button>
+        <textarea class="form-control" rows="20" v-model="input_text" v-on:keydown="catch_tabKey($event)"></textarea>
+      </div>
+
+      <div id="operate" class="tab-pane fade in">
+        <h1>Wire</h1>
+        <div class="form-inline">
+          <select class="form-control" v-model="wire_index">
+            <option value="0">Wire</option>
+            <option value="1">Wire1</option>
+          </select><br>
+        </div>
+        <div class="form-inline">
+          <label>sda</label> <input type="number" class="form-control" v-model.number="wire_sda">
+          <label>scl</label> <input type="number" class="form-control" v-model.number="wire_scl">
+          <button class="btn btn-default btn-sm" v-on:click="wire_begin">begin</button><br>
+          <button class="btn btn-default btn-sm" v-on:click="wire_scanDevice">scanDevice</button><br>
+          {{wire_devices}}<br>
+          <label>address</label> <input type="number" class="form-control" v-model.number="wire_address">
+          <select class="form-control" v-model="wire_mode">
+            <option value="read">read</option>
+            <option value="write">write</option>
+            <option value="write_read">write & read</option>
+          </select>
+          <span v-if="wire_mode!='read'">
+            <label>write</label><input type="text" class="form-control" v-model="wire_write_value">
+          </span>
+          <span v-if="wire_mode!='write'">
+            <label>read_len</label><input type="number" class="form-control" v-model.number="wire_read_len">
+          </span>
+          <button class="btn btn-default btn-sm" v-on:click="wire_execute">execute</button><br>
+          {{wire_read_value}}
+        </div>
+
+        <h1>Gpio</h1>
+        <div class="form-inline">
+          <label>pin</label> <input type="number" class="form-control" v-model.number="gpio_pin"><br>
+          <select class="form-control" v-model="gpio_pin_mode">
+            <option v-bind:value="Gpio.INPUT">INPUT</option>
+            <option v-bind:value="Gpio.OUTPUT">OUTPUT</option>
+          </select>
+          <button class="btn btn-default btn-sm" v-on:click="gpio_pinMode">pinMode</button><br>
+          <select class="form-control" v-model="gpio_value">
+            <option v-bind:value="Gpio.LOW">LOW</option>
+            <option v-bind:value="Gpio.HIGH">HIGH</option>
+          </select>
+          <button class="btn btn-default btn-sm" v-on:click="gpio_digitalWrite">digitalWrite</button>
+          <button class="btn btn-default btn-sm" v-on:click="gpio_digitalRead">digitalRead</button><br>
+          <button class="btn btn-default btn-sm" v-on:click="gpio_analogRead">analogRead</button> {{gpio_analog_value}}<br>
+        </div>
+
+        <h1>Ledc</h1>
+        <div class="form-inline">
+          <label>channel</label> <input type="number" class="form-control" v-model.number="ledc_channel">
+          <label>freq</label> <input type="number" class="form-control" v-model.number="ledc_setup_freq">
+          <label>resolution</label> <input type="number" class="form-control" v-model.number="ledc_setup_resolution">
+          <button class="btn btn-default btn-sm" v-on:click="ledc_setup">setup</button><br>
+          <label>pin</label> <input type="number" class="form-control" v-model.number="ledc_pin">
+          <button class="btn btn-default btn-sm" v-on:click="ledc_attachPin">attachPin</button>
+          <button class="btn btn-default btn-sm" v-on:click="ledc_detachPin">detachPin</button><br>
+          <label>duty</label> <input type="number" class="form-control" v-model="ledc_duty">
+          <button class="btn btn-default btn-sm" v-on:click="ledc_write">write</button><br>
+          <label>freq</label> <input type="number" class="form-control" v-model="ledc_freq">
+          <button class="btn btn-default btn-sm" v-on:click="ledc_writeTone">writeTone</button><br>
+          <label>note</label> <select class="form-control" v-model.number="ledc_note">
+            <option value="0">NOTE_C</option>
+            <option value="1">NOTE_Cs</option>
+            <option value="2">NOTE_D</option>
+            <option value="3">NOTE_Eb</option>
+            <option value="4">NOTE_E</option>
+            <option value="5">NOTE_F</option>
+            <option value="6">NOTE_Fs</option>
+            <option value="7">NOTE_G</option>
+            <option value="8">NOTE_Gs</option>
+            <option value="9">NOTE_A</option>
+            <option value="10">NOTE_Bb</option>
+            <option value="11">NOTE_B</option>
+            <option value="12">NOTE_MAX</option>
+          </select>
+          <label>octave</label> <input type="number" class="form-control" v-model="ledc_octave">
+          <button class="btn btn-default btn-sm" v-on:click="ledc_writeNote">writeNote</button><br>
+        </div>
+
+        <h1>Pixels</h1>
+        <div class="form-inline">
+          <label>pin</label> <input type="number" class="form-control" v-model.number="pixels_pin">
+          <button class="btn btn-default btn-sm" v-on:click="pixels_begin">begin</button><br>
+          <button class="btn btn-default btn-sm" v-on:click="pixels_setOnoff(true)">on</button>
+          <button class="btn btn-default btn-sm" v-on:click="pixels_setOnoff(false)">off</button>
+          <button class="btn btn-default btn-sm" v-on:click="pixels_clear">clear</button><br>
+          <label>index</label> <input type="number" class="form-control" v-model.number="pixels_index">
+          <input type="color" v-model="pixels_color">
+          <button class="btn btn-default btn-sm" v-on:click="pixels_setPixelColor">setPixelColor</button><br>
+        </div>
+
+        <h1>Rtc</h1>
+        <div class="form-inline">
+          <input type="number" class="form-control" v-model.number="rtc_date.Year">年
+          <input type="number" class="form-control" v-model.number="rtc_date.Month">月
+          <input type="number" class="form-control" v-model.number="rtc_date.Date">日
+          <button class="btn btn-default btn-sm" v-on:click="rtc_get_date">取得</button>
+          <button class="btn btn-default btn-sm" v-on:click="rtc_set_date">設定</button>
+        </div>
+        <div class="form-inline">
+          <input type="number" class="form-control" v-model.number="rtc_time.Hours">時
+          <input type="number" class="form-control" v-model.number="rtc_time.Minutes">分
+          <input type="number" class="form-control" v-model.number="rtc_time.Seconds">秒
+          <button class="btn btn-default btn-sm" v-on:click="rtc_get_time">取得</button>
+          <button class="btn btn-default btn-sm" v-on:click="rtc_set_time">設定</button>
+        </div>
+
+        <h1>SD</h1>
+        <div class="form-inline">
+          <label>filename</label> <input type="text" class="form-control" v-model="sd_filename">
+          <button class="btn btn-default btn-sm" v-on:click="sd_list">list</button>
+          <button class="btn btn-default btn-sm" v-on:click="sd_exists">exists</button> {{sd_exists_result}}
+          <button class="btn btn-default btn-sm" v-on:click="sd_mkdir">mkdir</button> {{sd_mkdir_result}}
+          <button class="btn btn-default btn-sm" v-on:click="sd_writeText">writeText</button> {{sd_writeText_result}}
+          <button class="btn btn-default btn-sm" v-on:click="sd_appendText">appendText</button> {{sd_appendText_result}}
+        </div>
+        <textarea type="text" class="form-control" rows="3" v-model="sd_writeText_input"></textarea>
+        <div class="form-inline">
+          <select class="form-control" v-model="sd_target_file">
+            <option v-for="(item, index) in sd_file_list" v-bind:value="item">{{item}}</option>
+          </select>
+          <button class="btn btn-default btn-sm" v-on:click="sd_remove">remove</button> {{sd_remove_result}}
+          <button class="btn btn-default btn-sm" v-on:click="sd_rmdir">rmdir</button> {{sd_rmdir_result}}
+          <button class="btn btn-default btn-sm" v-on:click="sd_size">size</button> {{sd_size_result}}
+          <button class="btn btn-default btn-sm" v-on:click="sd_readText">readText</button>
+        </div>
+        <textarea type="text" class="form-control" rows="3" readonly>{{sd_readText_result}}</textarea>
+
+        <h1>esp32</h1>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_restart">restart</button>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_millis">millis</button> {{esp32_millis_result}}<br>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_putText">putText</button>
+        <input type="text" class="form-control" v-model="esp32_putText_input"><br>
+      </div>
+    </div>
+    <br>
+    <br>
+
+    <modal-dialog size="lg" id="quickjs_js_dialog">
+      <div slot="content">
+        <div class="modal-header">
+          <label>main.js</label>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" rows="20" readonly>{{downloaded_js}}</textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" v-on:click="copy_to_texearea">テキストエリアにコピー</button>
+          <button class="btn btn-default" v-on:click="dialog_close('#quickjs_js_dialog')">閉じる</button>
+        </div>
+      </div>
+    </modal-dialog>
+
+
+    <!-- for progress-dialog -->
+    <progress-dialog v-bind:title="progress_title"></progress-dialog>
+  </div>
+
+  <script src="js/driver/Gpio.js"></script>
+  <script src="js/driver/Wire.js"></script>
+  <script src="js/driver/Ledc.js"></script>
+  <script src="js/driver/Pixels.js"></script>
+  <script src="js/driver/Sd.js"></script>
+  <script src="js/driver/Rtc.js"></script>
+  <script src="js/Arduino.js"></script>
+
+  <script src="js/start.js"></script>
+</body>
