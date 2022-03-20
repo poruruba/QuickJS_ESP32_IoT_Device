@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>test</title>
+
+    <script src="js/driver/Gpio.js"></script>
+    <script src="js/Arduino.js"></script>
+  </head>
+  <body>
+    <h1>test</h1>
+
+    <input id="test" onclick="btn_fire()" type="button" value="ƒ{ƒ^ƒ“" />
+
+    <script>
+      var arduino = new Arduino("http://192.168.1.245");
+      var gpio = new Gpio(arduino);
+      var led = false;
+
+      (async () =>{
+        await gpio.pinMode(10, gpio.OUTPUT);
+        await gpio.digitalWrite(10, led ? gpio.LOW : gpio.HIGH);
+        console.log("setup finished");
+      })();
+
+      async function btn_fire(){
+        console.log("pressed");
+        await arduino.console.log('pressed');
+        led = !led;
+        await gpio.digitalWrite(10, led ? gpio.LOW : gpio.HIGH);
+      }
+    </script>
+</body>
+</html>
