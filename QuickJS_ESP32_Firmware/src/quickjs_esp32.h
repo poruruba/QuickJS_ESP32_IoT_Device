@@ -24,6 +24,7 @@
 #include "module_utils.h"
 #include "module_ledc.h"
 #include "module_pixels.h"
+#include "module_ir.h"
 #ifdef _RTC_ENABLE_
 #include "module_rtc.h"
 #endif
@@ -47,6 +48,7 @@ static JsModuleEntry module_entries[] = {
   pixels_module,
   utils_module,
   ledc_module,
+  ir_module,
 #ifdef _IMU_ENABLE_
   imu_module,
 #endif 
@@ -248,10 +250,10 @@ class JSTimer
     return max(next, 0);
   }
   bool ConsumeTimer(JSContext *ctx, int32_t now) {
-    int32_t eps = 2;
+    int32_t eps = 1;
 
     bool empty = true;
-    while (!timers.empty() && timers.back().timeout - now <= eps) {
+    while (!timers.empty() && timers.back().timeout - now < eps) {
       empty = false;
       auto ent = timers.back();
 

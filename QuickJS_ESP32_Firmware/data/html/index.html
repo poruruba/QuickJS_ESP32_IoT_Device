@@ -58,10 +58,11 @@
 
         <div class="form-inline">
           <label>ライブラリファイルのリスト</label>
-          <button class="btn btn-primary" v-on:click="get_module_list">取得</button>
+          <button class="btn btn-primary" v-on:click="get_module_list">リスト取得</button>
           <select class="form-control" v-model="target_module">
             <option v-for="(item, index) in module_list" v-bind:value="item">{{item}}</option>
           </select>
+          <button class="btn btn-primary" v-on:click="download_module">ダウンロード</button>
           <button class="btn btn-primary" v-on:click="delete_module">削除</button>
         </div>
         <br>
@@ -213,6 +214,7 @@
 
         <h1>esp32</h1>
         <button class="btn btn-default btn-sm" v-on:click="esp32_restart">restart</button>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_reboot">reboot</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_millis">millis</button> {{esp32_millis_result}}<br>
         <button class="btn btn-default btn-sm" v-on:click="esp32_putText">putText</button>
         <input type="text" class="form-control" v-model="esp32_putText_input"><br>

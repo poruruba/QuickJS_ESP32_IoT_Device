@@ -208,7 +208,7 @@ long endp_sd_isDirectory(JsonObject request, JsonObject response, int magic)
   const char *fname = request["filename"];
   if( fname == NULL )
     return -1;
-  File file = SD.open(fname, FILE_WRITE);
+  File file = SD.open(fname);
   if( !file )
     return -1;
   
@@ -225,7 +225,7 @@ long endp_sd_list(JsonObject request, JsonObject response, int magic)
   const char *fname = request["filename"];
   if( fname == NULL )
     return -1;
-  File base = SD.open(fname, FILE_READ);
+  File base = SD.open(fname);
   if( !base )
     return -1;
 

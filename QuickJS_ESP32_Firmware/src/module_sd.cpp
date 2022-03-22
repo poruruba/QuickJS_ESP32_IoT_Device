@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "quickjs.h"
 #include "module_type.h"
+#include "module_utils.h"
 #include "module_sd.h"
 #include <SD.h>
 
@@ -170,15 +171,16 @@ static JSValue sd_writeBinary(JSContext *ctx, JSValueConst jsThis, int argc, JSV
   if( !file )
     return JS_EXCEPTION;
 
-  size_t bsize;
-  uint8_t *buffer = JS_GetArrayBuffer(ctx, &bsize, argv[1]);
-  if( buffer == NULL ){
-    JSValue value = JS_GetPropertyStr(ctx, argv[1], "buffer");
-    buffer = JS_GetArrayBuffer(ctx, &bsize, value);
-    if( buffer == NULL ){
-      file.close();
+
+  uint8_t *p_buffer;
+  uint8_t unit_size;
+  uint32_t bsize;
+  JSValue vbuffer = getArrayBuffer(ctx, argv[1], (void**)&p_buffer, &unit_size, &bsize);
+  if( JS_IsNull(vbuffer) )
+    return JS_EXCEPTION;
+  if( unit_size != 1 ){
+    JS_FreeValue(ctx, vbuffer);
       return JS_EXCEPTION;
-    }
   }
 
   uint32_t fsize = file.size();
@@ -194,8 +196,10 @@ static JSValue sd_writeBinary(JSContext *ctx, JSValueConst jsThis, int argc, JSV
     size = bsize;
 
   file.seek(offset);
-  size_t wrote = file.write(buffer, size);
+  size_t wrote = file.write(p_buffer, size);
   file.close();
+
+  JS_FreeValue(ctx, vbuffer);
 
   return JS_NewInt32(ctx, wrote);
 }

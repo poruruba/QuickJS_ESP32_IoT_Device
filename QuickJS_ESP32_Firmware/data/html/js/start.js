@@ -10,6 +10,7 @@ var vue_options = {
     	input_text: "",
         upload_js: null,
     	downloaded_js: "",
+        downloaded_fname: null,
         upload_mode: "main",
         target_module: "",
         module_name: "",
@@ -212,6 +213,14 @@ var vue_options = {
         esp32_restart: async function(){
             try{
                 await this.arduino.restart();
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        esp32_reboot: async function(){
+            try{
+                await this.arduino.reboot();
             }catch(error){
                 console.error(error);
                 alert(error);
@@ -466,7 +475,13 @@ var vue_options = {
         },
 		copy_to_texearea: function(){
 			this.input_text = this.downloaded_js;
+            if( !this.downloaded_fname ){
+                this.upload_mode = "main.js"
             this.upload_mode = "main";
+            }else{
+                this.module_name = this.downloaded_fname;
+                this.upload_mode = "module";
+            }
             this.dialog_close('#quickjs_js_dialog');
 		},
     	upload_textarea: async function(){
@@ -483,6 +498,7 @@ var vue_options = {
     	download_text: async function(){
             try{
                 this.downloaded_js = await this.arduino.code_download();
+                this.downloaded_fname = null;
                 this.dialog_open("#quickjs_js_dialog");
             }catch(error){
                 console.error(error);
@@ -519,6 +535,16 @@ var vue_options = {
 			e.target.value = cursorLeft+"\t"+cursorRight;
 			e.target.selectionEnd = cursorPosition + 1;
 		}, 
+        download_module: async function(){
+            try{
+                this.downloaded_js = await this.arduino.code_download(this.target_module);
+                this.downloaded_fname = this.target_module;
+                this.dialog_open("#quickjs_js_dialog");
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
         get_module_list: async function(){
             try{
                 var ret = await this.arduino.code_list();

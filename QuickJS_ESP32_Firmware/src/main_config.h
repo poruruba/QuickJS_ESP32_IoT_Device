@@ -63,6 +63,4 @@ long save_module(const char* p_fname, const char *p_code);
 long delete_module(const char *p_fname);
 long load_module(const char* p_fname, char *p_buffer, uint32_t len);
 
-bool is_wifi_connected(void);
-
 #endif

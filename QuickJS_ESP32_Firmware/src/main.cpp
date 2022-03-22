@@ -76,6 +76,7 @@ void setup()
   }
 
   binSem = xSemaphoreCreateBinary();
+  xSemaphoreGive(binSem);
 
   long ret;
   ret = m5_initialize();
@@ -104,7 +105,10 @@ void setup()
         JsonObject responseResult = response->getRoot();
   		  responseResult["status"] = "OK";
         responseResult["endpoint"] = (char*)endpoint;
+        bool sem = xSemaphoreTake(binSem, portMAX_DELAY);
         long ret = packet_execute(endpoint, jsonObj["params"], responseResult);
+        if( sem )
+          xSemaphoreGive(binSem);
         if( ret != 0 ){
           responseResult.clear();
           responseResult["status"] = "NG";
@@ -226,7 +230,6 @@ long save_module(const char* p_fname, const char *p_code)
   strcpy(filename, MODULE_DIR);
   strcat(filename, p_fname);
 
-  Serial.printf("save_module(%s)", filename);
   File fp = SPIFFS.open(filename, FILE_WRITE);
   if( !fp )
     return -1;
@@ -380,9 +383,4 @@ static long m5_initialize(void)
 
 
   return 0;
-}
-
-bool is_wifi_connected(void)
-{
-  return WiFi.status() == WL_CONNECTED;
 }

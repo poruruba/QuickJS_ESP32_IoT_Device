@@ -10,6 +10,8 @@
 long endp_putText(JsonObject request, JsonObject response, int magic)
 {
   const char *p_text = request["text"];
+  if( p_text == NULL )
+    return -1;
   if( (strlen(p_text) + 1) > FILE_BUFFER_SIZE )
     return -1;
 
@@ -64,14 +66,17 @@ long endp_code_upload(JsonObject request, JsonObject response, int magic)
   const char *p_fname = request["fname"];
 
   if( p_fname == NULL ){
-    if( (strlen(p_code) + 1) > sizeof(g_download_buffer) )
+    if( (strlen(p_code) + 1) > sizeof(g_download_buffer) ){
+      Serial.println("Buffer size over");
       return -1;
+    }
     strcpy( g_download_buffer, p_code);
     g_fileloading = FILE_LOADING_JS;
   }else{
     long ret = save_module(p_fname, p_code);
     if( ret != 0 )
       return 0;
+    Serial.printf("save_module(%s)\n", p_fname);
   }
 
   return 0;

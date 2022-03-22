@@ -515,3 +515,33 @@ long http_get_json(String url, JsonDocument * doc)
 
   return 0;
 }
+
+JSValue getArrayBuffer(JSContext *ctx, JSValue value, void** p_buffer, uint8_t *p_unit_size, uint32_t *p_unit_num)
+{
+  JSValue vlen = JS_GetPropertyStr(ctx, value, "length");
+  if( JS_IsException(vlen) )
+    return JS_EXCEPTION;
+  JS_ToUint32(ctx, p_unit_num, vlen);
+  JS_FreeValue(ctx, vlen);
+
+  JSValue vbuffer = JS_GetPropertyStr(ctx, value, "buffer");
+  if( JS_IsException(vbuffer) ){
+    JS_FreeValue(ctx, vbuffer);
+    return JS_EXCEPTION;
+  }
+  size_t bsize;
+  *p_buffer = (void*)JS_GetArrayBuffer(ctx, &bsize, vbuffer);
+  if( *p_buffer == NULL ){
+    JS_FreeValue(ctx, vbuffer);
+    return JS_EXCEPTION;
+  }
+
+  *p_unit_size = bsize / *p_unit_num;
+
+  return vbuffer;
+}
+
+bool is_wifi_connected(void)
+{
+  return WiFi.status() == WL_CONNECTED;
+}
