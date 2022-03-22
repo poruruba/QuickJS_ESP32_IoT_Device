@@ -265,7 +265,7 @@ class JSTimer
       JS_FreeValue(ctx, r);
 
       if (ent.interval >= 0) {
-        ent.timeout = now + ent.interval;
+        ent.timeout = (ent.interval < 1) ? (now + 1) : (now + ent.interval);
         if( RemoveEntry(ent.id) )
           timers.insert(timers.begin(), ent);
       } else {
