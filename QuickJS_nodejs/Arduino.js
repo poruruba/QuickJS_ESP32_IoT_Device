@@ -61,6 +61,14 @@ class Arduino{
     await this.webapi_request('/console-log', {msg: msg});
   }
 
+  async getIpAddress(){
+    return this.webapi_request("/getIpAddress", {} );
+  }
+
+  async getMacAddress(){
+    return this.webapi_request("/getMacAddress", {} );
+  }
+
   async webapi_request(endpoint, body) {
     var params = {
       endpoint: endpoint,

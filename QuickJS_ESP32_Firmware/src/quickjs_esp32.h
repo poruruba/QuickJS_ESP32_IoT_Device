@@ -25,6 +25,7 @@
 #include "module_ledc.h"
 #include "module_pixels.h"
 #include "module_ir.h"
+#include "module_udp.h"
 #ifdef _RTC_ENABLE_
 #include "module_rtc.h"
 #endif
@@ -49,6 +50,7 @@ static JsModuleEntry module_entries[] = {
   utils_module,
   ledc_module,
   ir_module,
+  udp_module,
 #ifdef _IMU_ENABLE_
   imu_module,
 #endif 

@@ -16,6 +16,8 @@ var vue_options = {
         module_name: "",
         module_list: [],
         base_url: base_url,
+        ipaddress: "",
+        macaddress: "",
 
         rtc_date: {},
         rtc_time: {},
@@ -243,6 +245,23 @@ var vue_options = {
                 console.error(error);
                 alert(error);
             }
+        },
+        esp32_get_ipaddress_macaddress: async function(){
+            try{
+                var result = await this.arduino.getIpAddress();
+                console.log(result);
+                this.ipaddress = ((result >> 24) & 0xff) + "." + ((result >> 16) & 0xff) + "." + ((result >> 8) & 0xff) + "." + (result & 0xff);
+                result = await this.arduino.getMacAddress();
+                console.log(result);
+                this.macaddress = this.to2h(result[0]) + ":" + this.to2h(result[1]) + ":" + this.to2h(result[2]) 
+                                    + ":" + this.to2h(result[3]) + ":" + this.to2h(result[4]) + ":" + this.to2h(result[5]);
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        to2h(d){
+            return ("00" + d.toString(16)).slice(-2);
         },
 
         // Wire
@@ -484,12 +503,17 @@ var vue_options = {
             }
             this.dialog_close('#quickjs_js_dialog');
 		},
+        copy_to_clipboard: function(){
+            this.clip_copy(this.downloaded_js);
+            this.toast_show("Clipboard", "クリップボードにコピーしました。");
+        },
     	upload_textarea: async function(){
             try{
                 if( this.upload_mode == 'main')
                     await this.arduino.code_upload(this.input_text);
                 else
                     await this.arduino.code_upload(this.input_text, this.module_name);
+                this.toast_show("アップロード", "アップロードしました。");
             }catch(error){
                 console.error(error);
                 alert(error);

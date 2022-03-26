@@ -4,6 +4,7 @@
 #include "module_utils.h"
 #include <IRsend.h>
 #include <IRrecv.h>
+#include <IRutils.h>
 
 #define IR_DEFAULT_HZ 38
 
@@ -11,6 +12,10 @@ static IRsend *g_irsend = NULL;
 static IRrecv *g_irrecv = NULL;
 static bool g_is_recving = false;
 static decode_results results;
+
+#define IR_TYPE_RAW 0
+#define IR_TYPE_NEC 1
+#define IR_TYPE_SONY  2
 
 static JSValue esp32_ir_sendBegin(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
@@ -119,15 +124,45 @@ static JSValue esp32_ir_checkRecv(JSContext *ctx, JSValueConst jsThis, int argc,
   if( g_irrecv == NULL )
     return JS_EXCEPTION;
 
+  uint32_t type = IR_TYPE_NEC;
+  if( argc >= 1 )
+    JS_ToUint32(ctx, &type, argv[0]);
+
   if( g_irrecv->decode(&results) ){
     g_irrecv->resume();
-    if( results.decode_type != NEC_LIKE )
-      return JS_NewUint32(ctx, 0);
 
+    if( (type == IR_TYPE_NEC && results.decode_type == NEC_LIKE) ||
+      (type == IR_TYPE_SONY && results.decode_type == SONY)
+    ){
     return JS_NewUint32(ctx, results.value);
+    }else{
+      return JS_NewUint32(ctx, 0);
+    }
   }
 
   return JS_NewUint32(ctx, 0);
+}
+
+static JSValue esp32_ir_checkRecvRaw(JSContext *ctx, JSValueConst jsThis, int argc,
+                               JSValueConst *argv)
+{
+  if( g_irrecv == NULL )
+    return JS_EXCEPTION;
+
+  if( g_irrecv->decode(&results) ){
+    g_irrecv->resume();
+
+    uint16_t * result = resultToRawArray(&results);
+    uint16_t len = getCorrectedRawLength(&results);
+    JSValue array = JS_NewArray(ctx);
+    for (uint16_t i = 0; i < len; i++)
+      JS_SetPropertyUint32(ctx, array, i, JS_NewInt32(ctx, result[i]));
+    delete[] result;
+
+    return array;
+  }
+
+  return JS_NULL;
 }
 
 static const JSCFunctionListEntry ir_funcs[] = {
@@ -150,7 +185,10 @@ static const JSCFunctionListEntry ir_funcs[] = {
                            func : {0, JS_CFUNC_generic, esp32_ir_recvStop}
                          }},
     JSCFunctionListEntry{"checkRecv", 0, JS_DEF_CFUNC, 0, {
-                           func : {0, JS_CFUNC_generic, esp32_ir_checkRecv}
+                           func : {1, JS_CFUNC_generic, esp32_ir_checkRecv}
+                         }},
+    JSCFunctionListEntry{"checkRecvRaw", 0, JS_DEF_CFUNC, 0, {
+                           func : {0, JS_CFUNC_generic, esp32_ir_checkRecvRaw}
                          }},
 };
 

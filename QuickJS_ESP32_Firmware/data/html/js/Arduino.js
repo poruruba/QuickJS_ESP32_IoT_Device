@@ -58,6 +58,14 @@ class Arduino{
     await this.webapi_request('/console-log', {msg: msg});
   }
   
+  async getIpAddress(){
+    return this.webapi_request("/getIpAddress", {} );
+  }
+
+  async getMacAddress(){
+    return this.webapi_request("/getMacAddress", {} );
+  }
+
   bufferToBase64(buf) {
     if( buf instanceof ArrayBuffer )
         buf = new Uint8Array(buf);

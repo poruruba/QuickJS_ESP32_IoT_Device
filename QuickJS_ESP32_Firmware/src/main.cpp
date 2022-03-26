@@ -291,6 +291,12 @@ static long load_all_modules(void)
     {
       strcpy(module_name, &fname[strlen(MODULE_DIR)]);
       size_t size = file.size();
+      if((js_modules_len + size + 1) > sizeof(js_modules_code)){
+        file.close();
+        dir.close();
+        Serial.printf("module_buffer over(%s)\n", fname);
+        return -1;
+      }
       file.readBytes(&js_modules_code[js_modules_len], size);
       file.close();
       js_modules_code[js_modules_len + size] = '\0';
