@@ -503,10 +503,6 @@ var vue_options = {
             }
             this.dialog_close('#quickjs_js_dialog');
 		},
-        copy_to_clipboard: function(){
-            this.clip_copy(this.downloaded_js);
-            this.toast_show("Clipboard", "クリップボードにコピーしました。");
-        },
     	upload_textarea: async function(){
             try{
                 if( this.upload_mode == 'main')
