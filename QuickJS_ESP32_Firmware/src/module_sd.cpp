@@ -59,6 +59,7 @@ static JSValue sd_size(JSContext *ctx, JSValueConst jsThis, int argc, JSValueCon
   const char *fname = JS_ToCString(ctx, argv[0]);
   if( fname == NULL )
     return JS_EXCEPTION;
+
   File file = SD.open(fname);
   JS_FreeCString(ctx, fname);
   if( !file )
@@ -96,6 +97,7 @@ static JSValue sd_readText(JSContext *ctx, JSValueConst jsThis, int argc, JSValu
   file.close();
   if( sem ) xSemaphoreGive(binSem);
   p_buffer[fsize] = '\0';
+
   JSValue value = JS_NewString(ctx, p_buffer);
   free(p_buffer);
 

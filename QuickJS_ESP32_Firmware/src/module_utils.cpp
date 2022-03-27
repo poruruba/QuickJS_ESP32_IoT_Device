@@ -299,19 +299,24 @@ static JSValue utils_urlencode(JSContext * ctx, JSValueConst jsThis, int argc, J
 static JSValue utils_base64(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
 {
   if( magic == 0 ){
-    size_t size;
-    uint8_t *buffer = JS_GetArrayBuffer(ctx, &size, argv[0]);
-    if( buffer == NULL ){
-      JSValue value = JS_GetPropertyStr(ctx, argv[0], "buffer");
-      buffer = JS_GetArrayBuffer(ctx, &size, value);
-      if( buffer == NULL )
+    uint32_t unit_num;
+    uint8_t unit_size;
+    uint8_t *p_buffer;
+    JSValue vbuffer = getArrayBuffer(ctx, argv[0], (void**)p_buffer, &unit_size, &unit_num);
+    if( JS_IsNull(vbuffer) )
+      return JS_EXCEPTION;
+    if( unit_size != 1 ){
+      JS_FreeValue(ctx, vbuffer);
         return JS_EXCEPTION;
     }
-    unsigned int len = b64_encode_length(size);
+    unsigned int len = b64_encode_length(unit_num);
     char *str = (char *)malloc(len + 1);
-    if (str == NULL)
+    if (str == NULL){
+      JS_FreeValue(ctx, vbuffer);
       return JS_EXCEPTION;
-    b64_encode(buffer, size, str);
+    }
+    b64_encode(p_buffer, unit_num, str);
+    JS_FreeValue(ctx, vbuffer);
     JSValue value = JS_NewString(ctx, str);
     free(str);
 
@@ -520,20 +525,20 @@ JSValue getArrayBuffer(JSContext *ctx, JSValue value, void** p_buffer, uint8_t *
 {
   JSValue vlen = JS_GetPropertyStr(ctx, value, "length");
   if( JS_IsException(vlen) )
-    return JS_EXCEPTION;
+    return JS_NULL;
   JS_ToUint32(ctx, p_unit_num, vlen);
   JS_FreeValue(ctx, vlen);
 
   JSValue vbuffer = JS_GetPropertyStr(ctx, value, "buffer");
   if( JS_IsException(vbuffer) ){
     JS_FreeValue(ctx, vbuffer);
-    return JS_EXCEPTION;
+    return JS_NULL;
   }
   size_t bsize;
   *p_buffer = (void*)JS_GetArrayBuffer(ctx, &bsize, vbuffer);
   if( *p_buffer == NULL ){
     JS_FreeValue(ctx, vbuffer);
-    return JS_EXCEPTION;
+    return JS_NULL;
   }
 
   *p_unit_size = bsize / *p_unit_num;

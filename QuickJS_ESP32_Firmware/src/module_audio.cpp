@@ -120,8 +120,7 @@ static JSValue audio_setGain(JSContext *ctx, JSValueConst jsThis, int argc,
   JS_ToFloat64(ctx, &gain, argv[0]);
 
   audio_gain = gain;
-  if( out != NULL )
-    out->SetGain(audio_gain/100.0);
+  out->SetGain(audio_gain/100.0);
 
   return JS_UNDEFINED;
 }
@@ -200,16 +199,6 @@ void endModule_audio(void)
   audio_dispose();
 }
 
-void loopModule_audio(void)
-{
-  if( mp3 != NULL ){
-    if (mp3->isRunning()) {
-      if (!mp3->loop())
-        mp3->stop();
-    }
-  }
-}
-
 long initializeModule_audio(void)
 {
   out = new AudioOutputI2S(I2S_NUM_0);
@@ -222,6 +211,6 @@ long initializeModule_audio(void)
 JsModuleEntry audio_module = {
   initializeModule_audio,
   addModule_audio,
-  loopModule_audio,
+  NULL,
   endModule_audio
 };
