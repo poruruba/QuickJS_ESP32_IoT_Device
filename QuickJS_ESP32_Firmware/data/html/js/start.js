@@ -212,6 +212,22 @@ var vue_options = {
         },
 
         // ESP32
+        esp32_pause: async function(){
+            try{
+                await this.arduino.pause();
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        esp32_resume: async function(){
+            try{
+                await this.arduino.resume();
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
         esp32_restart: async function(){
             try{
                 await this.arduino.restart();
@@ -503,10 +519,6 @@ var vue_options = {
             }
             this.dialog_close('#quickjs_js_dialog');
 		},
-        copy_to_clipboard: function(){
-            this.clip_copy(this.downloaded_js);
-            this.toast_show("Clipboard", "クリップボードにコピーしました。");
-        },
     	upload_textarea: async function(){
             try{
                 if( this.upload_mode == 'main')

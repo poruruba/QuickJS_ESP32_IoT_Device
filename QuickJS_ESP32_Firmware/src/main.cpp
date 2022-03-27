@@ -27,10 +27,9 @@
 extern const char jscode_default[] asm("_binary_rom_default_js_start");
 extern const char jscode_epilogue[] asm("_binary_rom_epilogue_js_start");
 
-char js_code[JSCODE_BUFFER_SIZE];
+char *js_code = NULL;
 uint32_t js_code_size = 0;
-char js_modules_code[JSMODULES_BUFFER_SIZE] = { '\0' };
-uint32_t js_modules_len = 0;
+char *js_modules_code = NULL;
 
 char g_download_buffer[FILE_BUFFER_SIZE];
 unsigned char g_fileloading = FILE_LOADING_NONE;
@@ -148,6 +147,11 @@ void setup()
 
 void loop()
 {
+  if( g_fileloading == FILE_LOADING_PAUSE ){
+    delay(100);
+    return;
+  }
+
   // For timer, async, etc.
   if( !qjs.loop() ){
     qjs.end();
@@ -155,12 +159,11 @@ void loop()
     Serial.println("[now downloading]");
     if( g_fileloading != FILE_LOADING_NONE ){
       if( g_fileloading == FILE_LOADING_JS ){
-        if( (strlen(g_download_buffer) + strlen(jscode_epilogue) + 1) <= JSCODE_BUFFER_SIZE ){
-          save_jscode(g_download_buffer);
-
-          js_code_size = strlen(g_download_buffer);
-          strcpy(js_code, g_download_buffer);
-          strcat(js_code, jscode_epilogue);
+        if( save_jscode(g_download_buffer) != 0 ){
+          Serial.println("cant save_jscode");
+        }else{
+          if( load_jscode() != 0 )
+            Serial.println("cant load_jscode");
         }
       }else if( g_fileloading == FILE_LOADING_REBOOT ){
         Serial.println("[now rebooting]");
@@ -168,9 +171,9 @@ void loop()
         ESP.restart();
         return;
       }else{
+        // g_fileloading == FILE_LOADING_RESTART
         Serial.println("[now restarting]");
         delay(2000);
-        // g_fileloading == FILE_LOADING_RESTART
       }
     }
     Serial.println("[end download]");
@@ -199,15 +202,22 @@ static long save_jscode(const char *p_code)
 
 static long load_jscode(void)
 {
-  js_code[0] = '\0';
-  if( SPIFFS.exists(MAIN_FNAME) ){
+  if( js_code != NULL ){
+    free(js_code);
+    js_code = NULL;
+  }
+    
+  while(true){
+    if( !SPIFFS.exists(MAIN_FNAME) )
+      break;
     File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
     if( !fp )
-      return -1;
+      break;
     size_t size = fp.size();
-    if( (size + strlen(jscode_epilogue) + 1) > sizeof(g_download_buffer) ){
+    js_code = (char*)malloc(size + strlen(jscode_epilogue) + 1);
+    if( js_code == NULL ){
       fp.close();
-      return -1;
+      break;
     }
     fp.readBytes(js_code, size);
     fp.close();
@@ -217,9 +227,13 @@ static long load_jscode(void)
     strcat(js_code, jscode_epilogue);
 
     return 0;
-  }else{
-    return -1;
   }
+
+  js_code = (char*)malloc(1);
+  js_code[0] = '\0';
+  js_code_size = 0;
+
+  return -1;
 }
 
 long save_module(const char* p_fname, const char *p_code)
@@ -274,14 +288,45 @@ long delete_module(const char *p_fname)
   return ret ? 0 : -1;
 }
 
-static long load_all_modules(void)
+static long get_all_modules_size(void)
 {
-  js_modules_code[0] = '\0';
-  js_modules_len = 0;
+  int32_t sum = 0;
 
   File dir = SPIFFS.open("/");
   if( !dir )
     return -1;
+  File file = dir.openNextFile();
+  while(file){
+    const char *fname = file.name();
+    if( strncmp(fname, MODULE_DIR, strlen(MODULE_DIR)) == 0 )
+      sum += file.size();
+    file.close();
+    file = dir.openNextFile();
+  }
+  dir.close();
+
+  return sum;
+}
+
+static long load_all_modules(void)
+{
+  if( js_modules_code != NULL ){
+    free(js_modules_code);
+    js_modules_code = NULL;
+  }
+
+  long all_size = get_all_modules_size();
+  if( all_size < 0 )
+    return -1;
+
+  File dir = SPIFFS.open("/");
+  if( !dir )
+    return -1;
+
+  js_modules_code = (char*)malloc(all_size + 1);
+  js_modules_code[0] = '\0';
+  int32_t js_modules_len = 0;
+
   File file = dir.openNextFile();
   char module_name[32];
   while(file){
@@ -291,12 +336,6 @@ static long load_all_modules(void)
     {
       strcpy(module_name, &fname[strlen(MODULE_DIR)]);
       size_t size = file.size();
-      if((js_modules_len + size + 1) > sizeof(js_modules_code)){
-        file.close();
-        dir.close();
-        Serial.printf("module_buffer over(%s)\n", fname);
-        return -1;
-      }
       file.readBytes(&js_modules_code[js_modules_len], size);
       file.close();
       js_modules_code[js_modules_len + size] = '\0';
@@ -354,6 +393,7 @@ static long m5_initialize(void)
   M5.begin(true, true, false);
 #elif defined(ARDUINO_M5STACK_Core2)
   M5.begin(true, true, true, true);
+  M5.Axp.SetSpkEnable(true);
 #endif
 //  Serial.begin(115200);
   Serial.println("[initializing]");

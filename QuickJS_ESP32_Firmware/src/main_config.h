@@ -5,6 +5,7 @@
 #if defined(ARDUINO_M5Stack_ATOM)
 #include <M5Atom.h>
 #define _IMU_ENABLE_
+#define _AUDIO_ENABLE_
 #define MDNS_NAME "QuickJS_ESP32_M5Atom" // mDNSサービスホスト名
 #elif defined(ARDUINO_M5Stick_C)
 #include <M5StickC.h>
@@ -18,6 +19,7 @@
 #define _RTC_ENABLE_
 #define _IMU_ENABLE_
 #define _SD_ENABLE_
+#define _AUDIO_ENABLE_
 #define MDNS_NAME "QuickJS_ESP32_M5Core2" // mDNSサービスホスト名
 #endif
 
@@ -37,24 +39,20 @@
 #define SERIAL_TIMEOUT2  20000
 #define SEMAPHORE_TIMEOUT   2000
 
-#define DEFAULT_BUFFER_SIZE 8000
+#define DEFAULT_BUFFER_SIZE 4000
 #define PACKET_JSON_DOCUMENT_SIZE  DEFAULT_BUFFER_SIZE
 #define FILE_BUFFER_SIZE DEFAULT_BUFFER_SIZE
-#define JSCODE_BUFFER_SIZE DEFAULT_BUFFER_SIZE
-#define JSMODULES_BUFFER_SIZE DEFAULT_BUFFER_SIZE
-
-#define MESSAGING_NONE  0
-#define MESSAGING_TEXT  1
 
 #define FILE_LOADING_NONE     0
 #define FILE_LOADING_RESTART  1
 #define FILE_LOADING_REBOOT   2
 #define FILE_LOADING_JS       3
 #define FILE_LOADING_TEXT     4
+#define FILE_LOADING_PAUSE    5
 extern unsigned char g_fileloading;
 extern char g_download_buffer[FILE_BUFFER_SIZE];
 
-extern char js_code[JSCODE_BUFFER_SIZE];
+extern char *js_code;
 extern uint32_t js_code_size;
 
 extern SemaphoreHandle_t binSem;

@@ -213,6 +213,8 @@
         <textarea type="text" class="form-control" rows="3" readonly>{{sd_readText_result}}</textarea>
 
         <h1>esp32</h1>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_pause">pause</button>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_resume">resume</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_restart">restart</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_reboot">reboot</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_millis">millis</button> {{esp32_millis_result}}<br>
@@ -237,7 +239,6 @@
           <textarea class="form-control" rows="20" readonly>{{downloaded_js}}</textarea>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" v-on:click="copy_to_clipboard">クリップボードにコピー</button>
           <button class="btn btn-primary" v-on:click="copy_to_texearea">テキストエリアにコピー</button>
           <button class="btn btn-default" v-on:click="dialog_close('#quickjs_js_dialog')">閉じる</button>
         </div>

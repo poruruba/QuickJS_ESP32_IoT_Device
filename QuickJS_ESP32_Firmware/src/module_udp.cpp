@@ -87,7 +87,7 @@ static JSValue esp32_udp_checkRecvBinary(JSContext *ctx, JSValueConst jsThis, in
 
   uint8_t *p_buffer = (uint8_t*)malloc(packetSize);
   if( p_buffer == NULL )
-    return JS_NULL;
+    return JS_EXCEPTION;
   
   int len = udp.read(p_buffer, packetSize);
   if( len <= 0 ){
@@ -110,7 +110,7 @@ static JSValue esp32_udp_checkRecvText(JSContext *ctx, JSValueConst jsThis, int 
 
   char *p_buffer = (char*)malloc(packetSize + 1);
   if( p_buffer == NULL )
-    return JS_NULL;
+    return JS_EXCEPTION;
   
   int len = udp.read(p_buffer, packetSize);
   if( len <= 0 ){

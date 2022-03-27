@@ -21,18 +21,11 @@ long endp_putText(JsonObject request, JsonObject response, int magic)
   return 0;
 }
 
-long endp_restart(JsonObject request, JsonObject response, int magic)
+long endp_update(JsonObject request, JsonObject response, int magic)
 {
   g_download_buffer[0] = '\0';
-  g_fileloading = FILE_LOADING_RESTART;
+  g_fileloading = magic;
 
-  return 0;
-}
-
-long endp_reboot(JsonObject request, JsonObject response, int magic)
-{
-  g_download_buffer[0] = '\0';
-  g_fileloading = FILE_LOADING_REBOOT;
   return 0;
 }
 
@@ -66,7 +59,7 @@ long endp_code_upload(JsonObject request, JsonObject response, int magic)
   const char *p_fname = request["fname"];
 
   if( p_fname == NULL ){
-    if( (strlen(p_code) + 1) > sizeof(g_download_buffer) ){
+    if( (strlen(p_code) + 1) > FILE_BUFFER_SIZE ){
       Serial.println("Buffer size over");
       return -1;
     }
@@ -154,8 +147,10 @@ long endp_console_log(JsonObject request, JsonObject response, int magic)
 
 EndpointEntry esp32_table[] = {
   EndpointEntry{ endp_millis, "/millis", 0 },
-  EndpointEntry{ endp_reboot, "/reboot", 0 },
-  EndpointEntry{ endp_restart, "/restart", 0 },
+  EndpointEntry{ endp_update, "/reboot", FILE_LOADING_REBOOT },
+  EndpointEntry{ endp_update, "/pause", FILE_LOADING_PAUSE },
+  EndpointEntry{ endp_update, "/resume", FILE_LOADING_NONE },
+  EndpointEntry{ endp_update, "/restart", FILE_LOADING_RESTART },
   EndpointEntry{ endp_getIpAddress, "/getIpAddress", 0 },
   EndpointEntry{ endp_getMacAddress, "/getMacAddress", 0 },
   EndpointEntry{ endp_putText, "/putText", 0 },

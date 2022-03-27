@@ -21,6 +21,14 @@ class Arduino{
     return this.webapi_request("/reboot", {});
   }
 
+  async pause(){
+    return this.webapi_request("/pause", {});
+  }
+
+  async resume(){
+    return this.webapi_request("/resume", {});
+  }
+
   async restart(){
     return this.webapi_request("/restart", {});
   }

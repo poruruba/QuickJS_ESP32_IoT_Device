@@ -17,7 +17,7 @@ static decode_results results;
 #define IR_TYPE_NEC 1
 #define IR_TYPE_SONY  2
 
-static JSValue esp32_ir_sendBegin(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_sendBegin(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   uint32_t pin;
@@ -34,7 +34,7 @@ static JSValue esp32_ir_sendBegin(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_UNDEFINED;
 }
 
-static JSValue esp32_ir_send(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_send(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   if( g_irsend == NULL )
@@ -51,7 +51,7 @@ static JSValue esp32_ir_send(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_UNDEFINED;
 }
 
-static JSValue esp32_ir_sendRaw(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_sendRaw(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   if( g_irsend == NULL )
@@ -75,7 +75,7 @@ static JSValue esp32_ir_sendRaw(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_UNDEFINED;
 }
 
-static JSValue esp32_ir_recvBegin(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_recvBegin(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   uint32_t pin;
@@ -93,7 +93,7 @@ static JSValue esp32_ir_recvBegin(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_UNDEFINED;
 }
 
-static JSValue esp32_ir_recvStart(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_recvStart(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   if( g_irrecv == NULL )
@@ -106,7 +106,7 @@ static JSValue esp32_ir_recvStart(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_UNDEFINED;
 }
 
-static JSValue esp32_ir_recvStop(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_recvStop(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   if( g_irrecv == NULL )
@@ -118,7 +118,7 @@ static JSValue esp32_ir_recvStop(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_UNDEFINED;
 }
 
-static JSValue esp32_ir_checkRecv(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_checkRecv(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   if( g_irrecv == NULL )
@@ -143,7 +143,7 @@ static JSValue esp32_ir_checkRecv(JSContext *ctx, JSValueConst jsThis, int argc,
   return JS_NewUint32(ctx, 0);
 }
 
-static JSValue esp32_ir_checkRecvRaw(JSContext *ctx, JSValueConst jsThis, int argc,
+static JSValue ir_checkRecvRaw(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
   if( g_irrecv == NULL )
@@ -167,28 +167,28 @@ static JSValue esp32_ir_checkRecvRaw(JSContext *ctx, JSValueConst jsThis, int ar
 
 static const JSCFunctionListEntry ir_funcs[] = {
     JSCFunctionListEntry{"sendBegin", 0, JS_DEF_CFUNC, 0, {
-                           func : {1, JS_CFUNC_generic, esp32_ir_sendBegin}
+                           func : {1, JS_CFUNC_generic, ir_sendBegin}
                          }},
     JSCFunctionListEntry{"send", 0, JS_DEF_CFUNC, 0, {
-                           func : {2, JS_CFUNC_generic, esp32_ir_send}
+                           func : {2, JS_CFUNC_generic, ir_send}
                          }},
     JSCFunctionListEntry{"sendRaw", 0, JS_DEF_CFUNC, 0, {
-                           func : {1, JS_CFUNC_generic, esp32_ir_sendRaw}
+                           func : {1, JS_CFUNC_generic, ir_sendRaw}
                          }},
     JSCFunctionListEntry{"recvBegin", 0, JS_DEF_CFUNC, 0, {
-                           func : {1, JS_CFUNC_generic, esp32_ir_recvBegin}
+                           func : {1, JS_CFUNC_generic, ir_recvBegin}
                          }},
     JSCFunctionListEntry{"recvStart", 0, JS_DEF_CFUNC, 0, {
-                           func : {0, JS_CFUNC_generic, esp32_ir_recvStart}
+                           func : {0, JS_CFUNC_generic, ir_recvStart}
                          }},
     JSCFunctionListEntry{"recvStop", 0, JS_DEF_CFUNC, 0, {
-                           func : {0, JS_CFUNC_generic, esp32_ir_recvStop}
+                           func : {0, JS_CFUNC_generic, ir_recvStop}
                          }},
     JSCFunctionListEntry{"checkRecv", 0, JS_DEF_CFUNC, 0, {
-                           func : {1, JS_CFUNC_generic, esp32_ir_checkRecv}
+                           func : {1, JS_CFUNC_generic, ir_checkRecv}
                          }},
     JSCFunctionListEntry{"checkRecvRaw", 0, JS_DEF_CFUNC, 0, {
-                           func : {0, JS_CFUNC_generic, esp32_ir_checkRecvRaw}
+                           func : {0, JS_CFUNC_generic, ir_checkRecvRaw}
                          }},
 };
 
