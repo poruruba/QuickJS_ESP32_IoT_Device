@@ -17,7 +17,7 @@ static AudioGeneratorMP3 *mp3 = NULL;
 static AudioFileSourceSD *file_sd = NULL;
 static AudioFileSourceHTTPStream *file_http = NULL;
 static AudioFileSourceBuffer *buff = NULL;
-static float audio_gain = 40;
+static float audio_gain = 40.0;
 
 #define AUDIO_BUFFER_SIZE 1024
 
@@ -53,9 +53,9 @@ static JSValue audio_begin(JSContext *ctx, JSValueConst jsThis, int argc,
   JS_ToUint32(ctx, &lrck, argv[1]);
   JS_ToUint32(ctx, &dout, argv[2]);
 
-  out->SetPinout(bclk, lrck, dout);
+  bool ret = out->SetPinout(bclk, lrck, dout);
 
-  return 0;
+  return JS_NewBool(ctx, ret);
 }
 
 static JSValue audio_update(JSContext *ctx, JSValueConst jsThis, int argc,
@@ -87,9 +87,9 @@ static JSValue audio_playUrl(JSContext *ctx, JSValueConst jsThis, int argc,
   file_http = new AudioFileSourceHTTPStream(url);
   buff = new AudioFileSourceBuffer(file_http, bufsize);
   mp3 = new AudioGeneratorMP3();
-  mp3->begin(buff, out);
+  bool ret = mp3->begin(buff, out);
 
-  return 0;
+  return JS_NewBool(ctx, ret);
 }
 
 static JSValue audio_playSd(JSContext *ctx, JSValueConst jsThis, int argc,
@@ -108,9 +108,9 @@ static JSValue audio_playSd(JSContext *ctx, JSValueConst jsThis, int argc,
     return JS_EXCEPTION;
   }
   mp3 = new AudioGeneratorMP3();
-  mp3->begin(file_sd, out);
+  bool ret = mp3->begin(file_sd, out);
 
-  return 0;
+  return JS_NewBool(ctx, ret);
 }
 
 static JSValue audio_setGain(JSContext *ctx, JSValueConst jsThis, int argc,
@@ -120,9 +120,9 @@ static JSValue audio_setGain(JSContext *ctx, JSValueConst jsThis, int argc,
   JS_ToFloat64(ctx, &gain, argv[0]);
 
   audio_gain = gain;
-  out->SetGain(audio_gain/100.0);
+  bool ret = out->SetGain(audio_gain/100.0);
 
-  return JS_UNDEFINED;
+  return JS_NewBool(ctx, ret);
 }
 
 static JSValue audio_getGain(JSContext *ctx, JSValueConst jsThis, int argc,

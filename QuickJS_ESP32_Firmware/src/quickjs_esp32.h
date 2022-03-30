@@ -26,6 +26,7 @@
 #include "module_pixels.h"
 #include "module_ir.h"
 #include "module_udp.h"
+#include "module_prefs.h"
 #ifdef _AUDIO_ENABLE_
 #include "module_audio.h"
 #endif
@@ -54,6 +55,7 @@ static JsModuleEntry module_entries[] = {
   ledc_module,
   ir_module,
   udp_module,
+  prefs_module,
 #ifdef _AUDIO_ENABLE_
   audio_module,
 #endif
@@ -286,7 +288,7 @@ class JSTimer
 
 class ESP32QuickJS {
  public:
-  JSRuntime *rt;
+  JSRuntime *rt = NULL;
   JSContext *ctx;
   JSTimer timer;
   JSValue loop_func = JS_UNDEFINED;
@@ -314,6 +316,9 @@ class ESP32QuickJS {
   }
 
   void end() {
+    if( rt == NULL )
+      return;
+      
     end_modules();
     
     if (JS_IsFunction(ctx, loop_func)){
@@ -324,6 +329,8 @@ class ESP32QuickJS {
     timer.RemoveAll(ctx);
     JS_FreeContext(ctx);
     JS_FreeRuntime(rt);
+
+    rt = NULL;
   }
 
   JSValue callJsFunc(JSContext *ctx, JSValueConst func_obj, JSValueConst this_obj){
@@ -337,7 +344,9 @@ class ESP32QuickJS {
 
   bool loop(bool callLoopFn = true)
   {
-    if( g_fileloading != FILE_LOADING_NONE && g_fileloading != FILE_LOADING_TEXT)
+    if( rt == NULL )
+      return false;
+    if( !(g_fileloading == FILE_LOADING_NONE || g_fileloading == FILE_LOADING_TEXT) )
       return false;
 
     // async

@@ -302,7 +302,7 @@ static JSValue utils_base64(JSContext *ctx, JSValueConst jsThis, int argc, JSVal
     uint32_t unit_num;
     uint8_t unit_size;
     uint8_t *p_buffer;
-    JSValue vbuffer = getArrayBuffer(ctx, argv[0], (void**)p_buffer, &unit_size, &unit_num);
+    JSValue vbuffer = getArrayBuffer(ctx, argv[0], (void**)&p_buffer, &unit_size, &unit_num);
     if( JS_IsNull(vbuffer) )
       return JS_EXCEPTION;
     if( unit_size != 1 ){
@@ -480,6 +480,84 @@ long http_get_binary(String url, uint8_t * p_buffer, unsigned long *p_len)
   delay(100);
 
   return 0;
+}
+
+uint8_t *http_get_binary2(const char *url, uint32_t *p_len)
+{
+  Serial.println(url);
+
+  HTTPClient http;
+  Serial.print("[HTTP] GET begin...\n");
+  // configure traged server and url
+  http.begin(url); //HTTP
+
+  // start connection and send HTTP header
+  int httpCode = http.GET();
+
+  // HTTP header has been send and Server response header has been handled
+  Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+  uint8_t *p_buffer = NULL;
+
+  // file found at server
+  if (httpCode == HTTP_CODE_OK){
+    // get tcp stream
+    WiFiClient *stream = http.getStreamPtr();
+
+    // get lenght of document (if no Content-Length header, then error)
+    int len = http.getSize();
+    if( len <= 0 ){
+      Serial.printf("[HTTP] content-length invalid\n");
+      http.end();
+      return NULL;
+    }
+    Serial.printf("[HTTP] Content-Length=%d\n", len);
+    p_buffer = (uint8_t*)malloc(len);
+    if( p_buffer == NULL ){
+      Serial.printf("[HTTP] buffer malloc failed\n");
+      http.end();
+      return NULL;
+    }
+
+    uint32_t index = 0;
+    *p_len = len;
+
+    // read all data from server
+    while (http.connected() && ( index < len )){
+      // get available data size
+      size_t size = stream->available();
+
+      if (size > 0){
+        if ((index + size) > len){
+          Serial.printf("[HTTP] buffer size over\n");
+          free(p_buffer);
+          http.end();
+          return NULL;
+        }
+        int c = stream->readBytes(&p_buffer[index], size);
+        index += c;
+      }
+      delay(1);
+    }
+
+    if (index != len){
+      Serial.printf("[HTTP] receive size mismatch\n");
+      free(p_buffer);
+      http.end();
+      return NULL;
+    }
+    Serial.printf("[HTTP] finished\n");
+  }else{
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    http.end();
+    return NULL;
+  }
+
+  http.end();
+
+  delay(100);
+  
+  return p_buffer;
 }
 
 long http_get_json(String url, JsonDocument * doc)

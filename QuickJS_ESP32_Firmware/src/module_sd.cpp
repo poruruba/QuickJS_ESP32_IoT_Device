@@ -235,6 +235,44 @@ static JSValue sd_writeBinary(JSContext *ctx, JSValueConst jsThis, int argc, JSV
   return JS_NewInt32(ctx, wrote);
 }
 
+static JSValue sd_download(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  const char *fname = JS_ToCString(ctx, argv[0]);
+  if( fname == NULL )
+    return JS_EXCEPTION;
+
+  const char *url = JS_ToCString(ctx, argv[1]);
+  if( url == NULL ){
+    JS_FreeCString(ctx, fname);
+    return JS_EXCEPTION;
+  }
+
+  uint32_t size;
+  uint8_t *p_buffer = http_get_binary2(url, &size);
+  JS_FreeCString(ctx, url);
+  if( p_buffer == NULL ){
+    JS_FreeCString(ctx, fname);
+    return JS_EXCEPTION;
+  }
+
+  bool sem = xSemaphoreTake(binSem, portMAX_DELAY);
+  File file = SD.open(fname, FILE_WRITE);
+  JS_FreeCString(ctx, fname);
+  if( !file ){
+    if( sem ) xSemaphoreGive(binSem);
+    free(p_buffer);
+    return JS_EXCEPTION;
+  }
+
+  size_t wrote = file.write(p_buffer, size);
+  file.close();
+  if( sem ) xSemaphoreGive(binSem);
+
+  free(p_buffer);
+
+  return JS_NewInt32(ctx, wrote);
+}
+
 static JSValue sd_isDirectory(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
   const char *fname = JS_ToCString(ctx, argv[0]);
@@ -312,6 +350,10 @@ static const JSCFunctionListEntry sd_funcs[] = {
     JSCFunctionListEntry{
         "appendText", 0, JS_DEF_CFUNC, 1, {
             func : {2, JS_CFUNC_generic_magic, {generic_magic : sd_writeText }}
+        }},
+    JSCFunctionListEntry{
+        "download", 0, JS_DEF_CFUNC, 0, {
+          func : {2, JS_CFUNC_generic, sd_download}
         }},
     JSCFunctionListEntry{
         "isDirectory", 0, JS_DEF_CFUNC, 0, {

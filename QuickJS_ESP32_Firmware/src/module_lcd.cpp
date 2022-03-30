@@ -78,6 +78,8 @@ static JSValue esp32_lcd_setTextDatum(JSContext *ctx, JSValueConst jsThis, int a
 static JSValue esp32_lcd_draw_image_file(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
   const char *fpath = JS_ToCString(ctx, argv[0]);
+  if( fpath == NULL )
+    return JS_EXCEPTION;
   File file = SD.open(fpath, FILE_READ);
   if( !file ){
     JS_FreeCString(ctx, fpath);
@@ -91,9 +93,10 @@ static JSValue esp32_lcd_draw_image_file(JSContext *ctx, JSValueConst jsThis, in
     return JS_EXCEPTION;
   }
 
-  int32_t x;
-  int32_t y;
+  int32_t x = 0, y = 0;
+  if( argc >= 2 )
   JS_ToInt32(ctx, &x, argv[1]);
+  if( argc >= 3 )
   JS_ToInt32(ctx, &y, argv[2]);
   bool ret = false;
   if( image_buffer[0] == 0xff && image_buffer[1] == 0xd8 ){
@@ -103,12 +106,37 @@ static JSValue esp32_lcd_draw_image_file(JSContext *ctx, JSValueConst jsThis, in
   }
   JS_FreeCString(ctx, fpath);
 
-  if( ret )
-    return JS_UNDEFINED;
-  else
-    return JS_EXCEPTION;
+  return JS_NewBool(ctx, ret);
 }
 #endif
+
+static JSValue esp32_lcd_draw_image_url(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  const char *url = JS_ToCString(ctx, argv[0]);
+  if( url == NULL )
+    return JS_EXCEPTION;
+  
+  uint32_t size;
+  uint8_t *image_buffer = http_get_binary2(url, &size);
+  JS_FreeCString(ctx, url);
+  if( image_buffer == NULL )
+    return JS_EXCEPTION;
+
+  int32_t x = 0, y = 0;
+  if( argc >= 2 )
+    JS_ToInt32(ctx, &x, argv[1]);
+  if( argc >= 3 )
+    JS_ToInt32(ctx, &y, argv[2]);
+
+  bool ret = false;
+  if( image_buffer[0] == 0xff && image_buffer[1] == 0xd8 ){
+    ret = lcd.drawJpg(image_buffer, size, x, y);
+  }else if (image_buffer[0] == 0x89 && image_buffer[1] == 0x50 && image_buffer[2] == 0x4e && image_buffer[3] == 0x47 ){
+    ret = lcd.drawPng(image_buffer, size, x, y);
+  }
+
+  return JS_NewBool(ctx, ret);
+}
 
 static JSValue esp32_lcd_print(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
 {
@@ -274,6 +302,9 @@ static const JSCFunctionListEntry lcd_funcs[] = {
                            func : {3, JS_CFUNC_generic, esp32_lcd_draw_image_file}
                          }},
 #endif
+    JSCFunctionListEntry{"drawImageUrl", 0, JS_DEF_CFUNC, 0, {
+                           func : {3, JS_CFUNC_generic, esp32_lcd_draw_image_url}
+                         }},
     JSCFunctionListEntry{"width", 0, JS_DEF_CFUNC, FUNC_TYPE_WIDTH, {
                            func : {0, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_getMetric}}
                          }},

@@ -163,18 +163,6 @@
           <button class="btn btn-default btn-sm" v-on:click="ledc_writeNote">writeNote</button><br>
         </div>
 
-        <h1>Pixels</h1>
-        <div class="form-inline">
-          <label>pin</label> <input type="number" class="form-control" v-model.number="pixels_pin">
-          <button class="btn btn-default btn-sm" v-on:click="pixels_begin">begin</button><br>
-          <button class="btn btn-default btn-sm" v-on:click="pixels_setOnoff(true)">on</button>
-          <button class="btn btn-default btn-sm" v-on:click="pixels_setOnoff(false)">off</button>
-          <button class="btn btn-default btn-sm" v-on:click="pixels_clear">clear</button><br>
-          <label>index</label> <input type="number" class="form-control" v-model.number="pixels_index">
-          <input type="color" v-model="pixels_color">
-          <button class="btn btn-default btn-sm" v-on:click="pixels_setPixelColor">setPixelColor</button><br>
-        </div>
-
         <h1>Rtc</h1>
         <div class="form-inline">
           <input type="number" class="form-control" v-model.number="rtc_date.Year">年
@@ -201,6 +189,7 @@
           <button class="btn btn-default btn-sm" v-on:click="sd_appendText">appendText</button> {{sd_appendText_result}}
         </div>
         <textarea type="text" class="form-control" rows="3" v-model="sd_writeText_input"></textarea>
+        <label>file upload</label> <comp_file id="sd_file" v-bind:callback="sd_open_files"></comp_file>
         <div class="form-inline">
           <select class="form-control" v-model="sd_target_file">
             <option v-for="(item, index) in sd_file_list" v-bind:value="item">{{item}}</option>
@@ -212,12 +201,30 @@
         </div>
         <textarea type="text" class="form-control" rows="3" readonly>{{sd_readText_result}}</textarea>
 
+        <h1>Prefs</h1>
+        <div class="form-inline">
+          <label>name</label> <input type="text" class="form-control" v-model="prefs_name">
+          <label>key</label> <input type="text" class="form-control" v-model="prefs_key">
+        </div>
+        <div class="form-inline">
+          <button class="btn btn-default btn-sm" v-on:click="prefs_put_number">putNumber</button>
+          <button class="btn btn-default btn-sm" v-on:click="prefs_get_number">getNumber</button>
+          <button class="btn btn-default btn-sm" v-on:click="prefs_put_string">putString</button>
+          <button class="btn btn-default btn-sm" v-on:click="prefs_get_string">getString</button>
+        </div>
+        <label>value</label>
+        <input type="text" class="form-control" v-model="prefs_value">
+
         <h1>esp32</h1>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_millis">millis</button> {{esp32_millis_result}}<br>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_console_log">console.log</button><br>
+        <input type="text" class="form-control" v-model="esp32_console_message">
         <button class="btn btn-default btn-sm" v-on:click="esp32_pause">pause</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_resume">resume</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_restart">restart</button>
         <button class="btn btn-default btn-sm" v-on:click="esp32_reboot">reboot</button>
-        <button class="btn btn-default btn-sm" v-on:click="esp32_millis">millis</button> {{esp32_millis_result}}<br>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_start">start</button>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_stop">stop</button><br>
         <button class="btn btn-default btn-sm" v-on:click="esp32_putText">putText</button>
         <input type="text" class="form-control" v-model="esp32_putText_input">
         <div class="form-inline">
@@ -253,9 +260,9 @@
   <script src="js/driver/Gpio.js"></script>
   <script src="js/driver/Wire.js"></script>
   <script src="js/driver/Ledc.js"></script>
-  <script src="js/driver/Pixels.js"></script>
   <script src="js/driver/Sd.js"></script>
   <script src="js/driver/Rtc.js"></script>
+  <script src="js/driver/Prefs.js"></script>
   <script src="js/Arduino.js"></script>
 
   <script src="js/start.js"></script>

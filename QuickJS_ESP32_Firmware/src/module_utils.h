@@ -10,6 +10,7 @@ extern JsModuleEntry utils_module;
 long http_get(String url, String *response);
 long http_get_binary(String url, uint8_t *p_buffer, unsigned long *p_len);
 long http_get_json(String url, JsonDocument *doc);
+uint8_t *http_get_binary2(const char *url, uint32_t *p_len);
 
 unsigned long b64_encode_length(unsigned long input_length);
 unsigned long b64_encode(const unsigned char input[], unsigned long input_length, char output[]);

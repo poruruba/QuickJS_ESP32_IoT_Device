@@ -35,6 +35,13 @@ long endp_millis(JsonObject request, JsonObject response, int magic)
   return 0;
 }
 
+long endp_getStatus(JsonObject request, JsonObject response, int magic)
+{
+  response["result"] = g_fileloading;
+
+  return 0;
+}
+
 long endp_getIpAddress(JsonObject request, JsonObject response, int magic)
 {
   IPAddress address = WiFi.localIP();
@@ -59,12 +66,11 @@ long endp_code_upload(JsonObject request, JsonObject response, int magic)
   const char *p_fname = request["fname"];
 
   if( p_fname == NULL ){
-    if( (strlen(p_code) + 1) > FILE_BUFFER_SIZE ){
-      Serial.println("Buffer size over");
-      return -1;
-    }
-    strcpy( g_download_buffer, p_code);
-    g_fileloading = FILE_LOADING_JS;
+    long ret = save_jscode(p_code);
+    if( ret != 0 )
+      return 0;
+    Serial.printf("save_jscode\n");
+    g_fileloading = FILE_LOADING_RESTART;
   }else{
     long ret = save_module(p_fname, p_code);
     if( ret != 0 )
@@ -151,6 +157,9 @@ EndpointEntry esp32_table[] = {
   EndpointEntry{ endp_update, "/pause", FILE_LOADING_PAUSE },
   EndpointEntry{ endp_update, "/resume", FILE_LOADING_NONE },
   EndpointEntry{ endp_update, "/restart", FILE_LOADING_RESTART },
+  EndpointEntry{ endp_update, "/stop", FILE_LOADING_STOPPING },
+  EndpointEntry{ endp_update, "/start", FILE_LOADING_START },
+  EndpointEntry{ endp_getStatus, "/getStatus", 0 },
   EndpointEntry{ endp_getIpAddress, "/getIpAddress", 0 },
   EndpointEntry{ endp_getMacAddress, "/getMacAddress", 0 },
   EndpointEntry{ endp_putText, "/putText", 0 },

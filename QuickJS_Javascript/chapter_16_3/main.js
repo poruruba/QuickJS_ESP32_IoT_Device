@@ -82,7 +82,7 @@ const NumberMatric = [
 ];
 
 function setup(){
-	pixels.begin(PIXES_PIN);
+	pixels.begin(PIXES_PIN, NUM_OF_LED_WIDTH * NUM_OF_LED_HEIGHT);
 	for( var i = 0 ; i < NUM_OF_LED_WIDTH * NUM_OF_LED_HEIGHT ; i++ )
 		pixels. setPixelColor(i, LED_BACK_COLOR);
 	pixels.setOnoff(true);

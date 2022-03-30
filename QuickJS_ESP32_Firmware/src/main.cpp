@@ -11,9 +11,9 @@
 #include "endpoint_esp32.h"
 #include "endpoint_gpio.h"
 #include "endpoint_ledc.h"
-#include "endpoint_pixels.h"
 #include "endpoint_wire.h"
 #include "endpoint_packet.h"
+#include "endpoint_prefs.h"
 #ifdef _RTC_ENABLE_
 #include "endpoint_rtc.h"
 #endif
@@ -39,8 +39,8 @@ AsyncWebServer server(HTTP_PORT);
 SemaphoreHandle_t binSem;
 
 static long m5_initialize(void);
+static long start_qjs(void);
 static long load_jscode(void);
-static long save_jscode(const char *p_code);
 static long load_all_modules(void);
 
 void notFound(AsyncWebServerRequest *request)
@@ -85,7 +85,7 @@ void setup()
     packet_appendEntry(gpio_table, num_of_gpio_entry);
     packet_appendEntry(wire_table, num_of_wire_entry);
     packet_appendEntry(ledc_table, num_of_ledc_entry);
-    packet_appendEntry(pixels_table, num_of_pixels_entry);
+    packet_appendEntry(prefs_table, num_of_prefs_entry);
 #ifdef _RTC_ENABLE_
     packet_appendEntry(rtc_table, num_of_rtc_entry);
 #endif
@@ -128,68 +128,77 @@ void setup()
   }
 
   qjs.initialize_modules();
-  qjs.begin();
 
-  ret = load_all_modules();
-  if( ret != 0 ){
-    Serial.println("[can't load module]");
-  }
-
-  ret = load_jscode();
-  if( ret == 0 ){
-    Serial.println("[executing]");
-    qjs.exec(js_code);
-  }else{
-    Serial.println("[can't load main]");
-    qjs.exec(jscode_default);
-  }
+  start_qjs();
 }
 
 void loop()
 {
-  if( g_fileloading == FILE_LOADING_PAUSE ){
+  if( g_fileloading == FILE_LOADING_PAUSE || g_fileloading == FILE_LOADING_STOP ){
     delay(100);
     return;
+  }else{
+// FILE_LOADING_NONE
+// FILE_LOADING_RESTART
+// FILE_LOADING_REBOOT
+// FILE_LOADING_TEXT
+// FILE_LOADING_START
+// FILE_LOADING_STOPPING
   }
 
   // For timer, async, etc.
   if( !qjs.loop() ){
     qjs.end();
 
-    Serial.println("[now downloading]");
     if( g_fileloading != FILE_LOADING_NONE ){
-      if( g_fileloading == FILE_LOADING_JS ){
-        if( save_jscode(g_download_buffer) != 0 ){
-          Serial.println("cant save_jscode");
-        }else{
-          if( load_jscode() != 0 )
-            Serial.println("cant load_jscode");
-        }
-      }else if( g_fileloading == FILE_LOADING_REBOOT ){
+      if( g_fileloading == FILE_LOADING_REBOOT ){
         Serial.println("[now rebooting]");
         delay(2000);
         ESP.restart();
         return;
-      }else{
-        // g_fileloading == FILE_LOADING_RESTART
+      }else if( g_fileloading == FILE_LOADING_RESTART ){
         Serial.println("[now restarting]");
         delay(2000);
+      }else if( g_fileloading == FILE_LOADING_STOPPING ){
+        Serial.println("[now stopping]");
+        delay(2000);
+      }else if( g_fileloading == FILE_LOADING_START ){
+        Serial.println("[now starting]");
       }
     }
-    Serial.println("[end download]");
 
-    qjs.begin();
-    long ret = load_all_modules();
-    if( ret != 0 ){
-      Serial.println("[can't load module]");
+    if( g_fileloading == FILE_LOADING_STOPPING ){
+      g_fileloading = FILE_LOADING_STOP;
+    }else{
+      start_qjs();
     }
-    qjs.exec(js_code);
   }
 
   delay(1);
 }
 
-static long save_jscode(const char *p_code)
+static long start_qjs(void)
+{
+    qjs.begin();
+
+  long ret1 = load_all_modules();
+  if( ret1 != 0 ){
+      Serial.println("[can't load module]");
+    }
+
+  long ret2 = load_jscode();
+  if( ret2 == 0 ){
+    Serial.println("[executing]");
+    qjs.exec(js_code);
+  }else{
+    Serial.println("[can't load main]");
+    qjs.exec(jscode_default);
+  }
+
+  return (ret2 == 0) ? ret1 : ret2;
+}
+
+long save_jscode(const char *p_code)
 {
   File fp = SPIFFS.open(MAIN_FNAME, FILE_WRITE);
   if( !fp )

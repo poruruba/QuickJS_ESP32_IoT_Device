@@ -3,6 +3,8 @@
 var base_url = "";
 var arduino = new Arduino(base_url);
 
+const MAX_SEND_SIZE = 1024;
+
 var vue_options = {
     el: "#top",
     mixins: [mixins_bootstrap],
@@ -27,7 +29,7 @@ var vue_options = {
         Wire1: new Wire(this.arduino, "Wire1"),
         Gpio: new Gpio(this.arduino),
         Ledc: new Ledc(this.arduino),
-        Pixels: new Pixels(this.arduino),
+        Prefs: new Prefs(this.arduino),
         Sd: new Sd(this.arduino),
         Rtc: new Rtc(this.arduino),
         
@@ -57,10 +59,6 @@ var vue_options = {
         ledc_note: 0,
         ledc_octave: 0,
 
-        pixels_pin: 26,
-        pixels_index: 0,
-        pixels_color: "#000000",
-
         sd_filename: "",
         sd_exists_result: null,
         sd_mkdir_result: null,
@@ -74,12 +72,59 @@ var vue_options = {
         sd_file_list: [],
         sd_target_file: "",
 
+        prefs_name: "",
+        prefs_key: "",
+        prefs_value: "",
+
         esp32_putText_input: null,
         esp32_millis_result: null,
+
+        esp32_console_message: "",
     },
     computed: {
     },
     methods: {
+        // Prefs
+        prefs_put_number: async function(){
+            try{
+                var value = parseInt(this.prefs_value);
+                var result = await this.Prefs.putNumber(this.prefs_name, this.prefs_key, value);
+                console.log(result);
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        prefs_get_number: async function(){
+            try{
+                var result = await this.Prefs.getNumber(this.prefs_name, this.prefs_key);
+                console.log(result);
+                this.prefs_value = result;
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        prefs_put_string: async function(){
+            try{
+                var result = await this.Prefs.putString(this.prefs_name, this.prefs_key, this.prefs_value);
+                console.log(result);
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        prefs_get_string: async function(){
+            try{
+                var result = await this.Prefs.getString(this.prefs_name, this.prefs_key);
+                console.log(result);
+                this.prefs_value = result;
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        
         // Rtc
         rtc_set_time: async function(){
             try{
@@ -210,8 +255,42 @@ var vue_options = {
                 alert(error);
             }
         },
+        sd_open_files: async function(files) {
+            if( files.length == 0 ){
+              return;
+            }
+            var file = files[0];
+
+            if( !confirm(this.sd_filename + " という名前でアップロードします。よろしいですか？") )
+                return;
+
+            var reader = new FileReader();
+            reader.onload = async (theFile) => {
+                try{
+                    for( var index = 0 ; index < reader.result.byteLength; ){
+                        var size = ((reader.result.byteLength - index) >= MAX_SEND_SIZE) ? MAX_SEND_SIZE : (reader.result.byteLength - index);
+                        var buffer = new Uint8Array(reader.result, index, size);
+                        await this.Sd.writeBinary(this.sd_filename, buffer, index, size);
+                        index += size;
+                    }
+                }catch(error){
+                    console.error(error);
+                    alert(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        },
+      
 
         // ESP32
+        esp32_console_log: async function(){
+            try{
+                await this.arduino.console.log(this.esp32_console_message);
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
         esp32_pause: async function(){
             try{
                 await this.arduino.pause();
@@ -239,6 +318,22 @@ var vue_options = {
         esp32_reboot: async function(){
             try{
                 await this.arduino.reboot();
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        esp32_start: async function(){
+            try{
+                await this.arduino.start();
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        esp32_stop: async function(){
+            try{
+                await this.arduino.stop();
             }catch(error){
                 console.error(error);
                 alert(error);
@@ -444,54 +539,6 @@ var vue_options = {
             }
         },
 
-        // Pixels
-        pixels_begin: async function(){
-            try{
-                await this.Pixels.begin(this.pixels_pin);
-                this.toast_show("Pixels", "成功しました。");
-            }catch(error){
-                console.error(error);
-                alert(error);
-            }
-        },
-        pixels_setOnoff: async function(onoff){
-            try{
-                await this.Pixels.setOnoff(onoff);
-                this.toast_show("Pixels", "成功しました。");
-            }catch(error){
-                console.error(error);
-                alert(error);
-            }
-        },
-        pixels_clear: async function(){
-            try{
-                await this.Pixels.clear();
-                this.toast_show("Pixels", "成功しました。");
-            }catch(error){
-                console.error(error);
-                alert(error);
-            }
-        },
-        pixels_setPixelColor: async function(){
-            try{
-                await this.Pixels.setPixelColor(this.pixels_index, this.rgb2num(this.pixels_color));
-                this.toast_show("Pixels", "成功しました。");
-            }catch(error){
-                console.error(error);
-                alert(error);
-            }
-        },
-        rgb2num: function (rgb, sel) {
-            if (sel == 'r')
-              return parseInt(rgb.slice(1, 3), 16);
-            else if (sel == 'g')
-              return parseInt(rgb.slice(3, 5), 16);
-            else if (sel == 'b')
-              return parseInt(rgb.slice(5, 7), 16);
-            else
-              return parseInt(rgb.slice(1, 7), 16);
-        },
-        
         seturl: function(){
             var url = (this.base_url.endsWith('/')) ? this.base_url.slice(0, -1) : this.base_url;
             this.arduino.set_baseUrl(url);

@@ -99,6 +99,10 @@ long endp_sd_readBinary(JsonObject request, JsonObject response, int magic)
 
   uint32_t enclen = b64_encode_length(size);
   char *encstr = (char*)malloc(enclen + 1);
+  if( encstr == NULL ){
+    free(buffer);
+    return -1;
+  }
   b64_encode(buffer, size, encstr);
   encstr[enclen] = '\0';
 

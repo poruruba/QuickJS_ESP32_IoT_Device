@@ -36,6 +36,18 @@ class Arduino{
     return this.webapi_request("/restart", {});
   }
 
+  async start(){
+    return this.webapi_request("/start", {});
+  }
+
+  async stop(){
+    return this.webapi_request("/stop", {});
+  }
+
+  async getStatus(){
+    return this.webapi_request("/getStatus", {});
+  }
+
   async code_upload(code, fname){
     if( fname )
       await this.webapi_request("/code-upload", { code: code, fname: fname } );
