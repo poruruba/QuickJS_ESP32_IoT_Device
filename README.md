@@ -2,6 +2,11 @@
 
 電子書籍「M5StackとJavascriptではじめるIoTデバイス制御」のサポートサイトです。<br>
 https://poruruba.booth.pm/items/3735175
+<br>
+<br>
+<br>
+以下のQiitaでも適時機能拡張を紹介しています！<br>
+https://qiita.com/poruruba
 
 ## 更新履歴
 - 2022-3-26
@@ -16,4 +21,5 @@ https://poruruba.booth.pm/items/3735175
   - 一部動作不備の修正
 
 ## 誤記訂正
-無し
+- 2022-03-31
+  - 赤外線送受信とUDPのサンプルを追記 
