@@ -62,6 +62,137 @@ String urlencode(String str)
   return encodedString;
 }
 
+static JSValue utils_http_json_text(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
+{
+  HTTPClient http;
+  const char *url = JS_ToCString(ctx, argv[0]);
+  if (magic == 0){
+    // HTTP POST JSON
+    Serial.println(url);
+    http.begin(url); //HTTP
+    http.addHeader("Content-Type", "application/json");
+  }else if( magic == 1){
+    // HTTP GET
+    if( argc >= 2 && argv[1] != JS_UNDEFINED ){
+      JSPropertyEnum *atoms;
+      uint32_t len;
+      int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[1], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
+      if (ret != 0){
+        JS_FreeCString(ctx, url);
+        return JS_EXCEPTION;
+      }
+
+      String url_str = String(url);
+      bool first = true;
+      for (int i = 0; i < len; i++){
+        JSAtom atom = atoms[i].atom;
+        const char *name = JS_AtomToCString(ctx, atom);
+        if( name != NULL ){
+          JSValue value = JS_GetPropertyStr(ctx, argv[1], name);
+          const char *str = JS_ToCString(ctx, value);
+          if( str != NULL ){
+            Serial.printf("%s=%s\n", name, str);
+
+            if( first ){
+              if (url_str.indexOf('?') >= 0)
+                url_str += "&";
+              else
+                url_str += "?";
+              first = false;
+            }else{
+              url_str += "&";
+            }
+            url_str += name;
+            url_str += "=";
+            url_str += urlencode(str);
+            JS_FreeCString(ctx, str);
+          }
+          JS_FreeCString(ctx, name);
+        }
+        JS_FreeAtom(ctx, atom);
+      }
+
+      Serial.println(url_str);
+      http.begin(url_str); //HTTP
+    }else{
+      Serial.println(url);
+      http.begin(url); //HTTP
+    }
+  }else{
+    JS_FreeCString(ctx, url);
+    return JS_EXCEPTION;
+  }
+  JS_FreeCString(ctx, url);
+
+  if( argc >= 3 && argv[2] != JS_UNDEFINED ){
+    JSPropertyEnum *atoms;
+    uint32_t len;
+    int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[2], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
+    if (ret != 0){
+      http.end();
+      return JS_EXCEPTION;
+    }
+
+    for (int i = 0; i < len; i++){
+      JSAtom atom = atoms[i].atom;
+      const char *name = JS_AtomToCString(ctx, atom);
+      if( name != NULL ){
+        JSValue value = JS_GetPropertyStr(ctx, argv[2], name);
+        const char *str = JS_ToCString(ctx, value);
+        if( str != NULL ){
+          Serial.printf("%s=%s\n", name, str);
+
+          http.addHeader(name, str);
+          JS_FreeCString(ctx, str);
+        }
+        JS_FreeCString(ctx, name);
+      }
+      JS_FreeAtom(ctx, atom);
+    }
+  }
+
+  JSValue value = JS_EXCEPTION;
+  int status_code;
+  if (magic == 0){
+    // HTTP POST JSON
+    if( argc >= 2 && argv[1] != JS_UNDEFINED ){
+      JSValue json = JS_JSONStringify(ctx, argv[1], JS_UNDEFINED, JS_UNDEFINED);
+      if( json == JS_UNDEFINED ){
+        http.end();
+        return JS_EXCEPTION;
+      }
+      const char *body = JS_ToCString(ctx, json);
+      if( body == NULL ){
+        http.end();
+        JS_FreeValue(ctx, json);
+        return JS_EXCEPTION;
+      }
+      Serial.printf("body=%s\n", body);
+
+      status_code = http.POST(body);
+      JS_FreeCString(ctx, body);
+      JS_FreeValue(ctx, json);
+    }else{
+      status_code = http.POST("{}");
+    }
+  }else{
+    // HTTP GET
+    status_code = http.GET();
+  }
+
+  if (status_code == 200){
+    String result = http.getString();
+    value = JS_NewString(ctx, result.c_str());
+  }else{
+    Serial.printf("status_code=%d\n", status_code);
+    goto end;
+  }
+
+end:
+  http.end();
+  return value;
+}
+
 static JSValue utils_http_json(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
 {
   HTTPClient http;
@@ -348,6 +479,12 @@ static const JSCFunctionListEntry utils_funcs[] = {
                          }},
     JSCFunctionListEntry{"httpGetJson", 0, JS_DEF_CFUNC, 1, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json}}
+                         }},
+    JSCFunctionListEntry{"httpPostJsonText", 0, JS_DEF_CFUNC, 0, {
+                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json_text}}
+                         }},
+    JSCFunctionListEntry{"httpGetJsonText", 0, JS_DEF_CFUNC, 1, {
+                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json_text}}
                          }},
     JSCFunctionListEntry{"httpGetText", 0, JS_DEF_CFUNC, 0, {
                            func : {3, JS_CFUNC_generic, utils_http_get_text}
