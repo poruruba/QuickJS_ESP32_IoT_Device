@@ -3,10 +3,10 @@
 #include "quickjs.h"
 #include "module_type.h"
 
-#define TOUCHPANEL  0
-#define BUTTON_A    1
-#define BUTTON_B    2
-#define BUTTON_C    3
+#define INPUT_TOUCHPANEL  0
+#define INPUT_BUTTON_A    1
+#define INPUT_BUTTON_B    2
+#define INPUT_BUTTON_C    3
 
 #define FUNC_TYPE_IS_PRESSED        0
 #define FUNC_TYPE_IS_RELEASED       1
@@ -31,51 +31,51 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
   switch(magic){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.isPressed(); break;
-        case BUTTON_B: result = M5.BtnB.isPressed(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_IS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.isReleased(); break;
-        case BUTTON_B: result = M5.BtnB.isReleased(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasPressed(); break;
-        case BUTTON_B: result = M5.BtnB.wasPressed(); break;
-        case BUTTON_C: result = (M5.Axp.GetBtnPress() == 1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
+        case INPUT_BUTTON_C: result = (M5.Axp.GetBtnPress() == 1); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasReleased(); break;
-        case BUTTON_B: result = M5.BtnB.wasReleased(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_PRESSED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
-        case BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_RELEASED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
-        case BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASE_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
-        case BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
       }
       break;
     }
@@ -84,57 +84,57 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
   switch(magic){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.isPressed(); break;
-        case BUTTON_B: result = M5.BtnB.isPressed(); break;
-        case BUTTON_C: result = M5.BtnC.isPressed(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_IS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.isReleased(); break;
-        case BUTTON_B: result = M5.BtnB.isReleased(); break;
-        case BUTTON_C: result = M5.BtnC.isReleased(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasPressed(); break;
-        case BUTTON_B: result = M5.BtnB.wasPressed(); break;
-        case BUTTON_C: result = M5.BtnC.wasPressed(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasReleased(); break;
-        case BUTTON_B: result = M5.BtnB.wasReleased(); break;
-        case BUTTON_C: result = M5.BtnC.wasReleased(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_PRESSED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
-        case BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
-        case BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_RELEASED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
-        case BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
-        case BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASE_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
-        case BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
-        case BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
       }
       break;
     }
@@ -142,57 +142,174 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
   switch(magic){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.isPressed(); break;
-        case BUTTON_B: result = M5.BtnB.isPressed(); break;
-        case BUTTON_C: result = M5.BtnC.isPressed(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_IS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.isReleased(); break;
-        case BUTTON_B: result = M5.BtnB.isReleased(); break;
-        case BUTTON_C: result = M5.BtnC.isReleased(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasPressed(); break;
-        case BUTTON_B: result = M5.BtnB.wasPressed(); break;
-        case BUTTON_C: result = M5.BtnC.wasPressed(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasReleased(); break;
-        case BUTTON_B: result = M5.BtnB.wasReleased(); break;
-        case BUTTON_C: result = M5.BtnC.wasReleased(); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_PRESSED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
-        case BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
-        case BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_RELEASED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
-        case BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
-        case BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASE_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
-        case BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
-        case BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
+      }
+      break;
+    }
+  }
+#elif defined(ARDUINO_M5STACK_FIRE)
+  switch(magic){
+    case FUNC_TYPE_IS_PRESSED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isPressed(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_IS_RELEASED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isReleased(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_PRESSED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasPressed(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_RELEASED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleased(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_PRESSED_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_RELEASED_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_RELEASE_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
+      }
+      break;
+    }
+  }
+  switch(magic){
+    case FUNC_TYPE_IS_PRESSED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isPressed(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_IS_RELEASED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.isReleased(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_PRESSED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasPressed(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_RELEASED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleased(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_PRESSED_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_RELEASED_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_RELEASE_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
+        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
+        case INPUT_BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
       }
       break;
     }
@@ -201,43 +318,43 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
   switch(magic){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.isPressed(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.isPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_IS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.isReleased(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.isReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_PRESSED: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.wasPressed(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.wasPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASED: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.wasReleased(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.wasReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_PRESSED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.pressedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.Btn.pressedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_RELEASED_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.releasedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.Btn.releasedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASE_FOR: {
       switch(value0){
-        case BUTTON_A: result = M5.Btn.wasReleasefor(value1); break;
+        case INPUT_BUTTON_A: result = M5.Btn.wasReleasefor(value1); break;
       }
       break;
     }
@@ -293,15 +410,15 @@ static const JSCFunctionListEntry input_funcs[] = {
 #endif
     JSCFunctionListEntry{
         "BUTTON_A", 0, JS_DEF_PROP_INT32, 0, {
-          i32 : BUTTON_A
+          i32 : INPUT_BUTTON_A
         }},
     JSCFunctionListEntry{
         "BUTTON_B", 0, JS_DEF_PROP_INT32, 0, {
-          i32 : BUTTON_B
+          i32 : INPUT_BUTTON_B
         }},
     JSCFunctionListEntry{
         "BUTTON_C", 0, JS_DEF_PROP_INT32, 0, {
-          i32 : BUTTON_C
+          i32 : INPUT_BUTTON_C
         }},
 };
 

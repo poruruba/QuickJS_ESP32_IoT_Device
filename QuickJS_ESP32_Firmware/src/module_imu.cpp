@@ -3,6 +3,8 @@
 #include "quickjs.h"
 #include "module_imu.h"
 
+#ifdef _IMU_ENABLE_
+
 static JSValue esp32_imu_getAccelData(JSContext *ctx, JSValueConst jsThis,
                                       int argc, JSValueConst *argv)
 {
@@ -78,3 +80,5 @@ JsModuleEntry imu_module = {
   NULL,
   NULL
 };
+
+#endif

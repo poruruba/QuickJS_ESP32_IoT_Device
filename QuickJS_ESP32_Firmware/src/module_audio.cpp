@@ -11,17 +11,18 @@
 #include "AudioOutputI2S.h"
 #include "AudioFileSourceSD.h"
 
-static AudioOutputI2S *out;
+#define DEFAULT_AUDIO_GAIN  40.0
 
+static AudioOutputI2S *out = NULL;
 static AudioGeneratorMP3 *mp3 = NULL;
 static AudioFileSourceSD *file_sd = NULL;
 static AudioFileSourceHTTPStream *file_http = NULL;
 static AudioFileSourceBuffer *buff = NULL;
-static float audio_gain = 40.0;
+static float audio_gain = DEFAULT_AUDIO_GAIN;
 
 #define AUDIO_BUFFER_SIZE 1024
 
-static void audio_dispose(void){
+static void audio_source_dispose(void){
   if( mp3 != NULL ){
     mp3->stop();
     delete mp3;
@@ -48,6 +49,30 @@ static void audio_dispose(void){
 static JSValue audio_begin(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
+  audio_source_dispose();
+  if( out != NULL ){
+    out->stop();
+    delete out;
+    out = NULL;
+  }
+
+  int32_t output_mode = AudioOutputI2S::EXTERNAL_I2S;
+  if( argc >= 1 )
+    JS_ToInt32(ctx, &output_mode, argv[0]);
+
+  out = new AudioOutputI2S(I2S_NUM_0, output_mode);
+  out->SetOutputModeMono(true);
+  out->SetGain(audio_gain / 100.0);
+  
+  return JS_UNDEFINED;
+}
+
+static JSValue audio_setPinout(JSContext *ctx, JSValueConst jsThis, int argc,
+                               JSValueConst *argv)
+{
+  if( out == NULL )
+    return JS_EXCEPTION;
+
   uint32_t bclk, lrck, dout;
   JS_ToUint32(ctx, &bclk, argv[0]);
   JS_ToUint32(ctx, &lrck, argv[1]);
@@ -74,6 +99,9 @@ static JSValue audio_update(JSContext *ctx, JSValueConst jsThis, int argc,
 static JSValue audio_playUrl(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
+  if( out == NULL )
+    return JS_EXCEPTION;
+
   const char *url = JS_ToCString(ctx, argv[0]);
   if( url == NULL )
     return JS_EXCEPTION;
@@ -82,7 +110,7 @@ static JSValue audio_playUrl(JSContext *ctx, JSValueConst jsThis, int argc,
   if( argc >= 2 )
     JS_ToUint32(ctx, &bufsize, argv[1]);
 
-  audio_dispose();
+  audio_source_dispose();
 
   file_http = new AudioFileSourceHTTPStream(url);
   buff = new AudioFileSourceBuffer(file_http, bufsize);
@@ -95,11 +123,14 @@ static JSValue audio_playUrl(JSContext *ctx, JSValueConst jsThis, int argc,
 static JSValue audio_playSd(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
+  if( out == NULL )
+    return JS_EXCEPTION;
+    
   const char *path = JS_ToCString(ctx, argv[0]);
   if( path == NULL )
     return JS_EXCEPTION;
 
-  audio_dispose();
+  audio_source_dispose();
 
   file_sd = new AudioFileSourceSD(path);
   if( !file_sd->isOpen() ){
@@ -116,6 +147,9 @@ static JSValue audio_playSd(JSContext *ctx, JSValueConst jsThis, int argc,
 static JSValue audio_setGain(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
+  if( out == NULL )
+    return JS_EXCEPTION;
+    
   double gain;
   JS_ToFloat64(ctx, &gain, argv[0]);
 
@@ -134,7 +168,7 @@ static JSValue audio_getGain(JSContext *ctx, JSValueConst jsThis, int argc,
 static JSValue audio_isRunning(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
-  if( mp3 == NULL )
+  if( out == NULL || mp3 == NULL )
     return JS_NewBool(ctx, false);
 
   bool is_running = mp3->isRunning();
@@ -145,14 +179,17 @@ static JSValue audio_isRunning(JSContext *ctx, JSValueConst jsThis, int argc,
 static JSValue audio_stop(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
-  audio_dispose();
+  audio_source_dispose();
 
   return JS_UNDEFINED;
 }
 
 static const JSCFunctionListEntry audio_funcs[] = {
     JSCFunctionListEntry{"begin", 0, JS_DEF_CFUNC, 0, {
-                           func : {3, JS_CFUNC_generic, audio_begin}
+                           func : {1, JS_CFUNC_generic, audio_begin}
+                         }},
+    JSCFunctionListEntry{"setPinout", 0, JS_DEF_CFUNC, 0, {
+                           func : {3, JS_CFUNC_generic, audio_setPinout}
                          }},
     JSCFunctionListEntry{"update", 0, JS_DEF_CFUNC, 0, {
                            func : {0, JS_CFUNC_generic, audio_update}
@@ -175,6 +212,18 @@ static const JSCFunctionListEntry audio_funcs[] = {
     JSCFunctionListEntry{"stop", 0, JS_DEF_CFUNC, 0, {
                            func : {0, JS_CFUNC_generic, audio_stop}
                          }},
+    JSCFunctionListEntry{
+        "EXTERNAL_I2S", 0, JS_DEF_PROP_INT32, 0, {
+          i32 : AudioOutputI2S::EXTERNAL_I2S
+        }},
+    JSCFunctionListEntry{
+        "INTERNAL_DAC", 0, JS_DEF_PROP_INT32, 0, {
+          i32 : AudioOutputI2S::INTERNAL_DAC
+        }},
+    JSCFunctionListEntry{
+        "INTERNAL_PDM", 0, JS_DEF_PROP_INT32, 0, {
+          i32 : AudioOutputI2S::INTERNAL_PDM
+        }},
 };
 
 JSModuleDef *addModule_audio(JSContext *ctx, JSValue global)
@@ -196,20 +245,17 @@ JSModuleDef *addModule_audio(JSContext *ctx, JSValue global)
 
 void endModule_audio(void)
 {
-  audio_dispose();
+  audio_source_dispose();
+  if( out != NULL ){
+    out->stop();
+    delete out;
+    out = NULL;
 }
-
-long initializeModule_audio(void)
-{
-  out = new AudioOutputI2S(I2S_NUM_0);
-  out->SetOutputModeMono(true);
-  out->SetGain(audio_gain / 100.0);
-
-  return 0;
+  audio_gain = DEFAULT_AUDIO_GAIN;
 }
 
 JsModuleEntry audio_module = {
-  initializeModule_audio,
+  NULL,
   addModule_audio,
   NULL,
   endModule_audio

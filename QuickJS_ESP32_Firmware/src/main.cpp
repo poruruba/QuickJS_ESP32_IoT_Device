@@ -400,6 +400,8 @@ static long m5_initialize(void)
   M5.begin(true, true, true);
 #elif defined(ARDUINO_M5Stack_ATOM)
   M5.begin(true, true, false);
+#elif defined(ARDUINO_M5STACK_FIRE)
+  M5.begin(true, true, true, true);
 #elif defined(ARDUINO_M5STACK_Core2)
   M5.begin(true, true, true, true);
   M5.Axp.SetSpkEnable(true);

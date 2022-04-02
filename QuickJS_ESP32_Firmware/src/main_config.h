@@ -12,7 +12,16 @@
 #define _LCD_ENABLE_
 #define _RTC_ENABLE_
 #define _IMU_ENABLE_
+#define _AUDIO_ENABLE_
 #define MDNS_NAME "QuickJS_ESP32_M5StickC" // mDNSサービスホスト名
+#elif defined(ARDUINO_M5STACK_FIRE)
+#define M5STACK_MPU6886
+#include <M5Stack.h>
+#define _LCD_ENABLE_
+#define _SD_ENABLE_
+#define _IMU_ENABLE_
+#define _AUDIO_ENABLE_
+#define MDNS_NAME "QuickJS_ESP32_M5Stack" // mDNSサービスホスト名
 #elif defined(ARDUINO_M5STACK_Core2)
 #include <M5Core2.h>
 #define _LCD_ENABLE_

@@ -229,8 +229,8 @@
         <input type="text" class="form-control" v-model="esp32_putText_input">
         <div class="form-inline">
           <button class="btn btn-default btn-sm" v-on:click="esp32_get_ipaddress_macaddress">IpAddress&nbsp;&amp;&nbsp;MacAddress</button>
-          <label>IpAddress</label> <input type="text" class="form-control" v-model="ipaddress">
-          <label>MacAddress</label> <input type="text" class="form-control" v-model="macaddress">
+          <label>IpAddress</label> <input type="text" class="form-control" v-model="ipaddress" readonly>
+          <label>MacAddress</label> <input type="text" class="form-control" v-model="macaddress" readonly>
         </div>
       </div>
     </div>

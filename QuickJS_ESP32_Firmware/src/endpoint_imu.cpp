@@ -4,6 +4,8 @@
 #include "endpoint_types.h"
 #include "endpoint_imu.h"
 
+#ifdef _IMU_ENABLE_
+
 long endp_imu_getAccelData(JsonObject request, JsonObject response, int magic)
 {
   float ax, ay, az;
@@ -45,3 +47,5 @@ EndpointEntry imu_table[] = {
 };
 
 const int num_of_imu_entry = sizeof(imu_table) / sizeof(EndpointEntry);
+
+#endif
