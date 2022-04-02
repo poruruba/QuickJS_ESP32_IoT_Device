@@ -21,6 +21,7 @@ https://qiita.com/poruruba
   - 一部動作不備の修正
 - 2022-4-2
   - DAC出力のAudioに対応
+  - M5Stack Fireでの動作を確認しました。
 
 ## 誤記訂正
 - 2022-03-31
