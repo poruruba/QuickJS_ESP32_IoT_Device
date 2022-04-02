@@ -21,10 +21,10 @@ https://qiita.com/poruruba
   - 一部動作不備の修正
 - 2022-4-2
   - DAC出力のAudioに対応
-  - M5Stack Fireでの動作を確認しました。
+  - M5Stack Fireでの動作を確認
 
 ## 誤記訂正
 - 2022-03-31
   - 赤外線送受信とUDPのサンプルを追記 
 - 2022-4-2
-  - DAC出力のAudio対応に伴い、audio.beginの入力パラメータ仕様を変更しました。 
+  - DAC出力のAudio対応に伴い、audio.beginの入力パラメータ仕様を変更 
