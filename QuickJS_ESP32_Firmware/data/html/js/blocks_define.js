@@ -391,7 +391,7 @@ Blockly.Blocks['program_start'] = {
 Blockly.Blocks['program_module'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["Audio","Audio"], ["Gpio","Gpio"], ["Imu","Imu"], ["Utils","Utils"]]), "module");
+        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Pixels","Pixles"], ["Utils","Utils"]]), "module");
     this.setOutput(true, "String");
     this.setColour(230);
  this.setTooltip("");
