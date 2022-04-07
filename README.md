@@ -22,9 +22,14 @@ https://qiita.com/poruruba
 - 2022-4-2
   - DAC出力のAudioに対応
   - M5Stack Fireでの動作を確認
+- 2022-4-8
+  - Syslog出力を追加
+  - 試験的にBlocklyに対応
 
 ## 誤記訂正
 - 2022-03-31
   - 赤外線送受信とUDPのサンプルを追記 
 - 2022-4-2
   - DAC出力のAudio対応に伴い、audio.beginの入力パラメータ仕様を変更 
+- 2022-4-8
+  - Syslog出力を追加
