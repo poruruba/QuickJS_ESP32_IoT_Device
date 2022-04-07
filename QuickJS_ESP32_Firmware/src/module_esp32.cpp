@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
+
 #include "main_config.h"
 #include "quickjs.h"
 #include "quickjs_esp32.h"
 #include "module_type.h"
 #include "module_esp32.h"
-#include "endpoint_packet.h"
 
 #define GLOBAL_ESP32
 #define GLOBAL_CONSOLE
@@ -107,6 +107,63 @@ static JSValue esp32_check_putText(JSContext *ctx, JSValueConst jsThis, int argc
   return value;
 }
 
+static JSValue esp32_syslog(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  const char *message = JS_ToCString(ctx, argv[0]);
+  if( message == NULL )
+    return JS_EXCEPTION;
+
+  syslog_send(message);
+
+  JS_FreeCString(ctx, message);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_setSyslogServer(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  const char *host = JS_ToCString(ctx, argv[0]);
+  if( host == NULL )
+    return JS_EXCEPTION;
+  uint32_t port;
+  JS_ToUint32(ctx, &port, argv[1]);
+
+  String server(host);
+  server += ":";
+  server += String(port);
+
+  long ret;  
+  ret = write_config_string(CONFIG_FNAME_SYSLOG, server.c_str());
+  if( ret != 0 ){
+    JS_FreeCString(ctx, host);
+    return JS_EXCEPTION;
+  }
+
+  ret = syslog_changeServer(host, port);
+  JS_FreeCString(ctx, host);
+  if( ret != 0 ){
+    return JS_EXCEPTION;
+  }
+
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_getSyslogServer(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  String server = read_config_string(CONFIG_FNAME_SYSLOG);
+  int delim = server.indexOf(':');
+  if( delim < 0 )
+    return JS_EXCEPTION;
+  String host = server.substring(0, delim);
+  String port = server.substring(delim + 1);
+
+  JSValue obj = JS_NewObject(ctx);
+  JS_SetPropertyStr(ctx, obj, "host", JS_NewString(ctx, host.c_str()));
+  JS_SetPropertyStr(ctx, obj, "port", JS_NewUint32(ctx, port.toInt()));
+  
+  return obj;
+}
+
 static JSValue esp32_console_log(JSContext *ctx, JSValueConst jsThis, int argc,
                             JSValueConst *argv, int magic) {
   int i = 0;
@@ -127,6 +184,7 @@ static JSValue esp32_console_log(JSContext *ctx, JSValueConst jsThis, int argc,
       JS_FreeCString(ctx, str);
     }
   }
+
   return JS_UNDEFINED;
 }
 
@@ -165,7 +223,7 @@ JSModuleDef *addModule_console(JSContext *ctx, JSValue global)
   }
 
 #ifdef GLOBAL_CONSOLE
-  // import * as console from "console";
+  // import * as console from "Console";
   JSValue console = JS_NewObject(ctx);
   JS_SetPropertyStr(ctx, global, "console", console);
   JS_SetPropertyFunctionList(
@@ -199,7 +257,16 @@ static const JSCFunctionListEntry esp32_funcs[] = {
                            func : {0, JS_CFUNC_generic, esp32_get_deviceModel}
                          }},
     JSCFunctionListEntry{"checkPutText", 0, JS_DEF_CFUNC, 0, {
-                           func : {1, JS_CFUNC_generic, esp32_check_putText}
+                           func : {0, JS_CFUNC_generic, esp32_check_putText}
+                         }},
+    JSCFunctionListEntry{"syslog", 0, JS_DEF_CFUNC, 0, {
+                           func : {1, JS_CFUNC_generic, esp32_syslog}
+                         }},
+    JSCFunctionListEntry{"setSyslogServer", 0, JS_DEF_CFUNC, 0, {
+                           func : {2, JS_CFUNC_generic, esp32_setSyslogServer}
+                         }},
+    JSCFunctionListEntry{"getSyslogServer", 0, JS_DEF_CFUNC, 0, {
+                           func : {0, JS_CFUNC_generic, esp32_getSyslogServer}
                          }},
     JSCFunctionListEntry{
         "MODEL_OTHER", 0, JS_DEF_PROP_INT32, 0, {

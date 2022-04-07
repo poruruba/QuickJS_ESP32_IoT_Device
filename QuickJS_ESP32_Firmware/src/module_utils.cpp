@@ -62,7 +62,7 @@ String urlencode(String str)
   return encodedString;
 }
 
-static JSValue utils_http_json_text(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
+static JSValue utils_http_text(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
 {
   HTTPClient http;
   const char *url = JS_ToCString(ctx, argv[0]);
@@ -325,99 +325,6 @@ end:
   return value;
 }
 
-static JSValue utils_http_get_text(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
-{
-  HTTPClient http;
-  const char *url = JS_ToCString(ctx, argv[0]);
-  if( argc >= 2 && argv[1] != JS_UNDEFINED ){
-    JSPropertyEnum *atoms;
-    uint32_t len;
-    int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[1], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
-    if (ret != 0){
-      JS_FreeCString(ctx, url);
-      return JS_EXCEPTION;
-    }
-
-    String url_str = String(url);
-    bool first = true;
-    for (int i = 0; i < len; i++){
-      JSAtom atom = atoms[i].atom;
-      const char *name = JS_AtomToCString(ctx, atom);
-      if( name != NULL ){
-        JSValue value = JS_GetPropertyStr(ctx, argv[1], name);
-        const char *str = JS_ToCString(ctx, value);
-        if( str != NULL ){
-          Serial.printf("%s=%s\n", name, str);
-
-          if( first ){
-            if (url_str.indexOf('?') >= 0)
-              url_str += "&";
-            else
-              url_str += "?";
-            first = false;
-          }else{
-            url_str += "&";
-          }
-          url_str += name;
-          url_str += "=";
-          url_str += urlencode(str);
-          JS_FreeCString(ctx, str);
-        }
-        JS_FreeCString(ctx, name);
-      }
-      JS_FreeAtom(ctx, atom);
-    }
-
-    Serial.println(url_str);
-    http.begin(url_str); //HTTP
-    }else{
-    Serial.println(url);
-    http.begin(url); //HTTP
-  }
-  JS_FreeCString(ctx, url);
-
-  if( argc >= 3 && argv[2] != JS_UNDEFINED ){
-    JSPropertyEnum *atoms;
-    uint32_t len;
-    int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[2], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
-    if (ret != 0){
-      http.end();
-      return JS_EXCEPTION;
-    }
-
-    for (int i = 0; i < len; i++){
-      JSAtom atom = atoms[i].atom;
-      const char *name = JS_AtomToCString(ctx, atom);
-      if( name != NULL ){
-        JSValue value = JS_GetPropertyStr(ctx, argv[2], name);
-        const char *str = JS_ToCString(ctx, value);
-        if( str != NULL ){
-          Serial.printf("%s=%s\n", name, str);
-
-          http.addHeader(name, str);
-          JS_FreeCString(ctx, str);
-        }
-        JS_FreeCString(ctx, name);
-      }
-      JS_FreeAtom(ctx, atom);
-    }
-  }
-
-  JSValue value = JS_EXCEPTION;
-  int status_code = http.GET();
-  if (status_code == 200){
-    String result = http.getString();
-    value = JS_NewString(ctx, result.c_str());
-  }else{
-    Serial.printf("status_code=%d\n", status_code);
-    goto end;
-  }
-
-end:
-  http.end();
-  return value;
-}
-
 static JSValue utils_urlencode(JSContext * ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
   const char *str = JS_ToCString(ctx, argv[0]);
@@ -473,6 +380,40 @@ static JSValue utils_base64(JSContext *ctx, JSValueConst jsThis, int argc, JSVal
   return JS_EXCEPTION;
 }
 
+static JSValue utils_rgb2number(JSContext *ctx, JSValueConst jsThis,
+                                     int argc, JSValueConst *argv)
+{
+  const char *rgb = JS_ToCString(ctx, argv[0]);
+  if( rgb == NULL )
+    return JS_EXCEPTION;
+  if( strlen(rgb) != 7 || rgb[0] != '#'){
+    JS_FreeCString(ctx, rgb);
+    return JS_EXCEPTION;
+  }
+  uint32_t color = 0;
+  char temp[3] = { '\0' };
+  for( int i = 0 ; i < 3 ; i++ ){
+    temp[0] = rgb[1 + i * 3];
+    temp[1] = rgb[1 + i * 3 + 1];
+    color <<= 8;
+    color |= strtol(temp, NULL, 16);
+  }
+
+  return JS_NewUint32(ctx, color);
+}
+
+static JSValue utils_number2rgb(JSContext *ctx, JSValueConst jsThis,
+                                     int argc, JSValueConst *argv)
+{
+  uint32_t color;
+  JS_ToUint32(ctx, &color, argv[0]);
+
+  char temp[8];
+  sprintf(temp, "#02X02X02X", (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+
+  return JS_NewString(ctx, temp);
+}
+
 static const JSCFunctionListEntry utils_funcs[] = {
     JSCFunctionListEntry{"httpPostJson", 0, JS_DEF_CFUNC, 0, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json}}
@@ -480,14 +421,11 @@ static const JSCFunctionListEntry utils_funcs[] = {
     JSCFunctionListEntry{"httpGetJson", 0, JS_DEF_CFUNC, 1, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json}}
                          }},
-    JSCFunctionListEntry{"httpPostJsonText", 0, JS_DEF_CFUNC, 0, {
-                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json_text}}
+    JSCFunctionListEntry{"httpPostText", 0, JS_DEF_CFUNC, 0, {
+                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_text}}
                          }},
-    JSCFunctionListEntry{"httpGetJsonText", 0, JS_DEF_CFUNC, 1, {
-                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json_text}}
-                         }},
-    JSCFunctionListEntry{"httpGetText", 0, JS_DEF_CFUNC, 0, {
-                           func : {3, JS_CFUNC_generic, utils_http_get_text}
+    JSCFunctionListEntry{"httpGetText", 0, JS_DEF_CFUNC, 1, {
+                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_text}}
                          }},
     JSCFunctionListEntry{"urlencode", 0, JS_DEF_CFUNC, 0, {
                            func : {1, JS_CFUNC_generic, utils_urlencode}
@@ -498,6 +436,12 @@ static const JSCFunctionListEntry utils_funcs[] = {
     JSCFunctionListEntry{"base64Decode", 0, JS_DEF_CFUNC, 1, {
                            func : {1, JS_CFUNC_generic_magic, {generic_magic : utils_base64}}
                          }},
+    JSCFunctionListEntry{"rgb2Number", 0, JS_DEF_CFUNC, 0, {
+                          func : {1, JS_CFUNC_generic, utils_rgb2number}
+                        }},
+    JSCFunctionListEntry{"number2Rgb", 0, JS_DEF_CFUNC, 0, {
+                          func : {1, JS_CFUNC_generic, utils_number2rgb}
+                        }},
 };
 
 JSModuleDef *addModule_utils(JSContext * ctx, JSValue global)

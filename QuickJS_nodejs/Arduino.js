@@ -13,7 +13,10 @@ class Arduino{
   }
 
   set_baseUrl(base_url){
-    this.base_url = base_url;
+    if( base_url.endsWith('/') )
+      this.base_url = base_url.slice(0, -1);
+    else
+      this.base_url = base_url;
   }
 
   async millis(){
@@ -48,9 +51,24 @@ class Arduino{
     return this.webapi_request("/getStatus", {});
   }
 
+  async setSyslogServer(host, port){
+    return this.webapi_request("/setSyslogServer", { host: host, port: port });
+  }
+
+  async getSyslogServer(){
+    return this.webapi_request("/getSyslogServer", {});
+  }
+
   async code_upload(code, fname){
     if( fname )
       await this.webapi_request("/code-upload", { code: code, fname: fname } );
+    else
+      await this.webapi_request("/code-upload", { code: code } );
+  }
+
+  async code_upload_main(code, autoupdate){
+    if( autoupdate !== undefined )
+      await this.webapi_request("/code-upload", { code: code, autoupdate: autoupdate } );
     else
       await this.webapi_request("/code-upload", { code: code } );
   }

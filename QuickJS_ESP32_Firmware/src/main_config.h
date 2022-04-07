@@ -35,6 +35,10 @@
 #define DUMMY_FNAME  "/dummy"
 #define MAIN_FNAME  "/main.js"
 #define MODULE_DIR  "/modules/"
+#define CONFIG_FNAME  "/config.ini"
+#define CONFIG_FNAME_SYSLOG  "/syslog.ini"
+
+#define CONFIG_INDEX_AUTOUPDATE 0
 
 //#define WIFI_SSID "【固定のWiFiアクセスポイントのSSID】" // WiFiアクセスポイントのSSID
 //#define WIFI_PASSWORD "【固定のWiFIアクセスポイントのパスワード】" // WiFIアクセスポイントのパスワード
@@ -52,6 +56,8 @@
 #define PACKET_JSON_DOCUMENT_SIZE  DEFAULT_BUFFER_SIZE
 #define FILE_BUFFER_SIZE DEFAULT_BUFFER_SIZE
 
+#define NUM_BTN_FUNC 4
+
 #define FILE_LOADING_NONE     0
 #define FILE_LOADING_RESTART  1
 #define FILE_LOADING_REBOOT   2
@@ -65,6 +71,7 @@ extern char g_download_buffer[FILE_BUFFER_SIZE];
 
 extern char *js_code;
 extern uint32_t js_code_size;
+extern bool g_autoupdate;
 
 extern SemaphoreHandle_t binSem;
 
@@ -72,5 +79,13 @@ long save_jscode(const char *p_code);
 long save_module(const char* p_fname, const char *p_code);
 long delete_module(const char *p_fname);
 long load_module(const char* p_fname, char *p_buffer, uint32_t len);
+
+long read_config_long(uint16_t index, long def);
+long write_config_long(uint16_t index, long value);
+String read_config_string(const char *fname);
+long write_config_string(const char *fname, const char *text);
+
+long syslog_send(const char *p_message);
+long syslog_changeServer(const char *host, uint16_t port);
 
 #endif

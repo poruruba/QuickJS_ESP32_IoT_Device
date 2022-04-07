@@ -16,10 +16,14 @@ var vue_options = {
         upload_mode: "main",
         target_module: "",
         module_name: "",
+        chk_autoupdate: false,
         module_list: [],
         base_url: base_url,
         ipaddress: "",
         macaddress: "",
+
+        syslog_host: "",
+        syslog_port: 514,
 
         rtc_date: {},
         rtc_time: {},
@@ -80,6 +84,12 @@ var vue_options = {
         esp32_millis_result: null,
 
         esp32_console_message: "",
+
+        js_upload: "",
+        js_import: "",
+        js_export: "",
+        hasWorkspace: false,
+        workspace: null,
     },
     computed: {
     },
@@ -283,6 +293,24 @@ var vue_options = {
       
 
         // ESP32
+        esp32_getSyslogServer: async function(){
+            try{
+                var result = await this.arduino.getSyslogServer();
+                this.syslog_host = result.host;
+                this.syslog_port = result.port;
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        esp32_setSyslogServer: async function(){
+            try{
+                await this.arduino.setSyslogServer(this.syslog_host, this.syslog_port);
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
         esp32_console_log: async function(){
             try{
                 await this.arduino.console.log(this.esp32_console_message);
@@ -569,7 +597,7 @@ var vue_options = {
     	upload_textarea: async function(){
             try{
                 if( this.upload_mode == 'main')
-                    await this.arduino.code_upload(this.input_text);
+                    await this.arduino.code_upload_main(this.input_text, this.chk_autoupdate);
                 else
                     await this.arduino.code_upload(this.input_text, this.module_name);
                 this.toast_show("アップロード", "アップロードしました。");
@@ -646,6 +674,72 @@ var vue_options = {
                 console.error(error);
                 alert(error);
             }
+        },
+
+        do_upload: async function(){
+            try{
+                this.arduino.set_baseUrl(this.base_url);
+                await this.arduino.code_upload_main(this.js_upload, true);
+                this.toast_show("アップロード", "アップロードしました。");
+                this.dialog_close('#upload_js_dialog');
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        do_import: function(){
+            try{
+                var json = JSON.parse(this.js_import);
+                console.log(json);
+                Blockly.serialization.workspaces.load(json, this.workspace);
+                this.dialog_close('#import_js_dialog');
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+        do_copy: function(){
+            this.clip_copy(this.js_export);
+            this.toast_show("クリップボード", "クリップボードにコピーしました。");
+        },
+        exportCode: function(){
+            try{
+                var json = Blockly.serialization.workspaces.save(this.workspace);
+                this.js_export = (JSON.stringify(json, null, '\t'));
+                this.dialog_open('#export_js_dialog');
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+        },
+	    showJavascript: function() {
+            try{
+                // Generate JavaScript code and display it.
+                Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+                var code = Blockly.JavaScript.workspaceToCode(this.workspace);
+                console.log(code);
+                this.js_upload = code;
+                this.dialog_open("#upload_js_dialog");
+            }catch(error){
+                console.error(error);
+                alert(error);
+            }
+	    },
+        importCode: function(){
+            this.js_import = "";
+            this.dialog_open('#import_js_dialog');
+        },
+        createWorkspace: function(){
+            this.hasWorkspace = true;
+            this.$nextTick(() =>{
+                var option = {
+                    toolbox: document.getElementById('toolbox'),
+                    trashcan: true,
+                    zoom: { controls: true }
+                };
+                this.workspace = Blockly.inject('#blocklyDiv', option);
+            //        this.workspace.addChangeListener(Blockly.Events.disableOrphans);
+            });
         },
     },
     created: function(){

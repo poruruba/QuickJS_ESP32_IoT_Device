@@ -60,9 +60,9 @@ long endp_ledc_writeNote(JsonObject request, JsonObject response, int magic)
 {
   uint8_t channel = request["channel"];
   uint8_t note = request["note"];
-  uint8_t ocvave = request["ocvave"];
+  uint8_t octave = request["octave"];
 
-  float ret = ledcWriteNote(channel, (note_t)note, ocvave);
+  float ret = ledcWriteNote(channel, (note_t)note, octave);
   response["result"] = ret;
 
   return 0;

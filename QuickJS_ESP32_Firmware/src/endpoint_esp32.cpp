@@ -6,6 +6,45 @@
 #include "endpoint_packet.h"
 #include "endpoint_types.h"
 #include "endpoint_esp32.h"
+#include "module_esp32.h"
+
+long endp_setSyslogServer(JsonObject request, JsonObject response, int magic)
+{
+  const char* host = request["host"];
+  if( host == NULL )
+    return -1;
+  uint16_t port = request["port"];
+
+  String server(host);
+  server += ":";
+  server += String(port);
+
+  long ret;  
+  ret = write_config_string(CONFIG_FNAME_SYSLOG, server.c_str());
+  if( ret != 0 )
+    return -1;
+
+  ret = syslog_changeServer(host, port);
+  if( ret != 0 )
+    return -1;
+
+  return 0;
+}
+
+long endp_getSyslogServer(JsonObject request, JsonObject response, int magic)
+{
+  String server = read_config_string(CONFIG_FNAME_SYSLOG);
+  int delim = server.indexOf(':');
+  if( delim < 0 )
+    return -1;
+  String host = server.substring(0, delim);
+  String port = server.substring(delim + 1);
+
+  response["result"]["host"] = (char*)host.c_str();
+  response["result"]["port"] = port.toInt();
+
+  return 0;
+}
 
 long endp_putText(JsonObject request, JsonObject response, int magic)
 {
@@ -66,9 +105,15 @@ long endp_code_upload(JsonObject request, JsonObject response, int magic)
   const char *p_fname = request["fname"];
 
   if( p_fname == NULL ){
+    bool autoupdate = request["autoupdate"] || false;
     long ret = save_jscode(p_code);
     if( ret != 0 )
       return 0;
+    write_config_long(CONFIG_INDEX_AUTOUPDATE, autoupdate ? 1 : 0);
+    g_autoupdate = autoupdate;
+    if( g_autoupdate )
+      Serial.println("autoupdate: on");
+
     Serial.printf("save_jscode\n");
     g_fileloading = FILE_LOADING_RESTART;
   }else{
@@ -131,7 +176,6 @@ long endp_code_list(JsonObject request, JsonObject response, int magic)
   return 0;
 }
 
-
 long endp_console_log(JsonObject request, JsonObject response, int magic)
 {
   if( request["msg"].is<JsonArray>() ){
@@ -163,6 +207,8 @@ EndpointEntry esp32_table[] = {
   EndpointEntry{ endp_getIpAddress, "/getIpAddress", 0 },
   EndpointEntry{ endp_getMacAddress, "/getMacAddress", 0 },
   EndpointEntry{ endp_putText, "/putText", 0 },
+  EndpointEntry{ endp_setSyslogServer, "/setSyslogServer", 0 },
+  EndpointEntry{ endp_getSyslogServer, "/getSyslogServer", 0 },
   EndpointEntry{ endp_code_upload, "/code-upload", 0 },
   EndpointEntry{ endp_code_download, "/code-download", 0 },
   EndpointEntry{ endp_code_delete, "/code-delete", 0 },

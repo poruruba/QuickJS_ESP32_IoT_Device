@@ -292,10 +292,16 @@ class ESP32QuickJS {
   JSContext *ctx;
   JSTimer timer;
   JSValue loop_func = JS_UNDEFINED;
+  JSValue btn_func[NUM_BTN_FUNC];
 
 #ifdef ENABLE_WIFI
   JSHttpFetcher httpFetcher;
 #endif
+
+  ESP32QuickJS(){
+    for( int i = 0 ; i < NUM_BTN_FUNC; i++ )
+      btn_func[i] = JS_UNDEFINED;
+  }
 
   void begin() {
     JSRuntime *rt = JS_NewRuntime();
@@ -324,6 +330,12 @@ class ESP32QuickJS {
     if (JS_IsFunction(ctx, loop_func)){
       JS_FreeValue(ctx, loop_func);
       loop_func = JS_UNDEFINED;
+    }
+    for( uint8_t i = 0 ; i < NUM_BTN_FUNC ; i++ ){
+      if (JS_IsFunction(ctx, btn_func[i])){
+        JS_FreeValue(ctx, btn_func[i]);
+        btn_func[i] = JS_UNDEFINED;
+      }
     }
 
     timer.RemoveAll(ctx);
@@ -354,7 +366,7 @@ class ESP32QuickJS {
     int ret = JS_ExecutePendingJob(JS_GetRuntime(ctx), &c);
     if (ret < 0) {
       qjs_dump_exception(ctx, JS_UNDEFINED);
-      return false;
+//      return false;
     }
 
     // timer
@@ -368,14 +380,29 @@ class ESP32QuickJS {
 #endif
 
     // loop()
-    if (callLoopFn && JS_IsFunction(ctx, loop_func)) {
+    if( callLoopFn ){
+      if (JS_IsFunction(ctx, loop_func)) {
       JSValue ret = JS_Call(ctx, loop_func, loop_func, 0, nullptr);
       if (JS_IsException(ret)) {
         qjs_dump_exception(ctx, ret);
         JS_FreeValue(ctx, ret);
-        return false;
+//          return false;
+        }else{
+          JS_FreeValue(ctx, ret);
+        }
+      }
+
+      for( int i = 0 ; i < NUM_BTN_FUNC ; i++ ){
+        if( JS_IsFunction(ctx, btn_func[i]) && module_input_checkButtonState(FUNC_TYPE_WAS_PRESSED, i, 0) ){
+          JSValue ret = JS_Call(ctx, btn_func[i], btn_func[i], 0, nullptr);
+          if (JS_IsException(ret)) {
+            qjs_dump_exception(ctx, ret);
+            JS_FreeValue(ctx, ret);
+//            return false;
       }else{
         JS_FreeValue(ctx, ret);
+      }
+    }
       }
     }
 
@@ -402,15 +429,22 @@ class ESP32QuickJS {
     return ret;
   }
 
-  void setLoopFunc(const char *fname) {
-    JSValue global = JS_GetGlobalObject(ctx);
-    setLoopFunc(JS_GetPropertyStr(ctx, global, fname));
-    JS_FreeValue(ctx, global);
-  }
+  // void setLoopFunc(const char *fname) {
+  //   JSValue global = JS_GetGlobalObject(ctx);
+  //   setLoopFunc(JS_GetPropertyStr(ctx, global, fname));
+  //   JS_FreeValue(ctx, global);
+  // }
 
   void setLoopFunc(JSValue f) {
     JS_FreeValue(ctx, loop_func);
     loop_func = f;
+  }
+
+  void setBtnFunc(JSValue f, uint8_t index) {
+    if( index >= 0 && index < NUM_BTN_FUNC ){
+      JS_FreeValue(ctx, btn_func[index]);
+      btn_func[index] = f;
+    }
   }
 
   int load_module(const void *buf, int buf_len, const char *filename) {

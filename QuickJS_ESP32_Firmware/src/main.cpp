@@ -4,9 +4,11 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncJson.h>
 #include <SPIFFS.h>
+#include <Syslog.h>
 
 #include "quickjs_esp32.h"
 #include "main_config.h"
+
 #include "endpoint_types.h"
 #include "endpoint_esp32.h"
 #include "endpoint_gpio.h"
@@ -30,6 +32,7 @@ extern const char jscode_epilogue[] asm("_binary_rom_epilogue_js_start");
 char *js_code = NULL;
 uint32_t js_code_size = 0;
 char *js_modules_code = NULL;
+bool g_autoupdate = false;
 
 char g_download_buffer[FILE_BUFFER_SIZE];
 unsigned char g_fileloading = FILE_LOADING_NONE;
@@ -37,6 +40,10 @@ unsigned char g_fileloading = FILE_LOADING_NONE;
 ESP32QuickJS qjs;
 AsyncWebServer server(HTTP_PORT);
 SemaphoreHandle_t binSem;
+
+static WiFiUDP syslog_udp;
+static Syslog g_syslog(syslog_udp);
+static char *p_syslog_host = NULL;
 
 static long m5_initialize(void);
 static long start_qjs(void);
@@ -127,6 +134,19 @@ void setup()
     }
   }
 
+  String server = read_config_string(CONFIG_FNAME_SYSLOG);
+  int delim = server.indexOf(':');
+  if( delim >= 0 ){
+    String host = server.substring(0, delim);
+    String port = server.substring(delim + 1);
+    syslog_changeServer(host.c_str(), port.toInt());
+  }
+
+  long conf = read_config_long(CONFIG_INDEX_AUTOUPDATE, 0);
+  g_autoupdate = (conf != 0) ? true : false;
+  if( g_autoupdate )
+    Serial.println("autoupdate: on");
+
   qjs.initialize_modules();
 
   start_qjs();
@@ -145,6 +165,9 @@ void loop()
 // FILE_LOADING_START
 // FILE_LOADING_STOPPING
   }
+
+  if( g_autoupdate )
+    qjs.update_modules();
 
   // For timer, async, etc.
   if( !qjs.loop() ){
@@ -438,6 +461,100 @@ static long m5_initialize(void)
       return ret;
   }
 
+  return 0;
+}
+
+long read_config_long(uint16_t index, long def)
+{
+  File fp = SPIFFS.open(CONFIG_FNAME, FILE_READ);
+  if( !fp )
+    return def;
+  
+  uint8_t temp[4];
+  bool ret = fp.seek(index * sizeof(long));
+  if( !ret ){
+    fp.close();
+    return def;
+  }
+
+  if( fp.read(temp, sizeof(long)) != sizeof(long) ){
+    fp.close();
+    return def;
+  }
+  fp.close();
+
+  return (long)( (temp[0] << 24) | (temp[1] << 16) | (temp[2] << 8) | temp[3]);
+}
+
+long write_config_long(uint16_t index, long value)
+{
+  File fp = SPIFFS.open(CONFIG_FNAME, FILE_WRITE);
+  if( !fp )
+    return -1;
+  
+  uint8_t temp[4] = { (uint8_t)((value >> 24) & 0xff), (uint8_t)((value >> 16) & 0xff), (uint8_t)((value >> 8) & 0xff), (uint8_t)(value & 0xff) };
+  bool ret = fp.seek(index * sizeof(long));
+  if( !ret ){
+    fp.close();
+    return -1;
+  }
+
+  if( fp.write(temp, sizeof(long)) != sizeof(long) ){
+    fp.close();
+    return -1;
+  }
+  fp.close();
+
+  return 0;
+}
+
+String read_config_string(const char *fname)
+{
+  File fp = SPIFFS.open(fname, FILE_READ);
+  if( !fp )
+    return String("");
+
+  String text = fp.readString();
+  fp.close();
+
+  return text;
+}
+
+long write_config_string(const char *fname, const char *text)
+{
+  File fp = SPIFFS.open(fname, FILE_WRITE);
+  if( !fp )
+    return -1;
+
+  long ret = fp.write((uint8_t*)text, strlen(text));
+  fp.close();
+  if( ret != strlen(text) )
+    return -1;
+
+  return 0;
+}
+
+long syslog_send(const char *p_message)
+{
+  bool ret = g_syslog.log(LOG_INFO, p_message);
+  return ret ? 0 : -1;
+}
+
+long syslog_changeServer(const char *host, uint16_t port)
+{
+  g_syslog.appName(MDNS_SERVICE);
+  g_syslog.deviceHostname(MDNS_NAME);
+  g_syslog.defaultPriority(LOG_INFO | LOG_USER);
+
+  if( p_syslog_host != NULL )
+    free(p_syslog_host);
+  p_syslog_host = (char*)malloc(strlen(host) + 1);
+  if( p_syslog_host == NULL )
+    return -1;
+  strcpy(p_syslog_host, host);
+  g_syslog.server(p_syslog_host, port);
+
+  Serial.printf("syslog: host=%s, port=%d\n", p_syslog_host, port);
 
   return 0;
 }

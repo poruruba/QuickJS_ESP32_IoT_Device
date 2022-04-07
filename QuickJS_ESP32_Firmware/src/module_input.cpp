@@ -2,33 +2,15 @@
 #include "main_config.h"
 #include "quickjs.h"
 #include "module_type.h"
+#include "module_input.h"
+#include "quickjs_esp32.h"
 
-#define INPUT_TOUCHPANEL  0
-#define INPUT_BUTTON_A    1
-#define INPUT_BUTTON_B    2
-#define INPUT_BUTTON_C    3
-
-#define FUNC_TYPE_IS_PRESSED        0
-#define FUNC_TYPE_IS_RELEASED       1
-#define FUNC_TYPE_WAS_PRESSED       2
-#define FUNC_TYPE_WAS_RELEASED      3
-#define FUNC_TYPE_PRESSED_FOR       4
-#define FUNC_TYPE_RELEASED_FOR      5
-#define FUNC_TYPE_WAS_RELEASE_FOR   6
-#define FUNC_TYPE_IS_TOUCHED        7
-
-static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int argc,
-                                JSValueConst *argv, int magic)
+bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1)
 {
-  uint32_t value0, value1 = 0;
-  JS_ToUint32(ctx, &value0, argv[0]);
-  if (magic == FUNC_TYPE_PRESSED_FOR || magic == FUNC_TYPE_RELEASED_FOR || magic == FUNC_TYPE_WAS_RELEASE_FOR)
-    JS_ToUint32(ctx, &value1, argv[1]);
-
   bool result = false;
 
 #if defined(ARDUINO_M5Stick_C)
-  switch(magic){
+  switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
@@ -81,7 +63,7 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
     }
   }
 #elif defined(ARDUINO_M5STACK_Core2)
-  switch(magic){
+  switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
@@ -139,7 +121,7 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
       break;
     }
   }
-  switch(magic){
+  switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
@@ -198,7 +180,7 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
     }
   }
 #elif defined(ARDUINO_M5STACK_FIRE)
-  switch(magic){
+  switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
@@ -256,7 +238,7 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
       break;
     }
   }
-  switch(magic){
+  switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
@@ -315,7 +297,7 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
     }
   }
 #elif defined(ARDUINO_M5Stack_ATOM)
-  switch(magic){
+  switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.Btn.isPressed(); break;
@@ -361,7 +343,29 @@ static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int a
   }
 #endif
 
+  return result;
+}
+
+static JSValue input_checkButtonState(JSContext *ctx, JSValueConst jsThis, int argc,
+                                JSValueConst *argv, int magic)
+{
+  uint32_t value0, value1 = 0;
+  JS_ToUint32(ctx, &value0, argv[0]);
+  if (magic == FUNC_TYPE_PRESSED_FOR || magic == FUNC_TYPE_RELEASED_FOR || magic == FUNC_TYPE_WAS_RELEASE_FOR)
+    JS_ToUint32(ctx, &value1, argv[1]);
+
+  bool result = module_input_checkButtonState(magic, value0, value1);
   return JS_NewBool(ctx, result);
+}
+
+static JSValue input_onButtonWasPressed(JSContext *ctx, JSValueConst jsThis, int argc,
+                            JSValueConst *argv) {
+  uint32_t value;
+  JS_ToUint32(ctx, &value, argv[0]);
+  ESP32QuickJS *qjs = (ESP32QuickJS *)JS_GetContextOpaque(ctx);
+  qjs->setBtnFunc(JS_DupValue(ctx, argv[1]), value);
+
+  return JS_UNDEFINED;
 }
 
 #if defined(ARDUINO_M5STACK_Core2)
@@ -402,6 +406,9 @@ static const JSCFunctionListEntry input_funcs[] = {
     JSCFunctionListEntry{"wasReleaseFor", 0, JS_DEF_CFUNC, FUNC_TYPE_WAS_RELEASE_FOR, {
                            func : {2, JS_CFUNC_generic_magic, {generic_magic : input_checkButtonState}}
                          }},
+    JSCFunctionListEntry{"onButtonWasPressed", 0, JS_DEF_CFUNC, 0, {
+                           func : {2, JS_CFUNC_generic, input_onButtonWasPressed}
+                         }},                         
 #if defined(ARDUINO_M5STACK_Core2)
     JSCFunctionListEntry{
         "isTouched", 0, JS_DEF_CFUNC, 0, {

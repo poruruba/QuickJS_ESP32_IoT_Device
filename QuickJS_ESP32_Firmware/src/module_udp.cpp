@@ -22,27 +22,31 @@ static JSValue esp32_udp_recvBegin(JSContext *ctx, JSValueConst jsThis, int argc
 static JSValue esp32_udp_sendBinary(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
-  uint32_t host, port;
-  JS_ToUint32(ctx, &host, argv[0]);
+  const char *host = JS_ToCString(ctx, argv[0]);
+  if( host == NULL )
+    return JS_EXCEPTION;
+  uint32_t port;
   JS_ToUint32(ctx, &port, argv[1]);
 
   uint8_t *p_buffer;
   uint8_t unit_size;
   uint32_t bsize;
   JSValue vbuffer = getArrayBuffer(ctx, argv[2], (void**)&p_buffer, &unit_size, &bsize);
-  if( JS_IsNull(vbuffer) )
+  if( JS_IsNull(vbuffer) ){
+    JS_FreeCString(ctx, host);
     return JS_EXCEPTION;
+  }
   if( unit_size != 1 ){
+    JS_FreeCString(ctx, host);
     JS_FreeValue(ctx, vbuffer);
     return JS_EXCEPTION;
   }
 
-  char temp[16];
-  sprintf(temp, "%d.%d.%d.%d", (host >> 24) & 0xff, (host >> 16) & 0xff, (host >> 8) & 0xff, host & 0xff);
-  udp.beginPacket(temp, port);
+  udp.beginPacket(host, port);
   udp.write(p_buffer, bsize);
   udp.endPacket();
 
+  JS_FreeCString(ctx, host);
   JS_FreeValue(ctx, vbuffer);
 
   return JS_UNDEFINED;
@@ -51,20 +55,23 @@ static JSValue esp32_udp_sendBinary(JSContext *ctx, JSValueConst jsThis, int arg
 static JSValue esp32_udp_sendText(JSContext *ctx, JSValueConst jsThis, int argc,
                                JSValueConst *argv)
 {
-  uint32_t host, port;
-  JS_ToUint32(ctx, &host, argv[0]);
+  const char *host = JS_ToCString(ctx, argv[0]);
+  if( host == NULL )
+    return JS_EXCEPTION;
+  uint32_t port;
   JS_ToUint32(ctx, &port, argv[1]);
 
   const char *text = JS_ToCString(ctx, argv[2]);
-  if( text == NULL )
+  if( text == NULL ){
+    JS_FreeCString(ctx, host);
     return JS_EXCEPTION;
+  }
 
-  char temp[16];
-  sprintf(temp, "%d.%d.%d.%d", (host >> 24) & 0xff, (host >> 16) & 0xff, (host >> 8) & 0xff, host & 0xff);
-  udp.beginPacket(temp, port);
+  udp.beginPacket(host, port);
   udp.write((const uint8_t*)text, strlen(text));
   udp.endPacket();
 
+  JS_FreeCString(ctx, host);
   JS_FreeCString(ctx, text);
 
   return JS_UNDEFINED;

@@ -30,6 +30,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+  <script src="https://unpkg.com/blockly@8.0.0/blockly.min.js"></script>
+  <script src="https://unpkg.com/blockly@8.0.0/blocks.js"></script>
+  <script src="https://unpkg.com/blockly@8.0.0/javascript.js"></script>
+  <!-- <script src="https://unpkg.com/blockly@8.0.0/msg/ja.js"></script> -->
+  <script src="./msg/js/ja.js"></script>
+
   <title>QuickJS_ESP32</title>
 </head>
 
@@ -40,16 +46,15 @@
     </div>
 -->
   <div id="top" class="container">
-    <h1>QuickJS_ESP32</h1>
-
-    <div class="form-inline">
+    <div class="form-inline pull-right">
       <label>base_url</label> <input type="text" class="form-control" v-model="base_url"><button class="btn btn-default btn-sm" v-on:click="seturl">変更</button>
     </div>
-    <br>
+    <h1>QuickJS_ESP32</h1>
     
     <ul class="nav nav-tabs">
       <li class="active"><a href="#editor" data-toggle="tab">エディタ</a></li>
       <li><a href="#operate" data-toggle="tab">デバイス操作</a></li>
+      <li><a href="#blockly" data-toggle="tab">Blockly</a></li>
     </ul>
 
     <div class="tab-content">
@@ -78,10 +83,29 @@
             <option value="module">Library</option>
           </select>
           <input v-if="upload_mode=='module'" type="text" class="form-control" v-model="module_name">
+          <span v-if="upload_mode=='main'">
+            <input type="checkbox" id="chk_autoupdate" v-model="chk_autoupdate"><label for="chk_autoupdate">autoupdate</label>
+          </span>
         </span>
         <button class="btn btn-primary" v-on:click="upload_textarea">アップロード</button>&nbsp;
-        <button class="btn btn-primary float-end" v-on:click="save_textarea">保存</button>
+        <button class="btn btn-primary float-end" v-on:click="save_textarea">ファイル保存</button>
         <textarea class="form-control" rows="20" v-model="input_text" v-on:keydown="catch_tabKey($event)"></textarea>
+
+        <modal-dialog size="lg" id="quickjs_js_dialog">
+          <div slot="content">
+            <div class="modal-header">
+              <label>main.js</label>
+            </div>
+            <div class="modal-body">
+              <textarea class="form-control" rows="20" readonly>{{downloaded_js}}</textarea>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" v-on:click="copy_to_texearea">テキストエリアにコピー</button>
+              <button class="btn btn-default" v-on:click="dialog_close('#quickjs_js_dialog')">閉じる</button>
+            </div>
+          </div>
+        </modal-dialog>
+
       </div>
 
       <div id="operate" class="tab-pane fade in">
@@ -232,30 +256,402 @@
           <label>IpAddress</label> <input type="text" class="form-control" v-model="ipaddress" readonly>
           <label>MacAddress</label> <input type="text" class="form-control" v-model="macaddress" readonly>
         </div>
+        <div class="form-inline">
+          <label>syslog</label>
+          <label>host</label> <input type="text" class="form-control" v-model="syslog_host">
+          <label>port</label> <input type="number" class="form-control" v-model.number="syslog_port">
+          <button class="btn btn-default btn-sm" v-on:click="esp32_getSyslogServer">取得</button>
+          <button class="btn btn-default btn-sm" v-on:click="esp32_setSyslogServer">設定</button>
       </div>
+    
     </div>
-    <br>
-    <br>
 
-    <modal-dialog size="lg" id="quickjs_js_dialog">
+
+      <div id="blockly" class="tab-pane fade in">
+    <br>
+        <div v-if="!hasWorkspace">
+          <button class="btn btn-primary" v-on:click="createWorkspace">Create Workspace</button>
+        </div>
+        <div v-else>
+          <div class="row">
+            <div id="blocklyDiv" class="form-control" style="height: 80vh;"></div>
+          </div>
+  
+          <button class="btn btn-primary btn-lg" v-on:click="showJavascript()">Show Javascript</button>
+          <button class="btn btn-default" v-on:click="importCode()">Import Code</button>
+          <button class="btn btn-default" v-on:click="exportCode()">Export Code</button>
+        </div>
+
+        <modal-dialog size="lg" id="upload_js_dialog">
       <div slot="content">
         <div class="modal-header">
           <label>main.js</label>
         </div>
         <div class="modal-body">
-          <textarea class="form-control" rows="20" readonly>{{downloaded_js}}</textarea>
+              <textarea class="form-control" rows="20" readonly>{{js_upload}}</textarea>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" v-on:click="do_upload">Upload</button>
+              <button class="btn btn-default" v-on:click="dialog_close('#upload_js_dialog')">閉じる</button>
+            </div>
+          </div>
+        </modal-dialog>
+    
+        <modal-dialog size="lg" id="import_js_dialog">
+          <div slot="content">
+            <div class="modal-header">
+              <label>Import</label>
+            </div>
+            <div class="modal-body">
+              <textarea class="form-control" rows="20" v-model="js_import"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" v-on:click="do_import">Import</button>
+              <button class="btn btn-default" v-on:click="dialog_close('#import_js_dialog')">閉じる</button>
+            </div>
+          </div>
+        </modal-dialog>
+    
+        <modal-dialog size="lg" id="export_js_dialog">
+          <div slot="content">
+            <div class="modal-header">
+              <label>Export</label>
+            </div>
+            <div class="modal-body">
+              <textarea class="form-control" rows="20" readonly>{{js_export}}</textarea>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" v-on:click="copy_to_texearea">テキストエリアにコピー</button>
-          <button class="btn btn-default" v-on:click="dialog_close('#quickjs_js_dialog')">閉じる</button>
+              <button class="btn btn-primary" v-on:click="do_copy">クリップボードにコピー</button>
+              <button class="btn btn-default" v-on:click="dialog_close('#export_js_dialog')">閉じる</button>
         </div>
       </div>
     </modal-dialog>
+
+      </div>
+
+    </div>
+    <br>
+
 
 
     <!-- for progress-dialog -->
     <progress-dialog v-bind:title="progress_title"></progress-dialog>
   </div>
+
+
+  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+    <category name="Logic" colour="%{BKY_LOGIC_HUE}">
+      <block type="controls_if"></block>
+      <block type="controls_if">
+        <mutation else="1"></mutation>
+      </block>
+      <block type="controls_if">
+        <mutation elseif="1" else="1"></mutation>
+      </block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+    </category>
+    <category name="Loops" colour="%{BKY_LOOPS_HUE}">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <field name="VAR">i</field>
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category name="Math" colour="%{BKY_MATH_HUE}">
+      <block type="math_number">
+        <field name="NUM">123</field>
+      </block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain">
+        <value name="LOW">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="HIGH">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
+      <block type="math_atan2"></block>
+    </category>
+    <category name="Text" colour="%{BKY_TEXTS_HUE}">
+      <block type="text"></block>
+      <block type="text_multiline"></block>
+      <block type="text_join"></block>
+      <block type="text_append">
+        <value name="TEXT">
+          <shadow type="text"></shadow>
+        </value>
+      </block>
+      <block type="text_length">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_isEmpty">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT"></field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+        <value name="FIND">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_getSubstring">
+        <value name="STRING">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_changeCase">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_trim">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_count">
+        <value name="SUB">
+          <shadow type="text"></shadow>
+        </value>
+        <value name="TEXT">
+          <shadow type="text"></shadow>
+        </value>
+      </block>
+      <block type="text_replace">
+        <value name="FROM">
+          <shadow type="text"></shadow>
+        </value>
+        <value name="TO">
+          <shadow type="text"></shadow>
+        </value>
+        <value name="TEXT">
+          <shadow type="text"></shadow>
+        </value>
+      </block>
+      <block type="text_reverse">
+        <value name="TEXT">
+          <shadow type="text"></shadow>
+        </value>
+      </block>
+    </category>
+    <category name="Lists" colour="%{BKY_LISTS_HUE}">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_setIndex">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getSublist">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_split">
+        <value name="DELIM">
+          <shadow type="text">
+            <field name="TEXT">,</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="lists_sort"></block>
+      <block type="lists_reverse"></block>
+    </category>
+    <category name="Color" colour="%{BKY_COLOUR_HUE}">
+      <block type="colour_picker"></block>
+      <block type="colour_random"></block>
+      <block type="colour_rgb">
+        <value name="RED">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+        <value name="GREEN">
+          <shadow type="math_number">
+            <field name="NUM">50</field>
+          </shadow>
+        </value>
+        <value name="BLUE">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="colour_blend">
+        <value name="COLOUR1">
+          <shadow type="colour_picker">
+            <field name="COLOUR">#ff0000</field>
+          </shadow>
+        </value>
+        <value name="COLOUR2">
+          <shadow type="colour_picker">
+            <field name="COLOUR">#3333ff</field>
+          </shadow>
+        </value>
+        <value name="RATIO">
+          <shadow type="math_number">
+            <field name="NUM">0.5</field>
+          </shadow>
+        </value>
+      </block>
+    </category>
+    <category name="Variables" custom="VARIABLE" colour="%{BKY_VARIABLES_HUE}">
+    </category>
+    <category name="Functions" custom="PROCEDURE" colour="%{BKY_PROCEDURES_HUE}">
+    </category>
+    <sep></sep>
+    <category name="Custom" expanded="true">
+      <category name="Default">
+        <block type="program_start"></block>
+        <block type="program_module"></block>
+        <block type="reboot"></block>
+        <block type="restart"></block>
+        <block type="checkputtext"></block>
+        <block type="console_log"></block>
+        <block type="object"></block>
+        <block type="object_field"></block>
+      </category>
+      <category name="Timer">
+        <block type="millis"></block>
+        <block type="delay"></block>
+        <block type="settimeout"></block>
+        <block type="cleartimeout"></block>
+        <block type="setinterval"></block>
+        <block type="clearinterval"></block>
+      </category>
+      <category name="Gpio">
+        <block type="gpio_pinmode"></block>
+        <block type="gpio_analogread"></block>
+        <block type="gpio_digitalread"></block>
+        <block type="gpio_digitalwrite"></block>
+      </category>
+      <category name="Input">
+        <block type="input_ispressed"></block>
+        <block type="input_onbuttonwaspressed"></block>
+      </category>
+      <category name="Pixels">
+        <block type="pixels_begin"></block>
+        <block type="pixels_clear"></block>
+        <block type="pixels_setonoff"></block>
+        <block type="pixels_getonoff"></block>
+        <block type="pixels_setpixelcolor"></block>
+        <block type="pixels_getpixelcolor"></block>
+      </category>
+      <category name="Utils">
+        <block type="utils_rgb2number"></block>
+        <block type="utils_number2rgb"></block>
+      </category>
+    </category>
+
+  </xml>
+
+
+  <script src="js/blocks_define.js"></script>
+  <script src="js/blocks_javascript.js"></script>
 
   <script src="js/driver/Gpio.js"></script>
   <script src="js/driver/Wire.js"></script>
