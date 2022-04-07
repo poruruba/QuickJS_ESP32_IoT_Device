@@ -393,8 +393,8 @@ static JSValue utils_rgb2number(JSContext *ctx, JSValueConst jsThis,
   uint32_t color = 0;
   char temp[3] = { '\0' };
   for( int i = 0 ; i < 3 ; i++ ){
-    temp[0] = rgb[1 + i * 3];
-    temp[1] = rgb[1 + i * 3 + 1];
+    temp[0] = rgb[1 + i * 2];
+    temp[1] = rgb[1 + i * 2 + 1];
     color <<= 8;
     color |= strtol(temp, NULL, 16);
   }
