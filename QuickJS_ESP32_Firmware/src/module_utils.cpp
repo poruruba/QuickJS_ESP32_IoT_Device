@@ -398,6 +398,7 @@ static JSValue utils_rgb2number(JSContext *ctx, JSValueConst jsThis,
     color <<= 8;
     color |= strtol(temp, NULL, 16);
   }
+  JS_FreeCString(ctx, rgb);
 
   return JS_NewUint32(ctx, color);
 }
