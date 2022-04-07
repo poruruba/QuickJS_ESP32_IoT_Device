@@ -409,7 +409,7 @@ static JSValue utils_number2rgb(JSContext *ctx, JSValueConst jsThis,
   JS_ToUint32(ctx, &color, argv[0]);
 
   char temp[8];
-  sprintf(temp, "#02X02X02X", (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+  sprintf(temp, "#%02X%02X%02X", (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
 
   return JS_NewString(ctx, temp);
 }
