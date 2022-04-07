@@ -33,3 +33,4 @@ https://qiita.com/poruruba
   - DAC出力のAudio対応に伴い、audio.beginの入力パラメータ仕様を変更 
 - 2022-4-8
   - Syslog出力を追加
+  - IPアドレス指定方法を変更
