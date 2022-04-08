@@ -277,7 +277,7 @@
             <div id="blocklyDiv" class="form-control" style="height: 80vh;"></div>
           </div>
   
-          <button class="btn btn-primary btn-lg" v-on:click="showJavascript()">Show Javascript</button>
+          <button class="btn btn-primary btn-lg" v-on:click="showJavascript()">Show & Upload Javascript</button>
           <button class="btn btn-default" v-on:click="importCode()">Import Code</button>
           <button class="btn btn-default" v-on:click="exportCode()">Export Code</button>
         </div>
@@ -291,7 +291,8 @@
               <textarea class="form-control" rows="20" readonly>{{js_upload}}</textarea>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-primary" v-on:click="do_upload">Upload</button>
+              <button class="btn btn-primary" v-on:click="do_upload">アップロード</button>
+              <button class="btn btn-default" v-on:click="do_copy_upload">クリップボードにコピー</button>
               <button class="btn btn-default" v-on:click="dialog_close('#upload_js_dialog')">閉じる</button>
             </div>
           </div>
@@ -321,7 +322,7 @@
               <textarea class="form-control" rows="20" readonly>{{js_export}}</textarea>
         </div>
         <div class="modal-footer">
-              <button class="btn btn-primary" v-on:click="do_copy">クリップボードにコピー</button>
+              <button class="btn btn-primary" v-on:click="do_copy_export">クリップボードにコピー</button>
               <button class="btn btn-default" v-on:click="dialog_close('#export_js_dialog')">閉じる</button>
         </div>
       </div>
@@ -606,40 +607,117 @@
     <sep></sep>
     <category name="Custom" expanded="true">
       <category name="Default">
-        <block type="program_start"></block>
+        <block type="program_start">
+          <value name="modules">
+            <block type="lists_create_with"></block>
+          </value>
+        </block>
         <block type="program_module"></block>
         <block type="reboot"></block>
         <block type="restart"></block>
         <block type="checkputtext"></block>
         <block type="console_log"></block>
-        <block type="object"></block>
+        <block type="object">
+          <value name="obj">
+            <block type="lists_create_with"></block>
+          </value>
+        </block>
         <block type="object_field"></block>
       </category>
       <category name="Timer">
         <block type="millis"></block>
-        <block type="delay"></block>
-        <block type="settimeout"></block>
+        <block type="delay">
+          <value name="msec">
+            <shadow type="math_number">
+              <field name="NUM">1000</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="settimeout">
+          <value name="msec">
+            <shadow type="math_number">
+              <field name="NUM">1000</field>
+            </shadow>
+          </value>
+        </block>
         <block type="cleartimeout"></block>
-        <block type="setinterval"></block>
+        <block type="setinterval">
+          <value name="msec">
+            <shadow type="math_number">
+              <field name="NUM">1000</field>
+            </shadow>
+          </value>
+        </block>
         <block type="clearinterval"></block>
       </category>
       <category name="Gpio">
-        <block type="gpio_pinmode"></block>
-        <block type="gpio_analogread"></block>
-        <block type="gpio_digitalread"></block>
-        <block type="gpio_digitalwrite"></block>
+        <block type="gpio_pinmode">
+          <value name="pin">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="gpio_analogread">
+          <value name="pin">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="gpio_digitalread">
+          <value name="pin">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="gpio_digitalwrite">
+          <value name="pin">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
       </category>
       <category name="Input">
         <block type="input_ispressed"></block>
         <block type="input_onbuttonwaspressed"></block>
       </category>
       <category name="Pixels">
-        <block type="pixels_begin"></block>
+        <block type="pixels_begin">
+          <value name="pin">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="num">
+            <shadow type="math_number">
+              <field name="NUM">25</field>
+            </shadow>
+          </value>
+        </block>
         <block type="pixels_clear"></block>
-        <block type="pixels_setonoff"></block>
+        <block type="pixels_setonoff">
+          <value name="onoff">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+        </block>
         <block type="pixels_getonoff"></block>
-        <block type="pixels_setpixelcolor"></block>
-        <block type="pixels_getpixelcolor"></block>
+        <block type="pixels_setpixelcolor">
+          <value name="index">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="pixels_getpixelcolor">
+          <value name="index">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
       </category>
       <category name="Utils">
         <block type="utils_rgb2number"></block>

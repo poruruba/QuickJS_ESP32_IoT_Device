@@ -698,8 +698,12 @@ var vue_options = {
                 alert(error);
             }
         },
-        do_copy: function(){
+        do_copy_export: function(){
             this.clip_copy(this.js_export);
+            this.toast_show("クリップボード", "クリップボードにコピーしました。");
+        },
+        do_copy_upload: function(){
+            this.clip_copy(this.js_upload);
             this.toast_show("クリップボード", "クリップボードにコピーしました。");
         },
         exportCode: function(){
