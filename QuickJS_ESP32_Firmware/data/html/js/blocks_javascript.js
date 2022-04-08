@@ -122,7 +122,7 @@ Blockly.JavaScript['input_onbuttonwaspressed'] = function(block) {
   var dropdown_btn = block.getFieldValue('btn');
   var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'input.onButtonWasPress(' + dropdown_btn + ', () => {\n' + statements_func + '});\n';
+  var code = 'input.onButtonWasPressed(' + dropdown_btn + ', () => {\n' + statements_func + '});\n';
   return code;
 };
 
