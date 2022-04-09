@@ -25,7 +25,6 @@ https://qiita.com/poruruba
 - 2022-4-8
   - Syslog出力を追加
   - 試験的にBlocklyに対応
-  - Blockにおいて、Javascript出力でpressになっていたのを修正
 
 ## 誤記訂正
 - 2022-03-31
@@ -35,3 +34,4 @@ https://qiita.com/poruruba
 - 2022-4-8
   - Syslog出力を追加
   - IPアドレス指定方法を変更
+  - Blocklyにおいて、Javascript出力でpressになっていたのを修正
