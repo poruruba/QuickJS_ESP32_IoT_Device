@@ -13,14 +13,9 @@
 #define LGFX_AUTODETECT
 #include <LovyanGFX.hpp>
 #include <LGFX_AUTODETECT.hpp>
-static LGFX lcd;
+LGFX lcd;
 
 #define FONT_COLOR TFT_WHITE
-
-#define FUNC_TYPE_WIDTH 1
-#define FUNC_TYPE_HEIGHT 2
-#define FUNC_TYPE_DEPTH 3
-#define FUNC_TYPE_FONTHEIGHT 4
 
 static JSValue esp32_lcd_setRotation(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
@@ -156,11 +151,9 @@ static JSValue esp32_lcd_print(JSContext *ctx, JSValueConst jsThis, int argc, JS
   return JS_NewInt32(ctx, ret);
 }
 
-static JSValue esp32_lcd_setFont(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+long module_lcd_setFont(uint16_t size)
 {
-  int32_t value;
-  JS_ToInt32(ctx, &value, argv[0]);
-  switch (value){
+  switch (size){
 //    case 8 : lcd.setFont(&fonts::lgfxJapanGothic_8); break;
 //    case 12 : lcd.setFont(&fonts::lgfxJapanGothic_12); break;
     case 16 : lcd.setFont(&fonts::lgfxJapanGothic_16); break;
@@ -171,6 +164,15 @@ static JSValue esp32_lcd_setFont(JSContext *ctx, JSValueConst jsThis, int argc, 
     case 36 : lcd.setFont(&fonts::lgfxJapanGothic_36); break;
 //    case 40 : lcd.setFont(&fonts::lgfxJapanGothic_40); break;
   }
+
+  return 0;
+}
+
+static JSValue esp32_lcd_setFont(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  int32_t value;
+  JS_ToInt32(ctx, &value, argv[0]);
+  module_lcd_setFont(value);
   return JS_UNDEFINED;
 }
 
@@ -205,10 +207,10 @@ static JSValue esp32_lcd_drawPixel(JSContext *ctx, JSValueConst jsThis, int argc
 {
   int32_t value0;
   int32_t value1;
-  int32_t value2;
+  uint32_t value2;
   JS_ToInt32(ctx, &value0, argv[0]);
   JS_ToInt32(ctx, &value1, argv[1]);
-  JS_ToInt32(ctx, &value2, argv[2]);
+  JS_ToUint32(ctx, &value2, argv[2]);
   lcd.drawPixel(value0, value1, value2);
   return JS_UNDEFINED;
 }
@@ -224,11 +226,89 @@ static JSValue esp32_lcd_drawLine(JSContext *ctx, JSValueConst jsThis, int argc,
   JS_ToInt32(ctx, &value2, argv[2]);
   JS_ToInt32(ctx, &value3, argv[3]);
   if(argc >= 5){
-    int32_t value4;
-    JS_ToInt32(ctx, &value4, argv[4]);
+    uint32_t value4;
+    JS_ToUint32(ctx, &value4, argv[4]);
     lcd.drawLine(value0, value1, value2, value3, value4);
   }else{
     lcd.drawLine(value0, value1, value2, value3);
+  }
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_lcd_fillCircle(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
+{
+  int32_t value0;
+  int32_t value1;
+  int32_t value2;
+  JS_ToInt32(ctx, &value0, argv[0]);
+  JS_ToInt32(ctx, &value1, argv[1]);
+  JS_ToInt32(ctx, &value2, argv[2]);
+  if(argc >= 4){
+    uint32_t value3;
+    JS_ToUint32(ctx, &value3, argv[3]);
+    if( magic == FUNC_TYPE_DRAWCIRCLE )
+      lcd.drawCircle(value0, value1, value2, value3);
+    else if( magic == FUNC_TYPE_FILLCIRCLE)
+      lcd.fillCircle(value0, value1, value2, value3);
+  }else{
+    if( magic == FUNC_TYPE_DRAWCIRCLE )
+      lcd.drawCircle(value0, value1, value2);
+    else if( magic == FUNC_TYPE_FILLCIRCLE)
+      lcd.fillCircle(value0, value1, value2);
+  }
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_lcd_fillRect(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
+{
+  int32_t value0;
+  int32_t value1;
+  int32_t value2;
+  int32_t value3;
+  JS_ToInt32(ctx, &value0, argv[0]);
+  JS_ToInt32(ctx, &value1, argv[1]);
+  JS_ToInt32(ctx, &value2, argv[2]);
+  JS_ToInt32(ctx, &value3, argv[3]);
+  if(argc >= 5){
+    uint32_t value4;
+    JS_ToUint32(ctx, &value4, argv[4]);
+    if( magic == FUNC_TYPE_DRAWRECT )
+      lcd.drawRect(value0, value1, value2, value3, value4);
+    else if( magic == FUNC_TYPE_FILLRECT)
+      lcd.fillRect(value0, value1, value2, value3, value4);
+  }else{
+    if( magic == FUNC_TYPE_DRAWRECT )
+      lcd.drawRect(value0, value1, value2, value3);
+    else if( magic == FUNC_TYPE_FILLRECT)
+      lcd.fillRect(value0, value1, value2, value3);
+  }
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_lcd_fillRoundRect(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv, int magic)
+{
+  int32_t value0;
+  int32_t value1;
+  int32_t value2;
+  int32_t value3;
+    int32_t value4;
+  JS_ToInt32(ctx, &value0, argv[0]);
+  JS_ToInt32(ctx, &value1, argv[1]);
+  JS_ToInt32(ctx, &value2, argv[2]);
+  JS_ToInt32(ctx, &value3, argv[3]);
+    JS_ToInt32(ctx, &value4, argv[4]);
+  if(argc >= 6){
+    uint32_t value5;
+    JS_ToUint32(ctx, &value5, argv[5]);
+    if( magic == FUNC_TYPE_DRAWROUNDRECT )
+      lcd.drawRoundRect(value0, value1, value2, value3, value4, value5);
+    else if( magic == FUNC_TYPE_FILLROUNDRECT)
+      lcd.fillRoundRect(value0, value1, value2, value3, value4, value5);
+  }else{
+    if( magic == FUNC_TYPE_DRAWROUNDRECT )
+      lcd.drawRoundRect(value0, value1, value2, value3, value4);
+    else if( magic == FUNC_TYPE_FILLROUNDRECT)
+      lcd.fillRoundRect(value0, value1, value2, value3, value4);
   }
   return JS_UNDEFINED;
 }
@@ -278,6 +358,24 @@ static const JSCFunctionListEntry lcd_funcs[] = {
                          }},
     JSCFunctionListEntry{"drawLine", 0, JS_DEF_CFUNC, 0, {
                            func : {5, JS_CFUNC_generic, esp32_lcd_drawLine}
+                         }},
+    JSCFunctionListEntry{"drawCircle", 0, JS_DEF_CFUNC, FUNC_TYPE_DRAWCIRCLE, {
+                           func : {4, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_fillCircle}}
+                         }},
+    JSCFunctionListEntry{"fillCircle", 0, JS_DEF_CFUNC, FUNC_TYPE_FILLCIRCLE, {
+                           func : {4, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_fillCircle}}
+                         }},
+    JSCFunctionListEntry{"drawRect", 0, JS_DEF_CFUNC, FUNC_TYPE_DRAWRECT, {
+                           func : {5, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_fillRect}}
+                         }},
+    JSCFunctionListEntry{"fillRect", 0, JS_DEF_CFUNC, FUNC_TYPE_FILLRECT, {
+                           func : {5, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_fillRect}}
+                         }},
+    JSCFunctionListEntry{"drawRoundRect", 0, JS_DEF_CFUNC, FUNC_TYPE_DRAWROUNDRECT, {
+                           func : {6, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_fillRoundRect}}
+                         }},
+    JSCFunctionListEntry{"fillRoundRect", 0, JS_DEF_CFUNC, FUNC_TYPE_FILLROUNDRECT, {
+                           func : {6, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_fillRoundRect}}
                          }},
     JSCFunctionListEntry{"setCursor", 0, JS_DEF_CFUNC, 0, {
                            func : {2, JS_CFUNC_generic, esp32_lcd_setCursor}

@@ -247,7 +247,6 @@ Blockly.Blocks['input_ispressed'] = {
         .appendField("Input.isPressed");
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("btn")
         .appendField(new Blockly.FieldDropdown([["BUTTON_A","input.BUTTON_A"], ["BUTTON_B","input.BUTTON_B"], ["BUTTON_C","input.BUTTON_C"]]), "btn");
     this.setInputsInline(true);
     this.setOutput(true, "Boolean");
@@ -314,7 +313,6 @@ Blockly.Blocks['pixels_setonoff'] = {
     this.appendValueInput("onoff")
         .setCheck("Boolean")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("onoff");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -391,7 +389,7 @@ Blockly.Blocks['program_start'] = {
 Blockly.Blocks['program_module'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Pixels","Pixels"], ["Utils","Utils"]]), "module");
+        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Lcd","Lcd"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
     this.setOutput(true, "String");
     this.setColour(230);
  this.setTooltip("");
@@ -425,6 +423,598 @@ Blockly.Blocks['utils_number2rgb'] = {
         .appendField("color");
     this.setInputsInline(true);
     this.setOutput(true, "Colour");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['udp_recvbegin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Udp.recvBegin");
+    this.appendValueInput("port")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("port");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['udp_sendtext'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Udp.sendText");
+    this.appendValueInput("host")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("host");
+    this.appendValueInput("port")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("port");
+    this.appendValueInput("text")
+        .setCheck("String")
+        .appendField("text");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['udp_recvstop'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Udp.recvStop");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['udp_checkrecvtext'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Udp.checkRecvText");
+    this.setInputsInline(true);
+    this.setOutput(true, "String");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_setrotation'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setRotation");
+    this.appendValueInput("rot")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("rot");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_setbrightness'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setBrightness");
+    this.appendValueInput("brt")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("brt");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_setfont'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setFont");
+    this.appendValueInput("size")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("size");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_settextcolor'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setTextColor");
+    this.appendValueInput("fore")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("fore");
+    this.appendValueInput("back")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("back");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_settextdatum'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setDatum");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("datum")
+        .appendField(new Blockly.FieldDropdown([["top_left","lcd.top_left"], ["top_center","lcd.top_center"], ["lcd_right","lcd.lcd_right"], ["middle_left","lcd.middle_left"], ["middle_center","lcd.middle_center"], ["middle_right","lcd.middle_right"], ["bottom_left","lcd.bottom_left"], ["bottom_center","lcd.bottom_center"], ["bottom_right","lcd.bottom_right"], ["baseline_left","lcd.baseline_left"], ["baseline_center","lcd.baseline_center"], ["baseline_right","lcd.baseline_right"]]), "datum");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_drawpixel'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.drawPixel");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_drawline'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.drawLine");
+    this.appendValueInput("x0")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x0");
+    this.appendValueInput("y0")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y0");
+    this.appendValueInput("x1")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x1");
+    this.appendValueInput("y1")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y1");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_drawrect'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.drawRect");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("w")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("w");
+    this.appendValueInput("h")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("h");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_fillrect'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.fillRect");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("w")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("w");
+    this.appendValueInput("h")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("h");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_fillroundrect'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.fillRoundRect");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("w")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("w");
+    this.appendValueInput("h")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("h");
+    this.appendValueInput("r")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("r");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_drawroundrect'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.drawRoundRect");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("w")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("w");
+    this.appendValueInput("h")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("h");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_drawcircle'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.drawCircle");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("r")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("r");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_fillcircle'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.fillCircle");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.appendValueInput("r")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("r");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_setcursor'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setCursor");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_getcursorx'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.getCursorX");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_getcursory'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.getCursorY");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_textwidth'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.textWidth");
+    this.appendValueInput("text")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("text");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_print'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.print");
+    this.appendValueInput("message")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("message");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_println'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.println");
+    this.appendValueInput("message")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("message");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_fillscreen'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.fillScreen");
+    this.appendValueInput("color")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("color");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_drawimagefile'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.drawImageFile");
+    this.appendValueInput("filename")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("filename");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("y");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_width'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.width");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_height'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.height");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_getcolordepth'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.getColorDepth");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['lcd_fontheight'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.fontHeight");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
     this.setColour(230);
  this.setTooltip("");
  this.setHelpUrl("");

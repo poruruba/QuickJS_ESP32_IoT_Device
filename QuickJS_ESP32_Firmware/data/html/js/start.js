@@ -33,6 +33,7 @@ var vue_options = {
         Wire1: new Wire(this.arduino, "Wire1"),
         Gpio: new Gpio(this.arduino),
         Ledc: new Ledc(this.arduino),
+        Lcd: new Lcd(this.arduino),
         Prefs: new Prefs(this.arduino),
         Sd: new Sd(this.arduino),
         Rtc: new Rtc(this.arduino),

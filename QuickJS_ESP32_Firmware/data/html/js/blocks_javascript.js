@@ -46,9 +46,9 @@ Blockly.JavaScript['object_field'] = function(block) {
   var text_key = block.getFieldValue('key');
   var value_value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = text_key + ': ' + value_value;
+  var code = "'" + text_key + "': " + value_value;
   // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.JavaScript.ORDER_NONE];
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
 Blockly.JavaScript['object'] = function(block) {
@@ -65,8 +65,10 @@ Blockly.JavaScript['program_start'] = function(block) {
   var code = '';
   if( value_modules ){
     var list = JSON.parse(value_modules);
-    for( var i = 0 ; i < list.length ; i++ )
+    for( var i = 0 ; i < list.length ; i++ ){
+      if( list[i] )
       code += "import * as " + list[i].toLowerCase() + " from '" + list[i] + "';\n";
+  }
   }
   return code;
 };
@@ -189,6 +191,245 @@ Blockly.JavaScript['utils_number2rgb'] = function(block) {
   var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
   var code = 'utils.number2Rgb(' + value_color + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+
+Blockly.JavaScript['udp_recvbegin'] = function(block) {
+  var value_port = Blockly.JavaScript.valueToCode(block, 'port', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'udp.recvBegin(' + value_port + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['udp_sendtext'] = function(block) {
+  var value_host = Blockly.JavaScript.valueToCode(block, 'host', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_port = Blockly.JavaScript.valueToCode(block, 'port', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_text = Blockly.JavaScript.valueToCode(block, 'text', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'udp.sendText(' + value_host + ', ' + value_port + ', ' + value_text + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['udp_recvstop'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'udp.recvStop();\n';
+  return code;
+};
+
+Blockly.JavaScript['udp_checkrecvtext'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'udp.checkRecvText()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_setrotation'] = function(block) {
+  var value_rot = Blockly.JavaScript.valueToCode(block, 'rot', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setRotaton(' + value_rot + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_setbrightness'] = function(block) {
+  var value_brt = Blockly.JavaScript.valueToCode(block, 'brt', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setBrightness(' + value_brt + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_setfont'] = function(block) {
+  var value_size = Blockly.JavaScript.valueToCode(block, 'size', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setFont(' + value_size + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_settextcolor'] = function(block) {
+  var value_fore = Blockly.JavaScript.valueToCode(block, 'fore', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_back = Blockly.JavaScript.valueToCode(block, 'back', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setTextColor(' + value_fore + ', ' + value_back + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_settextdatum'] = function(block) {
+  var dropdown_datum = block.getFieldValue('datum');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setTextDatum(' + dropdown_datum + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_drawpixel'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.drawPixel(' + value_x + ', ' + value_y + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_drawline'] = function(block) {
+  var value_x0 = Blockly.JavaScript.valueToCode(block, 'x0', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y0 = Blockly.JavaScript.valueToCode(block, 'y0', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_x1 = Blockly.JavaScript.valueToCode(block, 'x1', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y1 = Blockly.JavaScript.valueToCode(block, 'y1', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.drawLine(' + value_x0 + ', ' + value_y0 + ', ' + value_x1 + ', ' + value_y1 + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_drawrect'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_w = Blockly.JavaScript.valueToCode(block, 'w', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_h = Blockly.JavaScript.valueToCode(block, 'h', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.drawRect(' + value_x + ', ' + value_y + ', ' + value_w + ', ' + value_h + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_fillrect'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_w = Blockly.JavaScript.valueToCode(block, 'w', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_h = Blockly.JavaScript.valueToCode(block, 'h', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.fillRect(' + value_x + ', ' + value_y + ', ' + value_w + ', ' + value_h + ', ' + value_color +  ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_fillroundrect'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_w = Blockly.JavaScript.valueToCode(block, 'w', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_h = Blockly.JavaScript.valueToCode(block, 'h', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_r = Blockly.JavaScript.valueToCode(block, 'r', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.fillRoundRect(' + value_x + ', ' + value_y + ', ' + value_w + ', '+ value_h + ', ' + value_r + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_drawroundrect'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_w = Blockly.JavaScript.valueToCode(block, 'w', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_h = Blockly.JavaScript.valueToCode(block, 'h', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.drawRoundRect(' + value_x + ', ' + value_y + ', ' + value_w + ', '+ value_h + ', ' + value_r + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_drawcircle'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_r = Blockly.JavaScript.valueToCode(block, 'r', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.drawCircle(' + value_x + ', ' + value_y + ', ' + value_r + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_fillcircle'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_r = Blockly.JavaScript.valueToCode(block, 'r', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.fillCircle(' + value_x + ', ' + value_y + ', ' + value_r + ', ' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_setcursor'] = function(block) {
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setCursor(' + value_x + ', ' + value_y + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_getcursorx'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.getCursor().x';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_getcursory'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.getCursor().y';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_textwidth'] = function(block) {
+  var value_text = Blockly.JavaScript.valueToCode(block, 'text', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.textWidth(' + value_text + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_print'] = function(block) {
+  var value_message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.print(' + value_message + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_println'] = function(block) {
+  var value_message = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.println(' + value_message + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_fillscreen'] = function(block) {
+  var value_color = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.fillScreen(' + value_color + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_drawimagefile'] = function(block) {
+  var value_filename = Blockly.JavaScript.valueToCode(block, 'filename', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.drawImageFile(' + value_filename + ', ' + value_x + ', ' + value_y + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['lcd_width'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.width()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_height'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.height()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_getcolordepth'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.getColorDepth()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lcd_fontheight'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.fontHeight()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };

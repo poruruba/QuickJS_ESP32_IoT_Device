@@ -25,6 +25,9 @@
 #ifdef _SD_ENABLE_
 #include "endpoint_sd.h"
 #endif
+#ifdef _LCD_ENABLE_
+#include "endpoint_lcd.h"
+#endif
 
 extern const char jscode_default[] asm("_binary_rom_default_js_start");
 extern const char jscode_epilogue[] asm("_binary_rom_epilogue_js_start");
@@ -101,6 +104,9 @@ void setup()
 #endif
 #ifdef _SD_ENABLE_
     packet_appendEntry(sd_table, num_of_sd_entry);
+#endif
+#ifdef _LCD_ENABLE_
+    packet_appendEntry(lcd_table, num_of_lcd_entry);
 #endif
 
     if( is_wifi_connected() ){

@@ -307,7 +307,7 @@
               <textarea class="form-control" rows="20" v-model="js_import"></textarea>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-primary" v-on:click="do_import">Import</button>
+              <button class="btn btn-primary" v-on:click="do_import">インポート</button>
               <button class="btn btn-default" v-on:click="dialog_close('#import_js_dialog')">閉じる</button>
             </div>
           </div>
@@ -341,7 +341,7 @@
 
 
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
-    <category name="Logic" colour="%{BKY_LOGIC_HUE}">
+    <category name="論理" colour="%{BKY_LOGIC_HUE}">
       <block type="controls_if"></block>
       <block type="controls_if">
         <mutation else="1"></mutation>
@@ -355,7 +355,7 @@
       <block type="logic_boolean"></block>
       <block type="logic_null"></block>
     </category>
-    <category name="Loops" colour="%{BKY_LOOPS_HUE}">
+    <category name="ループ" colour="%{BKY_LOOPS_HUE}">
       <block type="controls_repeat_ext">
         <value name="TIMES">
           <block type="math_number">
@@ -385,7 +385,7 @@
       <block type="controls_forEach"></block>
       <block type="controls_flow_statements"></block>
     </category>
-    <category name="Math" colour="%{BKY_MATH_HUE}">
+    <category name="数値" colour="%{BKY_MATH_HUE}">
       <block type="math_number">
         <field name="NUM">123</field>
       </block>
@@ -424,7 +424,7 @@
       <block type="math_random_float"></block>
       <block type="math_atan2"></block>
     </category>
-    <category name="Text" colour="%{BKY_TEXTS_HUE}">
+    <category name="テキスト" colour="%{BKY_TEXTS_HUE}">
       <block type="text"></block>
       <block type="text_multiline"></block>
       <block type="text_join"></block>
@@ -512,7 +512,7 @@
         </value>
       </block>
     </category>
-    <category name="Lists" colour="%{BKY_LISTS_HUE}">
+    <category name="リスト" colour="%{BKY_LISTS_HUE}">
       <block type="lists_create_empty"></block>
       <block type="lists_create_with"></block>
       <block type="lists_repeat">
@@ -562,7 +562,7 @@
       <block type="lists_sort"></block>
       <block type="lists_reverse"></block>
     </category>
-    <category name="Color" colour="%{BKY_COLOUR_HUE}">
+    <category name="カラー" colour="%{BKY_COLOUR_HUE}">
       <block type="colour_picker"></block>
       <block type="colour_random"></block>
       <block type="colour_rgb">
@@ -600,12 +600,12 @@
         </value>
       </block>
     </category>
-    <category name="Variables" custom="VARIABLE" colour="%{BKY_VARIABLES_HUE}">
+    <category name="変数" custom="VARIABLE" colour="%{BKY_VARIABLES_HUE}">
     </category>
-    <category name="Functions" custom="PROCEDURE" colour="%{BKY_PROCEDURES_HUE}">
+    <category name="関数" custom="PROCEDURE" colour="%{BKY_PROCEDURES_HUE}">
     </category>
     <sep></sep>
-    <category name="Custom" expanded="true">
+    <category name="カスタム" expanded="true">
       <category name="Default">
         <block type="program_start">
           <value name="modules">
@@ -684,6 +684,32 @@
         <block type="input_ispressed"></block>
         <block type="input_onbuttonwaspressed"></block>
       </category>
+      <category name="Lcd">
+        <block type="lcd_setrotation"></block>
+        <block type="lcd_setbrightness"></block>
+        <block type="lcd_setfont"></block>
+        <block type="lcd_settextcolor"></block>
+        <block type="lcd_settextdatum"></block>
+        <block type="lcd_drawpixel"></block>
+        <block type="lcd_drawline"></block>
+        <block type="lcd_drawrect"></block>
+        <block type="lcd_fillrect"></block>
+        <block type="lcd_fillroundrect"></block>
+        <block type="lcd_drawroundrect"></block>
+        <block type="lcd_fillcircle"></block>
+        <block type="lcd_setcursor"></block>
+        <block type="lcd_getcursorx"></block>
+        <block type="lcd_getcursory"></block>
+        <block type="lcd_textwidth"></block>
+        <block type="lcd_print"></block>
+        <block type="lcd_println"></block>
+        <block type="lcd_fillscreen"></block>
+        <block type="lcd_drawimagefile"></block>
+        <block type="lcd_width"></block>
+        <block type="lcd_height"></block>
+        <block type="lcd_getcolordepth"></block>
+        <block type="lcd_fontheight"></block>
+      </category>
       <category name="Pixels">
         <block type="pixels_begin">
           <value name="pin">
@@ -719,6 +745,34 @@
           </value>
         </block>
       </category>
+      <category name="Udp">
+        <block type="udp_recvbegin">
+          <value name="port">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="udp_sendtext">
+          <value name="host">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="port">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="text">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="udp_recvstop"></block>
+        <block type="udp_checkrecvtext"></block>
+      </category>
       <category name="Utils">
         <block type="utils_rgb2number"></block>
         <block type="utils_number2rgb"></block>
@@ -733,6 +787,7 @@
 
   <script src="js/driver/Gpio.js"></script>
   <script src="js/driver/Wire.js"></script>
+  <script src="js/driver/Lcd.js"></script>
   <script src="js/driver/Ledc.js"></script>
   <script src="js/driver/Sd.js"></script>
   <script src="js/driver/Rtc.js"></script>
