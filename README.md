@@ -25,6 +25,8 @@ https://qiita.com/poruruba
 - 2022-4-8
   - Syslog出力を追加
   - 試験的にBlocklyに対応
+- 2022-4-9
+  - WebAPI・BlocklyからLCDを操作できるように追加
 
 ## 誤記訂正
 - 2022-03-31
