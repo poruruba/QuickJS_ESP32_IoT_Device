@@ -389,7 +389,7 @@ Blockly.Blocks['program_start'] = {
 Blockly.Blocks['program_module'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Lcd","Lcd"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
+        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
     this.setOutput(true, "String");
     this.setColour(230);
  this.setTooltip("");
@@ -1013,6 +1013,168 @@ Blockly.Blocks['lcd_fontheight'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Lcd.fontHeight");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_setup'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.setup");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
+    this.appendValueInput("freq")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("freq");
+    this.appendValueInput("resolution")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("resolution");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_attachpin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.attachPin");
+    this.appendValueInput("pin")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("pin");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_detachpin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.detachPin");
+    this.appendValueInput("pin")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("pin");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_write'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.write");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
+    this.appendValueInput("pin")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("pin");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_writetone'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.writeTone");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
+    this.appendValueInput("freq")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("freq");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_writenote'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.writeTone");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("note")
+        .appendField(new Blockly.FieldDropdown([["NOTE_C","ledc.NOTE_C"], ["NOTE_Cs","ledc.NOTE_Cs"], ["NOTE_D","ledc.NOTE_D"], ["NOTE_Eb","ledc.NOTE_Eb"], ["NOTE_E","ledc.NOTE_E"], ["NOTE_F","ledc.NOTE_F"], ["NOTE_Fs","ledc.NOTE_Fs"], ["NOTE_G","ledc.NOTE_G"], ["NOTE_Gs","ledc.NOTE_Gs"], ["NOTE_A","ledc.NOTE_A"], ["NOTE_Bb","ledc.NOTE_Bb"], ["NOTE_B","ledc.NOTE_B"], ["NOTE_MAX","ledc.NOTE_MAX"]]), "note");
+    this.appendValueInput("octave")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("octave");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_read'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.read");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ledc_readfreq'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ledc.readFreq");
+    this.appendValueInput("channel")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("channel");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);

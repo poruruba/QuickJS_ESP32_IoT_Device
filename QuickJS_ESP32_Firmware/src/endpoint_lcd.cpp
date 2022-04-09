@@ -1,7 +1,10 @@
 #include <Arduino.h>
-#include <SD.h>
-
 #include "main_config.h"
+
+#ifdef _SD_ENABLE_
+#include <SD.h>
+#endif
+
 #include "endpoint_types.h"
 #include "endpoint_lcd.h"
 #include "module_lcd.h"

@@ -78,7 +78,7 @@ Blockly.JavaScript['program_module'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = '"' + dropdown_module + '"';
   // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.JavaScript.ORDER_NONE];
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
 
@@ -430,6 +430,71 @@ Blockly.JavaScript['lcd_getcolordepth'] = function(block) {
 Blockly.JavaScript['lcd_fontheight'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = 'lcd.fontHeight()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['ledc_setup'] = function(block) {
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_freq = Blockly.JavaScript.valueToCode(block, 'freq', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_resolution = Blockly.JavaScript.valueToCode(block, 'resolution', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.setup(' + value_channel + ', ' + value_freq + ', ' + value_resolution + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ledc_attachpin'] = function(block) {
+  var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.attachPin(' + value_pin + ', ' + value_channel + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ledc_detachpin'] = function(block) {
+  var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.detachPin(' + value_pin + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ledc_write'] = function(block) {
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.write(' + value_channel + ', ' + value_pin + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ledc_writetone'] = function(block) {
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_freq = Blockly.JavaScript.valueToCode(block, 'freq', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.writeTone(' + value_channel + ', ' + value_freq + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ledc_writenote'] = function(block) {
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  var dropdown_note = block.getFieldValue('note');
+  var value_octave = Blockly.JavaScript.valueToCode(block, 'octave', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.writeNote(' + value_channel + ', ' + dropdown_note + ', ' + value_octave + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ledc_read'] = function(block) {
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.read(' + value_channel + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['ledc_readfreq'] = function(block) {
+  var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ledc.readFreq(' + value_channel + ')';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
