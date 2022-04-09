@@ -498,3 +498,45 @@ Blockly.JavaScript['ledc_readfreq'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
+
+Blockly.JavaScript['ir_sendbegin'] = function(block) {
+  var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ir.sendBegin(' + value_pin + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ir_send'] = function(block) {
+  var value_data = Blockly.JavaScript.valueToCode(block, 'data', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_repeat = Blockly.JavaScript.valueToCode(block, 'repeat', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ir.send(' + value_data + ', ' + value_repeat + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ir_recvbegin'] = function(block) {
+  var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ir.recvBegin(' + value_pin + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['ir_recvstart'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ir.recvStart();\n';
+  return code;
+};
+
+Blockly.JavaScript['ir_recvstop'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ir.recvStop();\n';
+  return code;
+};
+
+Blockly.JavaScript['ir_checkrecv'] = function(block) {
+  var dropdown_type = block.getFieldValue('type');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'ir.checkRecv(' + dropdown_type + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};

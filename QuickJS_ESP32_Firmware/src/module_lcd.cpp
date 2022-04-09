@@ -9,10 +9,6 @@
 #include <SD.h>
 #endif
 
-#define LGFX_USE_V1
-#define LGFX_AUTODETECT
-#include <LovyanGFX.hpp>
-#include <LGFX_AUTODETECT.hpp>
 LGFX lcd;
 
 #define FONT_COLOR TFT_WHITE

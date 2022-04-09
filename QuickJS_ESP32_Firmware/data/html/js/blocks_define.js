@@ -389,7 +389,7 @@ Blockly.Blocks['program_start'] = {
 Blockly.Blocks['program_module'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
+        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Ir","Ir"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
     this.setOutput(true, "String");
     this.setColour(230);
  this.setTooltip("");
@@ -1175,6 +1175,103 @@ Blockly.Blocks['ledc_readfreq'] = {
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("channel");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ir_sendbegin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ir.sendBegin");
+    this.appendValueInput("pin")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("pin");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ir_send'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ir.send");
+    this.appendValueInput("data")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("data");
+    this.appendValueInput("repeat")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("repeat");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ir_recvbegin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ir.recvBegin");
+    this.appendValueInput("pin")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("pin");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ir_recvstart'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ir.recvStart");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ir_recvstop'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ir.recvStop");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['ir_checkrecv'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Ir.checkRev");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("type")
+        .appendField(new Blockly.FieldDropdown([["IR_TYPE_NEC","ir.IR_TYPE_NEC"], ["IR_TYPE_SONY","ir.IR_TYPE_SONY"]]), "type");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
