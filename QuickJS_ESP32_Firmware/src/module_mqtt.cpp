@@ -164,8 +164,8 @@ static JSValue mqtt_setServer(JSContext *ctx, JSValueConst jsThis, int argc, JSV
   const char *host = JS_ToCString(ctx, argv[0]);
   if( host == NULL )
     return JS_EXCEPTION;
-  uint32_t port;
-  JS_ToUint32(ctx, &port, argv[1]);
+  int32_t port;
+  JS_ToInt32(ctx, &port, argv[1]);
 
   String server(host);
   server += ":";

@@ -261,6 +261,14 @@ Blockly.JavaScript['lcd_settextcolor'] = function(block) {
   return code;
 };
 
+Blockly.JavaScript['lcd_settextsize'] = function(block) {
+  var value_scale = Blockly.JavaScript.valueToCode(block, 'scale', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_yscale = Blockly.JavaScript.valueToCode(block, 'yscale', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'lcd.setTextSize(' + value_scale + ', ' + value_yscale + ');\n';
+  return code;
+};
+
 Blockly.JavaScript['lcd_settextdatum'] = function(block) {
   var dropdown_datum = block.getFieldValue('datum');
   // TODO: Assemble JavaScript into code variable.
@@ -585,7 +593,7 @@ Blockly.JavaScript['mqtt_publish'] = function(block) {
 
 Blockly.JavaScript['mqtt_getpayload'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
-  var code = 'mqtt.getPayload()';
+  var code = 'mqtt.getPayload().payload';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -594,7 +602,7 @@ Blockly.JavaScript['mqtt_setserver'] = function(block) {
   var value_host = Blockly.JavaScript.valueToCode(block, 'host', Blockly.JavaScript.ORDER_ATOMIC);
   var value_port = Blockly.JavaScript.valueToCode(block, 'port', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'mqtt.setServer' + value_host + ', ' + value_port + ';\n';
+  var code = 'mqtt.setServer(' + value_host + ', ' + value_port + ');\n';
   return code;
 };
 

@@ -588,6 +588,27 @@ Blockly.Blocks['lcd_settextcolor'] = {
   }
 };
 
+Blockly.Blocks['lcd_settextsize'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Lcd.setTextSize");
+    this.appendValueInput("scale")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("scale");
+    this.appendValueInput("yscale")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("yscale");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
 Blockly.Blocks['lcd_settextdatum'] = {
   init: function() {
     this.appendDummyInput()
