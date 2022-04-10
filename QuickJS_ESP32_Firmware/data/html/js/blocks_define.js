@@ -169,6 +169,27 @@ Blockly.Blocks['object'] = {
   }
 };
 
+Blockly.Blocks['setsyslogserver'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("setSyslogServer");
+    this.appendValueInput("host")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("topic");
+    this.appendValueInput("port")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("port");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
 Blockly.Blocks['gpio_pinmode'] = {
   init: function() {
     this.appendDummyInput()
@@ -389,7 +410,7 @@ Blockly.Blocks['program_start'] = {
 Blockly.Blocks['program_module'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["Gpio","Gpio"], ["Input","Input"], ["Ir","Ir"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
+        .appendField(new Blockly.FieldDropdown([["Audio","Audio"], ["Gpio","Gpio"], ["Input","Input"], ["Ir","Ir"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Mqtt","Mqtt"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
     this.setOutput(true, "String");
     this.setColour(230);
  this.setTooltip("");
@@ -1274,6 +1295,315 @@ Blockly.Blocks['ir_checkrecv'] = {
         .appendField(new Blockly.FieldDropdown([["IR_TYPE_NEC","ir.IR_TYPE_NEC"], ["IR_TYPE_SONY","ir.IR_TYPE_SONY"]]), "type");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_connect'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.connect");
+    this.appendValueInput("client_name")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("client_name");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_disconnect'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.disconnect");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_subscribe'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.subscribe");
+    this.appendValueInput("topic")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("topic");
+    this.appendStatementInput("func")
+        .setCheck(null)
+        .setAlign(Blockly.ALIGN_RIGHT)
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_unsubscribe'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.unsubscribe");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_publish'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.publish");
+    this.appendValueInput("topic")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("topic");
+    this.appendValueInput("payload")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("payload");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_getpayload'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.getPayload");
+    this.setInputsInline(true);
+    this.setOutput(true, "String");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['mqtt_setserver'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.setServer");
+    this.appendValueInput("host")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("host");
+    this.appendValueInput("port")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("port");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_begin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.begin");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("mode")
+        .appendField(new Blockly.FieldDropdown([["EXTERNAL_I2S","audio.EXTERNAL_I2S"], ["INTERNAL_DAC","audio.INTERNAL_DAC"], ["INTERNAL_PDM","audio.INTERNAL_PDM"]]), "mode");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_setpinout'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.setPinout");
+    this.appendValueInput("bclk")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("bclk");
+    this.appendValueInput("lrck")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("lrck");
+    this.appendValueInput("dout")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("dout");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_update'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.update");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_playsd'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.playSd");
+    this.appendValueInput("path")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("path");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_setgain'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.setGain");
+    this.appendValueInput("gain")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("gain");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_getgain'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.getGain");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_isrunning'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.isRunning");
+    this.setInputsInline(true);
+    this.setOutput(true, "Boolean");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['audio_stop'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Audio.stop");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['setloop'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("setLoop");
+    this.appendStatementInput("func")
+        .setCheck(null)
+        .setAlign(Blockly.ALIGN_RIGHT);
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['esp32_reboot'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Esp32.reboot");
+    this.setPreviousStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['esp32_restart'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Esp32.restart");
+    this.setPreviousStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['update'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("update");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['setloop'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("setLoop");
+    this.appendStatementInput("func")
+        .setCheck(null)
+        .setAlign(Blockly.ALIGN_RIGHT);
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
     this.setColour(230);
  this.setTooltip("");
  this.setHelpUrl("");

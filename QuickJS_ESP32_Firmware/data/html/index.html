@@ -88,7 +88,8 @@
           </span>
         </span>
         <button class="btn btn-primary" v-on:click="upload_textarea">アップロード</button>&nbsp;
-        <button class="btn btn-primary float-end" v-on:click="save_textarea">ファイル保存</button>
+        <button class="btn btn-primary" v-on:click="save_textarea">ファイル保存</button>
+        <button class="btn btn-default btn-sm" v-on:click="esp32_restart">restart</button>
         <textarea class="form-control" rows="20" v-model="input_text" v-on:keydown="catch_tabKey($event)"></textarea>
 
         <modal-dialog size="lg" id="quickjs_js_dialog">
@@ -623,6 +624,9 @@
           </value>
         </block>
         <block type="object_field"></block>
+        <block type="update"></block>
+        <block type="setloop"></block>
+        <block type="setsyslogserver"></block>
       </category>
       <category name="Timer">
         <block type="millis"></block>
@@ -680,6 +684,16 @@
           </value>
         </block>
       </category>
+      <category name="Audio">
+        <block type="audio_begin"></block>
+        <block type="audio_setpinout"></block>
+        <block type="audio_update"></block>
+        <block type="audio_playsd"></block>
+        <block type="audio_setgain"></block>
+        <block type="audio_getgain"></block>
+        <block type="audio_isrunning"></block>
+        <block type="audio_stop"></block>
+      </category>
       <category name="Input">
         <block type="input_ispressed"></block>
         <block type="input_onbuttonwaspressed"></block>
@@ -727,6 +741,15 @@
         <block type="ledc_writenote"></block>
         <block type="ledc_read"></block>
         <block type="ledc_readfreq"></block>
+      </category>
+      <category name="Mqtt">
+        <block type="mqtt_connect"></block>
+        <block type="mqtt_disconnect"></block>
+        <block type="mqtt_subscribe"></block>
+        <block type="mqtt_unsubscribe"></block>
+        <block type="mqtt_publish"></block>
+        <block type="mqtt_getpayload"></block>
+        <block type="mqtt_setserver"></block>
       </category>
       <category name="Pixels">
         <block type="pixels_begin">

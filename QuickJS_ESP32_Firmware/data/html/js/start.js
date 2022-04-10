@@ -649,6 +649,8 @@ var vue_options = {
 		}, 
         download_module: async function(){
             try{
+                if( !this.target_module )
+                    return;
                 this.downloaded_js = await this.arduino.code_download(this.target_module);
                 this.downloaded_fname = this.target_module;
                 this.dialog_open("#quickjs_js_dialog");

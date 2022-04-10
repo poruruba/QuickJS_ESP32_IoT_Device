@@ -81,6 +81,13 @@ Blockly.JavaScript['program_module'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
+Blockly.JavaScript['setsyslogserver'] = function(block) {
+  var value_host = Blockly.JavaScript.valueToCode(block, 'host', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_port = Blockly.JavaScript.valueToCode(block, 'port', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'setSyslogServer(' + value_host + ', ' + value_port + ');\n';
+  return code;
+};
 
 Blockly.JavaScript['gpio_pinmode'] = function(block) {
   var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
@@ -539,4 +546,142 @@ Blockly.JavaScript['ir_checkrecv'] = function(block) {
   var code = 'ir.checkRecv(' + dropdown_type + ')';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['mqtt_connect'] = function(block) {
+  var value_client_name = Blockly.JavaScript.valueToCode(block, 'client_name', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.connect(' + value_client_name + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['mqtt_disconnect'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.disconnect();\n';
+  return code;
+};
+
+Blockly.JavaScript['mqtt_subscribe'] = function(block) {
+  var value_topic = Blockly.JavaScript.valueToCode(block, 'topic', Blockly.JavaScript.ORDER_ATOMIC);
+  var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.subscribe(' + value_topic + ', () => {\n' + statements_func + '});\n';
+  return code;
+};
+
+Blockly.JavaScript['mqtt_unsubscribe'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.unsubscribe();\n';
+  return code;
+};
+
+Blockly.JavaScript['mqtt_publish'] = function(block) {
+  var value_topic = Blockly.JavaScript.valueToCode(block, 'topic', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_payload = Blockly.JavaScript.valueToCode(block, 'payload', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.publish(' + value_topic + ', ' + value_payload + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['mqtt_getpayload'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.getPayload()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['mqtt_setserver'] = function(block) {
+  var value_host = Blockly.JavaScript.valueToCode(block, 'host', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_port = Blockly.JavaScript.valueToCode(block, 'port', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.setServer' + value_host + ', ' + value_port + ';\n';
+  return code;
+};
+
+Blockly.JavaScript['audio_begin'] = function(block) {
+  var dropdown_mode = block.getFieldValue('mode');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.begin(' + dropdown_mode + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['audio_setpinout'] = function(block) {
+  var value_bclk = Blockly.JavaScript.valueToCode(block, 'bclk', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_lrck = Blockly.JavaScript.valueToCode(block, 'lrck', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_dout = Blockly.JavaScript.valueToCode(block, 'dout', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.setPinout(' + value_bclk + ', ' + value_lrck + ', ' + value_dout + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['audio_update'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.update();\n';
+  return code;
+};
+
+Blockly.JavaScript['audio_playsd'] = function(block) {
+  var value_path = Blockly.JavaScript.valueToCode(block, 'path', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.playSd(' + value_path + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['audio_setgain'] = function(block) {
+  var value_gain = Blockly.JavaScript.valueToCode(block, 'gain', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.setGain(' + value_gain + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['audio_getgain'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.getGain()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['audio_isrunning'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.isRunning()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['audio_stop'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'audio.stop();\n';
+  return code;
+};
+
+Blockly.JavaScript['esp32_setloop'] = function(block) {
+  var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'esp32.setLoop(() =>{\n' + statements_func + '});\n';
+  return code;
+};
+
+Blockly.JavaScript['reboot'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'esp32.reboot();\n';
+  return code;
+};
+
+Blockly.JavaScript['restart'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'esp32.restart;\n';
+  return code;
+};
+
+Blockly.JavaScript['update'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'esp32.update();\n';
+  return code;
+};
+
+Blockly.JavaScript['setloop'] = function(block) {
+  var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'esp32.setLoop(() => {\n' + statements_func + '});\n';
+  return code;
 };
