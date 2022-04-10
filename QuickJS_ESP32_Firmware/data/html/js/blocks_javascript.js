@@ -677,7 +677,7 @@ Blockly.JavaScript['reboot'] = function(block) {
 
 Blockly.JavaScript['restart'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
-  var code = 'esp32.restart;\n';
+  var code = 'esp32.restart();\n';
   return code;
 };
 
