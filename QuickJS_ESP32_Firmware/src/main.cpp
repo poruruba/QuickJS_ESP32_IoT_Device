@@ -4,7 +4,6 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncJson.h>
 #include <SPIFFS.h>
-#include <Syslog.h>
 
 #include "quickjs_esp32.h"
 #include "main_config.h"
@@ -43,10 +42,6 @@ unsigned char g_fileloading = FILE_LOADING_NONE;
 ESP32QuickJS qjs;
 AsyncWebServer server(HTTP_PORT);
 SemaphoreHandle_t binSem;
-
-static WiFiUDP syslog_udp;
-static Syslog g_syslog(syslog_udp);
-static char *p_syslog_host = NULL;
 
 static long m5_initialize(void);
 static long start_qjs(void);
@@ -138,14 +133,6 @@ void setup()
       server.onNotFound(notFound);
       server.begin();
     }
-  }
-
-  String server = read_config_string(CONFIG_FNAME_SYSLOG);
-  int delim = server.indexOf(':');
-  if( delim >= 0 ){
-    String host = server.substring(0, delim);
-    String port = server.substring(delim + 1);
-    syslog_changeServer(host.c_str(), port.toInt());
   }
 
   long conf = read_config_long(CONFIG_INDEX_AUTOUPDATE, 0);
@@ -476,20 +463,24 @@ long read_config_long(uint16_t index, long def)
   if( !fp )
     return def;
   
-  uint8_t temp[4];
+  size_t fsize = fp.size();
+  if( fsize < (index + 1) * sizeof(long) )
+    return def;
+
   bool ret = fp.seek(index * sizeof(long));
   if( !ret ){
     fp.close();
     return def;
   }
 
-  if( fp.read(temp, sizeof(long)) != sizeof(long) ){
+  long value;
+  if( fp.read((uint8_t*)&value, sizeof(long)) != sizeof(long) ){
     fp.close();
     return def;
   }
   fp.close();
 
-  return (long)( (temp[0] << 24) | (temp[1] << 16) | (temp[2] << 8) | temp[3]);
+  return value;
 }
 
 long write_config_long(uint16_t index, long value)
@@ -498,14 +489,16 @@ long write_config_long(uint16_t index, long value)
   if( !fp )
     return -1;
   
-  uint8_t temp[4] = { (uint8_t)((value >> 24) & 0xff), (uint8_t)((value >> 16) & 0xff), (uint8_t)((value >> 8) & 0xff), (uint8_t)(value & 0xff) };
-  bool ret = fp.seek(index * sizeof(long));
-  if( !ret ){
-    fp.close();
-    return -1;
+  size_t fsize = fp.size();
+  long temp = 0;
+  if( fsize < index * sizeof(long) ){
+    fp.seek(fsize / sizeof(long) * sizeof(long));
+    for( int i = fsize / sizeof(long) ; i < index ; i++ )
+      fp.write((uint8_t*)&temp, sizeof(long));
   }
 
-  if( fp.write(temp, sizeof(long)) != sizeof(long) ){
+
+  if( fp.write((uint8_t*)&value, sizeof(long)) != sizeof(long) ){
     fp.close();
     return -1;
   }
@@ -536,31 +529,6 @@ long write_config_string(const char *fname, const char *text)
   fp.close();
   if( ret != strlen(text) )
     return -1;
-
-  return 0;
-}
-
-long syslog_send(const char *p_message)
-{
-  bool ret = g_syslog.log(LOG_INFO, p_message);
-  return ret ? 0 : -1;
-}
-
-long syslog_changeServer(const char *host, uint16_t port)
-{
-  g_syslog.appName(MDNS_SERVICE);
-  g_syslog.deviceHostname(MDNS_NAME);
-  g_syslog.defaultPriority(LOG_INFO | LOG_USER);
-
-  if( p_syslog_host != NULL )
-    free(p_syslog_host);
-  p_syslog_host = (char*)malloc(strlen(host) + 1);
-  if( p_syslog_host == NULL )
-    return -1;
-  strcpy(p_syslog_host, host);
-  g_syslog.server(p_syslog_host, port);
-
-  Serial.printf("syslog: host=%s, port=%d\n", p_syslog_host, port);
 
   return 0;
 }

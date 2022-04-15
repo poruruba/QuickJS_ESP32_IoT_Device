@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
+#include <Syslog.h>
 
 #include "main_config.h"
 #include "quickjs.h"
@@ -21,6 +22,35 @@
 #define MODEL_M5Tough       7
 #define MODEL_M5StickC      8
 #define MODEL_M5Atom        9
+
+static WiFiUDP syslog_udp;
+static Syslog g_syslog(syslog_udp);
+static char *p_syslog_host = NULL;
+
+long syslog_send(const char *p_message)
+{
+  bool ret = g_syslog.log(LOG_INFO, p_message);
+  return ret ? 0 : -1;
+}
+
+long syslog_changeServer(const char *host, uint16_t port)
+{
+  g_syslog.appName(MDNS_SERVICE);
+  g_syslog.deviceHostname(MDNS_NAME);
+  g_syslog.defaultPriority(LOG_INFO | LOG_USER);
+
+  if( p_syslog_host != NULL )
+    free(p_syslog_host);
+  p_syslog_host = (char*)malloc(strlen(host) + 1);
+  if( p_syslog_host == NULL )
+    return -1;
+  strcpy(p_syslog_host, host);
+  g_syslog.server(p_syslog_host, port);
+
+  Serial.printf("syslog: host=%s, port=%d\n", p_syslog_host, port);
+
+  return 0;
+}
 
 static JSValue esp32_reboot(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
@@ -335,13 +365,26 @@ JSModuleDef *addModule_esp32(JSContext *ctx, JSValue global)
   return mod;
 }
 
+long initialize_esp32(void)
+{
+  String server = read_config_string(CONFIG_FNAME_SYSLOG);
+  int delim = server.indexOf(':');
+  if( delim >= 0 ){
+    String host = server.substring(0, delim);
+    String port = server.substring(delim + 1);
+    syslog_changeServer(host.c_str(), port.toInt());
+  }
+
+  return 0;
+}
+
 void loopModule_esp32(void)
 {
   M5.update();
 }
 
 JsModuleEntry esp32_module = {
-  NULL,
+  initialize_esp32,
   addModule_esp32,
   loopModule_esp32,
   NULL

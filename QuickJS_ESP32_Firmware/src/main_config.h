@@ -86,7 +86,4 @@ long write_config_long(uint16_t index, long value);
 String read_config_string(const char *fname);
 long write_config_string(const char *fname, const char *text);
 
-long syslog_send(const char *p_message);
-long syslog_changeServer(const char *host, uint16_t port);
-
 #endif

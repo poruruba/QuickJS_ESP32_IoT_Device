@@ -13,18 +13,20 @@ Blockly.JavaScript['millis'] = function(block) {
 };
 
 Blockly.JavaScript['settimeout'] = function(block) {
-  var value_name = Blockly.JavaScript.valueToCode(block, 'msec', Blockly.JavaScript.ORDER_ATOMIC);
-  var statements_name = Blockly.JavaScript.statementToCode(block, 'func');
+  var dropdown_async = block.getFieldValue('async');
+  var value_msec = Blockly.JavaScript.valueToCode(block, 'msec', Blockly.JavaScript.ORDER_ATOMIC);
+  var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'setTimeout( () => {\n' + statements_name + '}, ' + value_name + ');\n';
+  var code = 'setTimeout(' + (dropdown_async==='true' ? ' async ' : "") + '() => {\n' + statements_func + '}, ' + value_msec + ');\n';
   return code;
 };
 
 Blockly.JavaScript['setinterval'] = function(block) {
-  var value_name = Blockly.JavaScript.valueToCode(block, 'msec', Blockly.JavaScript.ORDER_ATOMIC);
-  var statements_name = Blockly.JavaScript.statementToCode(block, 'func');
+  var dropdown_async = block.getFieldValue('async');
+  var value_msec = Blockly.JavaScript.valueToCode(block, 'msec', Blockly.JavaScript.ORDER_ATOMIC);
+  var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'setInterval( () => {\n' + statements_name + '}, ' + value_name + ');\n';
+  var code = 'setInterval(' + (dropdown_async==='true' ? ' async ' : "" ) + '() => {\n' + statements_func + '}, ' + value_msec + ');\n';
   return code;
 };
 
@@ -81,14 +83,6 @@ Blockly.JavaScript['program_module'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
-Blockly.JavaScript['setsyslogserver'] = function(block) {
-  var value_host = Blockly.JavaScript.valueToCode(block, 'host', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_port = Blockly.JavaScript.valueToCode(block, 'port', Blockly.JavaScript.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = 'setSyslogServer(' + value_host + ', ' + value_port + ');\n';
-  return code;
-};
-
 Blockly.JavaScript['gpio_pinmode'] = function(block) {
   var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
   var dropdown_mode = block.getFieldValue('mode');
@@ -120,18 +114,19 @@ Blockly.JavaScript['gpio_digitalwrite'] = function(block) {
 };
 
 Blockly.JavaScript['input_ispressed'] = function(block) {
-  var dropdown_name = block.getFieldValue('btn');
+  var dropdown_btn = block.getFieldValue('btn');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'input.isPressed(' + dropdown_name + ')';
+  var code = 'input.isPressed(' + dropdown_btn + ')';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['input_onbuttonwaspressed'] = function(block) {
+  var dropdown_async = block.getFieldValue('async');
   var dropdown_btn = block.getFieldValue('btn');
   var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'input.onButtonWasPressed(' + dropdown_btn + ', () => {\n' + statements_func + '});\n';
+  var code = 'input.onButtonWasPressed(' + dropdown_btn + ', ' + (dropdown_async==='true' ? "async " : "") + '() => {\n' + statements_func + '});\n';
   return code;
 };
 
@@ -235,7 +230,7 @@ Blockly.JavaScript['udp_checkrecvtext'] = function(block) {
 Blockly.JavaScript['lcd_setrotation'] = function(block) {
   var value_rot = Blockly.JavaScript.valueToCode(block, 'rot', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'lcd.setRotaton(' + value_rot + ');\n';
+  var code = 'lcd.setRotation(' + value_rot + ');\n';
   return code;
 };
 
@@ -475,9 +470,9 @@ Blockly.JavaScript['ledc_detachpin'] = function(block) {
 
 Blockly.JavaScript['ledc_write'] = function(block) {
   var value_channel = Blockly.JavaScript.valueToCode(block, 'channel', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_pin = Blockly.JavaScript.valueToCode(block, 'pin', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_duty = Blockly.JavaScript.valueToCode(block, 'duty', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'ledc.write(' + value_channel + ', ' + value_pin + ');\n';
+  var code = 'ledc.write(' + value_channel + ', ' + value_duty + ');\n';
   return code;
 };
 
@@ -570,10 +565,11 @@ Blockly.JavaScript['mqtt_disconnect'] = function(block) {
 };
 
 Blockly.JavaScript['mqtt_subscribe'] = function(block) {
+  var dropdown_async = block.getFieldValue('async');
   var value_topic = Blockly.JavaScript.valueToCode(block, 'topic', Blockly.JavaScript.ORDER_ATOMIC);
   var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'mqtt.subscribe(' + value_topic + ', () => {\n' + statements_func + '});\n';
+  var code = 'mqtt.subscribe(' + value_topic + ', ' + (dropdown_async==='true' ? "async " : "") + '() => {\n' + statements_func + '});\n';
   return code;
 };
 
@@ -662,13 +658,6 @@ Blockly.JavaScript['audio_stop'] = function(block) {
   return code;
 };
 
-Blockly.JavaScript['esp32_setloop'] = function(block) {
-  var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
-  // TODO: Assemble JavaScript into code variable.
-  var code = 'esp32.setLoop(() =>{\n' + statements_func + '});\n';
-  return code;
-};
-
 Blockly.JavaScript['reboot'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = 'esp32.reboot();\n';
@@ -677,7 +666,7 @@ Blockly.JavaScript['reboot'] = function(block) {
 
 Blockly.JavaScript['restart'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
-  var code = 'esp32.restart;\n';
+  var code = 'esp32.restart();\n';
   return code;
 };
 
@@ -687,9 +676,18 @@ Blockly.JavaScript['update'] = function(block) {
   return code;
 };
 
-Blockly.JavaScript['setloop'] = function(block) {
+Blockly.JavaScript['loop'] = function(block) {
+  var dropdown_async = block.getFieldValue('async');
   var statements_func = Blockly.JavaScript.statementToCode(block, 'func');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'esp32.setLoop(() => {\n' + statements_func + '});\n';
+  var code = (dropdown_async==='true' ? "async " : "") + 'function loop(){\n' + statements_func + '}\n';
+  return code;
+};
+
+Blockly.JavaScript['wait_async'] = function(block) {
+  var dropdown_await = block.getFieldValue('await');
+  var value_msec = Blockly.JavaScript.valueToCode(block, 'msec', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = (dropdown_await==='true' ? "await " : "") + 'wait_async(' + value_msec + ');\n';
   return code;
 };

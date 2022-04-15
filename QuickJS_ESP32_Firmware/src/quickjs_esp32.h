@@ -526,6 +526,8 @@ protected:
 
     JS_SetPropertyStr(ctx, global, "millis", JS_NewCFunction(ctx, esp32_millis, "millis", 0));
     JS_SetPropertyStr(ctx, global, "delay", JS_NewCFunction(ctx, esp32_delay, "delay", 1));
+    JS_SetPropertyStr(ctx, global, "randomSeed", JS_NewCFunction(ctx, esp32_randomSeed, "randomSeed", 1));
+    JS_SetPropertyStr(ctx, global, "random", JS_NewCFunction(ctx, esp32_random, "random", 2));
 
 #ifdef ENABLE_WIFI
     JS_SetPropertyStr(ctx, global, "isWifiConnected", JS_NewCFunction(ctx, wifi_is_connected, "isWifiConnected", 0));
@@ -596,6 +598,35 @@ protected:
     return JS_UNDEFINED;
   }
 
+  static JSValue esp32_randomSeed(JSContext *ctx, JSValueConst jsThis, int argc,
+                              JSValueConst *argv){
+    int32_t seed;
+    JS_ToInt32(ctx, &seed, argv[0]);
+
+    randomSeed(seed);
+
+    return JS_UNDEFINED;
+  }
+
+  static JSValue esp32_random(JSContext *ctx, JSValueConst jsThis, int argc,
+                              JSValueConst *argv){
+  long ret;
+  if( argc <= 1 ){
+    int32_t max;
+    JS_ToInt32(ctx, &max, argv[0]);
+
+    ret = random(max);
+  }else{
+    int32_t min, max;
+    JS_ToInt32(ctx, &min, argv[0]);
+    JS_ToInt32(ctx, &max, argv[1]);
+
+    ret = random(min, max);
+  }
+
+  return JS_NewInt32(ctx, ret);
+}
+
 #ifdef ENABLE_WIFI
   static JSValue wifi_is_connected(JSContext *ctx, JSValueConst jsThis,
                                    int argc, JSValueConst *argv) {
@@ -609,4 +640,3 @@ protected:
   }
 #endif
 };
-

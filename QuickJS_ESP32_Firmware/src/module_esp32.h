@@ -6,4 +6,7 @@
 extern JsModuleEntry esp32_module;
 extern JsModuleEntry console_module;
 
+long syslog_send(const char *p_message);
+long syslog_changeServer(const char *host, uint16_t port);
+
 #endif

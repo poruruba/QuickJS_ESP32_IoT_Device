@@ -34,6 +34,9 @@ Blockly.Blocks['settimeout'] = {
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("msec");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new Blockly.FieldDropdown([["async","true"], ["none","false"]]), "async");
     this.appendStatementInput("func")
         .setCheck(null)
         .setAlign(Blockly.ALIGN_RIGHT);
@@ -70,6 +73,9 @@ Blockly.Blocks['setinterval'] = {
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("msec");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new Blockly.FieldDropdown([["async","true"], ["none","false"]]), "async");
     this.appendStatementInput("func")
         .setCheck(null)
         .setAlign(Blockly.ALIGN_RIGHT);
@@ -169,27 +175,6 @@ Blockly.Blocks['object'] = {
   }
 };
 
-Blockly.Blocks['setsyslogserver'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("setSyslogServer");
-    this.appendValueInput("host")
-        .setCheck("String")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("topic");
-    this.appendValueInput("port")
-        .setCheck("Number")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("port");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
-};
-
 Blockly.Blocks['gpio_pinmode'] = {
   init: function() {
     this.appendDummyInput()
@@ -282,10 +267,13 @@ Blockly.Blocks['input_onbuttonwaspressed'] = {
     this.appendDummyInput()
         .appendField("Input.onButtonWasPressed");
     this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
         .appendField(new Blockly.FieldDropdown([["BUTTON_A","input.BUTTON_A"], ["BUTTON_B","input.BUTTON_B"], ["BUTTON_C","input.BUTTON_C"]]), "btn");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new Blockly.FieldDropdown([["async","true"], ["none","false"]]), "async");
     this.appendStatementInput("func")
-        .setCheck(null)
-        .setAlign(Blockly.ALIGN_RIGHT);
+        .setCheck(null);
     this.setInputsInline(true);
     this.setColour(230);
  this.setTooltip("");
@@ -472,7 +460,7 @@ Blockly.Blocks['udp_sendtext'] = {
     this.appendDummyInput()
         .appendField("Udp.sendText");
     this.appendValueInput("host")
-        .setCheck("Number")
+        .setCheck("String")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("host");
     this.appendValueInput("port")
@@ -1134,10 +1122,10 @@ Blockly.Blocks['ledc_write'] = {
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("channel");
-    this.appendValueInput("pin")
+    this.appendValueInput("duty")
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("pin");
+        .appendField("duty");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -1171,7 +1159,7 @@ Blockly.Blocks['ledc_writetone'] = {
 Blockly.Blocks['ledc_writenote'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Ledc.writeTone");
+        .appendField("Ledc.writeNote");
     this.appendValueInput("channel")
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
@@ -1360,9 +1348,12 @@ Blockly.Blocks['mqtt_subscribe'] = {
         .setCheck("String")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("topic");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new Blockly.FieldDropdown([["async","true"], ["none","false"]]), "async");
     this.appendStatementInput("func")
         .setCheck(null)
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.ALIGN_RIGHT);
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -1565,44 +1556,6 @@ Blockly.Blocks['audio_stop'] = {
   }
 };
 
-Blockly.Blocks['setloop'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("setLoop");
-    this.appendStatementInput("func")
-        .setCheck(null)
-        .setAlign(Blockly.ALIGN_RIGHT);
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['esp32_reboot'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Esp32.reboot");
-    this.setPreviousStatement(true, null);
-    this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['esp32_restart'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Esp32.restart");
-    this.setPreviousStatement(true, null);
-    this.setColour(230);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
-};
-
 Blockly.Blocks['update'] = {
   init: function() {
     this.appendDummyInput()
@@ -1615,13 +1568,33 @@ Blockly.Blocks['update'] = {
   }
 };
 
-Blockly.Blocks['setloop'] = {
+Blockly.Blocks['loop'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("setLoop");
+        .appendField("loop");
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new Blockly.FieldDropdown([["async","true"], ["none","false"]]), "async");
     this.appendStatementInput("func")
         .setCheck(null)
         .setAlign(Blockly.ALIGN_RIGHT);
+    this.setInputsInline(true);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wait_async'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([["await","true"], ["none","false"]]), "await");
+    this.appendDummyInput()
+        .appendField("wait_async");
+    this.appendValueInput("msec")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("msec");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);

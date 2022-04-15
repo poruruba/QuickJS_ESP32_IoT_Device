@@ -4,6 +4,10 @@
 #include "module_type.h"
 #include "esp32-hal-ledc.h"
 
+#define NUM_LEDC_CHANNEL  3
+static bool is_beeping[NUM_LEDC_CHANNEL] = { false, false, false };
+static uint32_t beep_end[NUM_LEDC_CHANNEL];
+
 static JSValue esp32_ledc_setup(JSContext *ctx, JSValueConst jsThis,
                                       int argc, JSValueConst *argv)
 {
@@ -101,6 +105,27 @@ static JSValue esp32_ledc_readFreq(JSContext *ctx, JSValueConst jsThis,
   return JS_NewFloat64(ctx, ret);
 }
 
+static JSValue esp32_ledc_beepNote(JSContext *ctx, JSValueConst jsThis,
+                                     int argc, JSValueConst *argv)
+{
+  uint32_t channel, note, octave;
+  JS_ToUint32(ctx, &channel, argv[0]);
+  JS_ToUint32(ctx, &note, argv[1]);
+  JS_ToUint32(ctx, &octave, argv[2]);
+  uint32_t duration;
+  JS_ToUint32(ctx, &duration, argv[3]);
+
+  if( channel >= NUM_LEDC_CHANNEL )
+    return JS_EXCEPTION;
+
+  is_beeping[channel] = true;
+  beep_end[channel] = millis() + duration;
+
+  double ret = ledcWriteNote(channel, (note_t)note, octave);
+
+  return JS_NewFloat64(ctx, ret);
+}
+
 static const JSCFunctionListEntry ledc_funcs[] = {
     JSCFunctionListEntry{
         "setup", 0, JS_DEF_CFUNC, 0, {
@@ -133,6 +158,10 @@ static const JSCFunctionListEntry ledc_funcs[] = {
     JSCFunctionListEntry{
         "readFreq", 0, JS_DEF_CFUNC, 0, {
           func : {1, JS_CFUNC_generic, esp32_ledc_readFreq}
+        }},
+    JSCFunctionListEntry{
+        "beepNote", 0, JS_DEF_CFUNC, 0, {
+          func : {4, JS_CFUNC_generic, esp32_ledc_beepNote}
         }},
         
     JSCFunctionListEntry{
@@ -206,9 +235,29 @@ JSModuleDef *addModule_ledc(JSContext *ctx, JSValue global)
   return mod;
 }
 
+void loopModule_ledc(void){
+  for( int i = 0 ; i < NUM_LEDC_CHANNEL ; i++ ){
+    if( is_beeping[i] ){
+      if( beep_end[i] <= millis() ){
+        is_beeping[i] = false;
+        ledcWrite(i, 0);
+      }
+    }
+  }
+}
+
+void endModule_ledc(void){
+  for( int i = 0 ; i < NUM_LEDC_CHANNEL ; i++ ){
+    if( is_beeping[i] ){
+      is_beeping[i] = false;
+      ledcWrite(i, 0);
+    }
+  }
+}
+
 JsModuleEntry ledc_module = {
   NULL,
   addModule_ledc,
-  NULL,
-  NULL
+  loopModule_ledc,
+  endModule_ledc
 };

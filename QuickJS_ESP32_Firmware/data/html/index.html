@@ -289,7 +289,7 @@
           <label>main.js</label>
         </div>
         <div class="modal-body">
-              <textarea class="form-control" rows="20" readonly>{{js_upload}}</textarea>
+              <textarea class="form-control" rows="20">{{js_upload}}</textarea>
             </div>
             <div class="modal-footer">
               <button class="btn btn-primary" v-on:click="do_upload">アップロード</button>
@@ -624,9 +624,17 @@
           </value>
         </block>
         <block type="object_field"></block>
+        <block type="loop">
+          <value name="async">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+          <value name="msec">
+            <shadow type="math_number">
+              <field name="NUM">1000</field>
+            </shadow>
+          </value>
+        </block>
         <block type="update"></block>
-        <block type="setloop"></block>
-        <block type="setsyslogserver"></block>
       </category>
       <category name="Timer">
         <block type="millis"></block>
@@ -643,115 +651,409 @@
               <field name="NUM">1000</field>
             </shadow>
           </value>
+          <value name="async">
+            <shadow type="logic_boolean"></shadow>
+          </value>
         </block>
-        <block type="cleartimeout"></block>
+        <block type="cleartimeout">
+          <value name="id">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="setinterval">
           <value name="msec">
             <shadow type="math_number">
               <field name="NUM">1000</field>
             </shadow>
           </value>
+          <value name="async">
+            <shadow type="logic_boolean"></shadow>
+          </value>
         </block>
-        <block type="clearinterval"></block>
+        <block type="clearinterval">
+          <value name="id">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="wait_async">
+          <value name="msec">
+            <shadow type="math_number">
+              <field name="NUM">1000</field>
+            </shadow>
+          </value>
+          <value name="await">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+        </block>
       </category>
       <category name="Gpio">
         <block type="gpio_pinmode">
           <value name="pin">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
         <block type="gpio_analogread">
           <value name="pin">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
         <block type="gpio_digitalread">
           <value name="pin">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
         <block type="gpio_digitalwrite">
           <value name="pin">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
       </category>
       <category name="Audio">
         <block type="audio_begin"></block>
-        <block type="audio_setpinout"></block>
+        <block type="audio_setpinout">
+          <value name="bclk">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="lrck">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="dout">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="audio_update"></block>
-        <block type="audio_playsd"></block>
-        <block type="audio_setgain"></block>
+        <block type="audio_playsd">
+          <value name="path">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="audio_setgain">
+          <value name="gain">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="audio_getgain"></block>
         <block type="audio_isrunning"></block>
         <block type="audio_stop"></block>
       </category>
       <category name="Input">
         <block type="input_ispressed"></block>
-        <block type="input_onbuttonwaspressed"></block>
+        <block type="input_onbuttonwaspressed">
+          <value name="async">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+        </block>
       </category>
       <category name="Ir">
-        <block type="ir_sendbegin"></block>
-        <block type="ir_send"></block>
-        <block type="ir_recvbegin"></block>
+        <block type="ir_sendbegin">
+          <value name="pin">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ir_send">
+          <value name="data">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="repeat">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ir_recvbegin">
+          <value name="pin">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="ir_recvstart"></block>
         <block type="ir_recvstop"></block>
         <block type="ir_checkrecv"></block>
       </category>
       <category name="Lcd">
-        <block type="lcd_setrotation"></block>
-        <block type="lcd_setbrightness"></block>
-        <block type="lcd_setfont"></block>
+        <block type="lcd_setrotation">
+          <value name="rot">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_setbrightness">
+          <value name="brt">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_setfont">
+          <value name="size">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="lcd_settextcolor"></block>
-        <block type="lcd_settextsize"></block>
+        <block type="lcd_settextsize">
+          <value name="scale">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="yscale">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="lcd_settextdatum"></block>
-        <block type="lcd_drawpixel"></block>
-        <block type="lcd_drawline"></block>
-        <block type="lcd_drawrect"></block>
-        <block type="lcd_fillrect"></block>
-        <block type="lcd_fillroundrect"></block>
-        <block type="lcd_drawroundrect"></block>
-        <block type="lcd_drawcircle"></block>
-        <block type="lcd_fillcircle"></block>
-        <block type="lcd_setcursor"></block>
+        <block type="lcd_drawpixel">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_drawline">
+          <value name="x0">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y0">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="x1">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y1">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_drawrect">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="w">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="h">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_fillrect">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="w">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="h">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_fillroundrect">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="w">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="h">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="r">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_drawroundrect">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="w">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="h">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="r">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_drawcircle">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="r">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_fillcircle">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="r">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="lcd_setcursor">
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="lcd_getcursorx"></block>
         <block type="lcd_getcursory"></block>
-        <block type="lcd_textwidth"></block>
-        <block type="lcd_print"></block>
-        <block type="lcd_println"></block>
+        <block type="lcd_textwidth">
+          <value name="text">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lcd_print">
+          <value name="message">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lcd_println">
+          <value name="message">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
         <block type="lcd_fillscreen"></block>
-        <block type="lcd_drawimagefile"></block>
+        <block type="lcd_drawimagefile">
+          <value name="filename">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+          <value name="x">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="y">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
         <block type="lcd_width"></block>
         <block type="lcd_height"></block>
         <block type="lcd_getcolordepth"></block>
         <block type="lcd_fontheight"></block>
       </category>
       <category name="Ledc">
-        <block type="ledc_setup"></block>
-        <block type="ledc_attachpin"></block>
-        <block type="ledc_detachpin"></block>
-        <block type="ledc_write"></block>
-        <block type="ledc_writetone"></block>
-        <block type="ledc_writenote"></block>
-        <block type="ledc_read"></block>
-        <block type="ledc_readfreq"></block>
+        <block type="ledc_setup">
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="freq">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="resolution">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_attachpin">
+          <value name="pin">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_detachpin">
+          <value name="pin">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_write">
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="duty">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_writetone">
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="freq">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_writenote">
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="octave">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_read">
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="ledc_readfreq">
+          <value name="channel">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
       </category>
       <category name="Mqtt">
-        <block type="mqtt_connect"></block>
+        <block type="mqtt_connect">
+          <value name="client_name">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
         <block type="mqtt_disconnect"></block>
-        <block type="mqtt_subscribe"></block>
+        <block type="mqtt_subscribe">
+          <value name="topic">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+          <value name="async">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+        </block>
         <block type="mqtt_unsubscribe"></block>
-        <block type="mqtt_publish"></block>
+        <block type="mqtt_publish">
+          <value name="topic">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+          <value name="payload">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
         <block type="mqtt_getpayload"></block>
-        <block type="mqtt_setserver"></block>
+        <block type="mqtt_setserver">
+          <value name="host">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+          <value name="port">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
       </category>
       <category name="Pixels">
         <block type="pixels_begin">
@@ -798,8 +1100,8 @@
         </block>
         <block type="udp_sendtext">
           <value name="host">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
+            <shadow type="text">
+              <field name="TEXT"></field>
             </shadow>
           </value>
           <value name="port">

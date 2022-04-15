@@ -1,5 +1,9 @@
 
 
+async function wait_async(msec){
+  return new Promise(resolve => setTimeout(resolve, msec) );
+}
+
 var setup_finished = false;
 if (typeof setup === 'function'){
   async function call_setup(){
