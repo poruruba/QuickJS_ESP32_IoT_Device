@@ -477,6 +477,10 @@ class ESP32QuickJS {
     return ret;
   }
 
+  void getMemoryUsage(JSMemoryUsage *usage){
+    JS_ComputeMemoryUsage(this->rt, usage);
+  }
+
   void add_modules(JSValue global){
     int num = sizeof(module_entries) / sizeof(JsModuleEntry);
     for( int i = 0 ; i < num ; i++ ){

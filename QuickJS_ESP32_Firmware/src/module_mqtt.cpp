@@ -14,19 +14,23 @@ static JSContext *g_ctx = NULL;
 
 static WiFiClient wifiClient;
 static PubSubClient mqttClient(wifiClient);
-static char g_client_name[33] = "";
-static char g_topic_name[33] = "";
+static char *g_client_name = NULL;
+static char *g_topic_name = NULL;
 static JSValue g_callback_func = JS_UNDEFINED;
-static char g_received_topic[33] = "";
+static char *g_received_topic = NULL;
 static byte *g_received_payload = NULL;
 static uint16_t g_buffer_size;
+static char *g_broker_host = NULL;
 
 static void mqttCallback(char* topic, byte* payload, unsigned int length)
 {
   if(g_ctx == NULL || g_callback_func == JS_UNDEFINED)
     return;
   
-  if( length <= g_buffer_size - 1 && strlen(topic) < sizeof(g_received_topic) - 1){
+  if( length <= g_buffer_size - 1 ){
+    if( g_received_topic != NULL )
+      free(g_received_topic);
+    g_received_topic = (char*)malloc(strlen(topic) + 1);
     strcpy(g_received_topic, topic);
     g_received_payload = payload;
     g_received_payload[length] = '\0';
@@ -47,6 +51,9 @@ static long mqttUnsubscribe(void){
 static long mqttSubscribe(const char* topic_name, JSValue callback){
   mqttUnsubscribe();
   if( mqttClient.subscribe(topic_name) ){
+    if( g_topic_name != NULL )
+      free(g_topic_name);
+    g_topic_name = (char*)malloc(strlen(topic_name) + 1);
     strcpy(g_topic_name, topic_name);
     g_callback_func = callback;
     return 0;
@@ -63,20 +70,27 @@ static void mqttDisconnect(void){
   g_ctx = NULL;
 }
 
-static boolean mqttConnect(JSContext *ctx, const char *client_name, const char *broker_url, uint16_t broker_port, uint16_t buffer_size)
+static boolean mqttConnect(JSContext *ctx, const char *client_name, const char *broker_url, uint16_t broker_port, uint16_t buffer_size, const char *username, const char *password)
 {
   mqttDisconnect();
 
+  if( g_client_name != NULL )
+    free(g_client_name);
+  g_client_name = (char*)malloc(strlen(client_name) + 1);
   strcpy(g_client_name, client_name);
+  if( g_broker_host != NULL )
+    free(g_broker_host);
+  g_broker_host = (char*)malloc(strlen(broker_url) + 1);
+  strcpy(g_broker_host, broker_url);
 
   g_buffer_size = buffer_size;
   mqttClient.setBufferSize(g_buffer_size);
   mqttClient.setCallback(mqttCallback);
-  mqttClient.setServer(broker_url, broker_port);
+  mqttClient.setServer(g_broker_host, broker_port);
 
   g_ctx = ctx;
 
-  return mqttClient.connect(g_client_name);
+  return mqttClient.connect(g_client_name, username, password);
 }
 
 static JSValue mqtt_connect(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
@@ -87,7 +101,14 @@ static JSValue mqtt_connect(JSContext *ctx, JSValueConst jsThis, int argc, JSVal
 
   uint32_t buffer_size = DEFAULT_MQTT_BUFFER_SIZE;
   if( argc >= 2 )
-      JS_ToUint32(ctx, &buffer_size, argv[0]);
+      JS_ToUint32(ctx, &buffer_size, argv[1]);
+
+  const char *username = NULL;
+  if( argc >= 3 )
+    username = JS_ToCString(ctx, argv[2]);
+  const char *password = NULL;
+  if( argc >= 4 )
+    password = JS_ToCString(ctx, argv[3]);
 
   String server = read_config_string(CONFIG_FNAME_MQTT);
   int delim = server.indexOf(':');
@@ -97,8 +118,12 @@ static JSValue mqtt_connect(JSContext *ctx, JSValueConst jsThis, int argc, JSVal
   }
   String host = server.substring(0, delim);
   String port = server.substring(delim + 1);
-  mqttConnect(ctx, client_name, host.c_str(), port.toInt(), buffer_size);
+  mqttConnect(ctx, client_name, host.c_str(), port.toInt(), buffer_size, username, password);
   JS_FreeCString(ctx, client_name);
+  if( username != NULL )
+    JS_FreeCString(ctx, username);
+  if( password != NULL )
+    JS_FreeCString(ctx, password);
 
   return JS_UNDEFINED;
 }
@@ -206,7 +231,7 @@ static JSValue mqtt_getServer(JSContext *ctx, JSValueConst jsThis, int argc, JSV
 static const JSCFunctionListEntry mqtt_funcs[] = {
     JSCFunctionListEntry{
         "connect", 0, JS_DEF_CFUNC, 0, {
-          func : {2, JS_CFUNC_generic, mqtt_connect}
+          func : {4, JS_CFUNC_generic, mqtt_connect}
         }},
     JSCFunctionListEntry{
         "disconnect", 0, JS_DEF_CFUNC, 0, {

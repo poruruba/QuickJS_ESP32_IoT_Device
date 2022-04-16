@@ -553,8 +553,19 @@ Blockly.JavaScript['ir_checkrecv'] = function(block) {
 
 Blockly.JavaScript['mqtt_connect'] = function(block) {
   var value_client_name = Blockly.JavaScript.valueToCode(block, 'client_name', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_buffer_size = Blockly.JavaScript.valueToCode(block, 'buffer_size', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'mqtt.connect(' + value_client_name + ');\n';
+  var code = 'mqtt.connect(' + value_client_name + ', ' + value_buffer_size + ');\n';
+  return code;
+};
+
+Blockly.JavaScript['mqtt_connect_user_pass_'] = function(block) {
+  var value_client_name = Blockly.JavaScript.valueToCode(block, 'client_name', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_buffer_size = Blockly.JavaScript.valueToCode(block, 'buffer_size', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_username = Blockly.JavaScript.valueToCode(block, 'username', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_password = Blockly.JavaScript.valueToCode(block, 'password', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'mqtt.connect(' + value_client_name + ', ' + value_buffer_size + ', ' + value_username + ', ' + value_password + ');\n';
   return code;
 };
 

@@ -194,6 +194,21 @@ static JSValue esp32_getSyslogServer(JSContext *ctx, JSValueConst jsThis, int ar
   return obj;
 }
 
+static JSValue esp32_getMemoryUsage(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  JSMemoryUsage usage;
+  ESP32QuickJS *qjs = (ESP32QuickJS *)JS_GetContextOpaque(ctx);
+  qjs->getMemoryUsage(&usage);
+
+  JSValue obj = JS_NewObject(ctx);
+  JS_SetPropertyStr(ctx, obj, "malloc_limit", JS_NewUint32(ctx, usage.malloc_limit));
+  JS_SetPropertyStr(ctx, obj, "memory_usage_size", JS_NewUint32(ctx, usage.memory_used_size));
+  JS_SetPropertyStr(ctx, obj, "malloc_size", JS_NewUint32(ctx, usage.malloc_size));
+  JS_SetPropertyStr(ctx, obj, "free_heap", JS_NewUint32(ctx, ESP.getFreeHeap()));
+
+  return obj;
+}
+
 static JSValue esp32_console_log(JSContext *ctx, JSValueConst jsThis, int argc,
                             JSValueConst *argv, int magic) {
   int i = 0;
@@ -297,6 +312,9 @@ static const JSCFunctionListEntry esp32_funcs[] = {
                          }},
     JSCFunctionListEntry{"getSyslogServer", 0, JS_DEF_CFUNC, 0, {
                            func : {0, JS_CFUNC_generic, esp32_getSyslogServer}
+                         }},
+    JSCFunctionListEntry{"getMemoryUsage", 0, JS_DEF_CFUNC, 0, {
+                           func : {0, JS_CFUNC_generic, esp32_getMemoryUsage}
                          }},
     JSCFunctionListEntry{
         "MODEL_OTHER", 0, JS_DEF_PROP_INT32, 0, {

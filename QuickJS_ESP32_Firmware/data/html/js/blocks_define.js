@@ -1318,6 +1318,10 @@ Blockly.Blocks['mqtt_connect'] = {
         .setCheck("String")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("client_name");
+    this.appendValueInput("buffer_size")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("buffer_size");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -1327,6 +1331,34 @@ Blockly.Blocks['mqtt_connect'] = {
   }
 };
 
+Blockly.Blocks['mqtt_connect_user_pass_'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mqtt.connect");
+    this.appendValueInput("client_name")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("client_name");
+    this.appendValueInput("buffer_size")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("buffer_size");
+    this.appendValueInput("username")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("username");
+    this.appendValueInput("password")
+        .setCheck("String")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("password");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
 Blockly.Blocks['mqtt_disconnect'] = {
   init: function() {
     this.appendDummyInput()
