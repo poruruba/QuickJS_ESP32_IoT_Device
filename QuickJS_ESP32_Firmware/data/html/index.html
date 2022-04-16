@@ -687,6 +687,12 @@
           </value>
         </block>
       </category>
+      <category name="Env">
+        <block type="env_dht12_readtemperature"></block>
+        <block type="env_dht12_readhumidity"></block>
+        <block type="env_sht30_gettemperature"></block>
+        <block type="env_sht30_gethumidity"></block>
+      </category>
       <category name="Gpio">
         <block type="gpio_pinmode">
           <value name="pin">
@@ -1122,6 +1128,16 @@
       <category name="Utils">
         <block type="utils_rgb2number"></block>
         <block type="utils_number2rgb"></block>
+      </category>
+      <category name="Wire">
+        <block type="wire_begin">
+          <value name="sda">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="scl">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
       </category>
     </category>
 

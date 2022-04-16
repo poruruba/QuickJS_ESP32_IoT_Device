@@ -398,7 +398,7 @@ Blockly.Blocks['program_start'] = {
 Blockly.Blocks['program_module'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["Audio","Audio"], ["Gpio","Gpio"], ["Input","Input"], ["Ir","Ir"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Mqtt","Mqtt"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"]]), "module");
+        .appendField(new Blockly.FieldDropdown([["Audio","Audio"], ["Env","Env"], ["Gpio","Gpio"], ["Input","Input"], ["Ir","Ir"], ["Lcd","Lcd"], ["Ledc","Ledc"], ["Mqtt","Mqtt"], ["Pixels","Pixels"], ["Udp","Udp"], ["Utils","Utils"], ["Wire","Wire"]]), "module");
     this.setOutput(true, "String");
     this.setColour(230);
  this.setTooltip("");
@@ -1595,6 +1595,71 @@ Blockly.Blocks['wait_async'] = {
         .setCheck("Number")
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("msec");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['env_dht12_readtemperature'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Env.dht12_readTemperature");
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['env_dht12_readhumidity'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Env.dht12_readHumidity");
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['env_sht30_gethumidity'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Env.sht30_getHumidity");
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['env_sht30_gettemperature'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Env.sht30_getTemperature");
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_begin'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.begin");
+    this.appendValueInput("sda")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("sda");
+    this.appendValueInput("scl")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("scl");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);

@@ -691,3 +691,39 @@ Blockly.JavaScript['wait_async'] = function(block) {
   var code = (dropdown_await==='true' ? "await " : "") + 'wait_async(' + value_msec + ');\n';
   return code;
 };
+
+Blockly.JavaScript['env_dht12_readtemperature'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'env.dht12_readTemperature().toFixed()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['env_dht12_readhumidity'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'env.dht12_readHumidity().toFixed()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['env_sht30_gettemperature'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'env.sht30_get().cTemp.toFixed()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['env_sht30_gethumidity'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'env.sht30_get().humidity.toFixed()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['wire_begin'] = function(block) {
+  var value_sda = Blockly.JavaScript.valueToCode(block, 'sda', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_scl = Blockly.JavaScript.valueToCode(block, 'scl', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.begin(' + value_sda + ', ' + value_scl + ');\n';
+  return code;
+};
