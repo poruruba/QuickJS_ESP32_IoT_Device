@@ -29,6 +29,8 @@ https://qiita.com/poruruba
   - WebAPI・BlocklyからLCDを操作できるように追加
 - 2022-4-10
   - MQTT機能の追加
+- 2022-4-16
+  - 温湿度センサ(SHT30、DH12)の追加
 
 ## 誤記訂正
 - 2022-03-31
