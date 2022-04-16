@@ -28,6 +28,7 @@
 #include "module_udp.h"
 #include "module_prefs.h"
 #include "module_mqtt.h"
+#include "module_env.h"
 #ifdef _AUDIO_ENABLE_
 #include "module_audio.h"
 #endif
@@ -58,6 +59,7 @@ static JsModuleEntry module_entries[] = {
   udp_module,
   prefs_module,
   mqtt_module,
+  env_module,
 #ifdef _AUDIO_ENABLE_
   audio_module,
 #endif

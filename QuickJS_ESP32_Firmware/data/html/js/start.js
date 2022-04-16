@@ -748,6 +748,11 @@ var vue_options = {
             //        this.workspace.addChangeListener(Blockly.Events.disableOrphans);
             });
         },
+        clearWorkspace: function(){
+            if( !confirm("ワークスペースを初期化しますか？") )
+                return;
+            this.workspace.clear();
+        }
     },
     created: function(){
     },

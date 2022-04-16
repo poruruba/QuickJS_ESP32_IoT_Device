@@ -7,7 +7,7 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
-#define MQTT_BUFFER_SIZE 256
+#define DEFAULT_MQTT_BUFFER_SIZE 256
 #define MQTT_CONNECT_TRY_COUNT 5
 
 static JSContext *g_ctx = NULL;
@@ -19,13 +19,14 @@ static char g_topic_name[33] = "";
 static JSValue g_callback_func = JS_UNDEFINED;
 static char g_received_topic[33] = "";
 static byte *g_received_payload = NULL;
+static uint16_t g_buffer_size;
 
 static void mqttCallback(char* topic, byte* payload, unsigned int length)
 {
   if(g_ctx == NULL || g_callback_func == JS_UNDEFINED)
     return;
   
-  if( length <= MQTT_BUFFER_SIZE - 1 && strlen(topic) < sizeof(g_received_topic) - 1){
+  if( length <= g_buffer_size - 1 && strlen(topic) < sizeof(g_received_topic) - 1){
     strcpy(g_received_topic, topic);
     g_received_payload = payload;
     g_received_payload[length] = '\0';
@@ -62,13 +63,14 @@ static void mqttDisconnect(void){
   g_ctx = NULL;
 }
 
-static boolean mqttConnect(JSContext *ctx, const char *client_name, const char *broker_url, uint16_t broker_port)
+static boolean mqttConnect(JSContext *ctx, const char *client_name, const char *broker_url, uint16_t broker_port, uint16_t buffer_size)
 {
   mqttDisconnect();
 
   strcpy(g_client_name, client_name);
 
-  mqttClient.setBufferSize(MQTT_BUFFER_SIZE);
+  g_buffer_size = buffer_size;
+  mqttClient.setBufferSize(g_buffer_size);
   mqttClient.setCallback(mqttCallback);
   mqttClient.setServer(broker_url, broker_port);
 
@@ -83,6 +85,10 @@ static JSValue mqtt_connect(JSContext *ctx, JSValueConst jsThis, int argc, JSVal
   if( client_name == NULL )
     return JS_EXCEPTION;
 
+  uint32_t buffer_size = DEFAULT_MQTT_BUFFER_SIZE;
+  if( argc >= 2 )
+      JS_ToUint32(ctx, &buffer_size, argv[0]);
+
   String server = read_config_string(CONFIG_FNAME_MQTT);
   int delim = server.indexOf(':');
   if( delim < 0 ){
@@ -91,7 +97,7 @@ static JSValue mqtt_connect(JSContext *ctx, JSValueConst jsThis, int argc, JSVal
   }
   String host = server.substring(0, delim);
   String port = server.substring(delim + 1);
-  mqttConnect(ctx, client_name, host.c_str(), port.toInt());
+  mqttConnect(ctx, client_name, host.c_str(), port.toInt(), buffer_size);
   JS_FreeCString(ctx, client_name);
 
   return JS_UNDEFINED;
@@ -200,7 +206,7 @@ static JSValue mqtt_getServer(JSContext *ctx, JSValueConst jsThis, int argc, JSV
 static const JSCFunctionListEntry mqtt_funcs[] = {
     JSCFunctionListEntry{
         "connect", 0, JS_DEF_CFUNC, 0, {
-          func : {1, JS_CFUNC_generic, mqtt_connect}
+          func : {2, JS_CFUNC_generic, mqtt_connect}
         }},
     JSCFunctionListEntry{
         "disconnect", 0, JS_DEF_CFUNC, 0, {
