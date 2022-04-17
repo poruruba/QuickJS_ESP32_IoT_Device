@@ -704,29 +704,33 @@ Blockly.JavaScript['wait_async'] = function(block) {
 };
 
 Blockly.JavaScript['env_dht12_readtemperature'] = function(block) {
+  var value_fixed = Blockly.JavaScript.valueToCode(block, 'fixed', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'env.dht12_readTemperature().toFixed()';
+  var code = 'parseFloat(env.dht12_readTemperature().toFixed(' + value_fixed + '))';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['env_dht12_readhumidity'] = function(block) {
+  var value_fixed = Blockly.JavaScript.valueToCode(block, 'fixed', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'env.dht12_readHumidity().toFixed()';
+  var code = 'parseFloat(env.dht12_readHumidity().toFixed(' + value_fixed + '))';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['env_sht30_gettemperature'] = function(block) {
+  var value_fixed = Blockly.JavaScript.valueToCode(block, 'fixed', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'env.sht30_get().cTemp.toFixed()';
+  var code = 'parseFloat(env.sht30_get().cTemp.toFixed(' + value_fixed + '))';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['env_sht30_gethumidity'] = function(block) {
+  var value_fixed = Blockly.JavaScript.valueToCode(block, 'fixed', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'env.sht30_get().humidity.toFixed()';
+  var code = 'parseFloat(env.sht30_get().humidity.toFixed(' + value_fixed + '))';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };

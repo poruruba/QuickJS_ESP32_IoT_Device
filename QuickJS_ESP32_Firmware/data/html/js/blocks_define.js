@@ -1640,6 +1640,11 @@ Blockly.Blocks['env_dht12_readtemperature'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Env.dht12_readTemperature");
+    this.appendValueInput("fixed")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("fixed");
+    this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
  this.setTooltip("");
@@ -1651,6 +1656,11 @@ Blockly.Blocks['env_dht12_readhumidity'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Env.dht12_readHumidity");
+    this.appendValueInput("fixed")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("fixed");
+    this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
  this.setTooltip("");
@@ -1662,6 +1672,11 @@ Blockly.Blocks['env_sht30_gethumidity'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Env.sht30_getHumidity");
+    this.appendValueInput("fixed")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("fixed");
+    this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
  this.setTooltip("");
@@ -1673,6 +1688,11 @@ Blockly.Blocks['env_sht30_gettemperature'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Env.sht30_getTemperature");
+    this.appendValueInput("fixed")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("fixed");
+    this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
  this.setTooltip("");

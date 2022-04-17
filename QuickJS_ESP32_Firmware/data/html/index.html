@@ -688,10 +688,26 @@
         </block>
       </category>
       <category name="Env">
-        <block type="env_dht12_readtemperature"></block>
-        <block type="env_dht12_readhumidity"></block>
-        <block type="env_sht30_gettemperature"></block>
-        <block type="env_sht30_gethumidity"></block>
+        <block type="env_dht12_readtemperature">
+          <value name="fixed">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="env_dht12_readhumidity">
+          <value name="fixed">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="env_sht30_gettemperature">
+          <value name="fixed">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="env_sht30_gethumidity">
+          <value name="fixed">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
       </category>
       <category name="Gpio">
         <block type="gpio_pinmode">
