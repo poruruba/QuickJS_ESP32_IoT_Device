@@ -132,10 +132,11 @@ long endp_code_download(JsonObject request, JsonObject response, int magic)
 
   g_fileloading = FILE_LOADING_NONE;
   if( p_fname == NULL ){
-    strncpy(g_download_buffer, js_code, js_code_size);
-    g_download_buffer[js_code_size] = '\0';
+    long ret = read_jscode(g_download_buffer, sizeof(g_download_buffer));
+    if( ret != 0 )
+      return ret;
   }else{
-    long ret = load_module(p_fname, g_download_buffer, sizeof(g_download_buffer));
+    long ret = read_module(p_fname, g_download_buffer, sizeof(g_download_buffer));
     if( ret != 0 )
       return ret;
   }
@@ -172,6 +173,21 @@ long endp_code_list(JsonObject request, JsonObject response, int magic)
     file = dir.openNextFile();
   }
   dir.close();
+
+  return 0;
+}
+
+long endp_code_eval(JsonObject request, JsonObject response, int magic)
+{
+  const char *code = request["code"];
+  if( code == NULL )
+    return -1;
+
+  if( (strlen(code) + 1) > FILE_BUFFER_SIZE )
+    return -1;
+
+  strcpy(g_download_buffer, code);
+  g_fileloading = FILE_LOADING_EXEC;
 
   return 0;
 }
@@ -213,6 +229,7 @@ EndpointEntry esp32_table[] = {
   EndpointEntry{ endp_code_download, "/code-download", 0 },
   EndpointEntry{ endp_code_delete, "/code-delete", 0 },
   EndpointEntry{ endp_code_list, "/code-list", 0 },
+  EndpointEntry{ endp_code_eval, "/code-eval", 0 },
   EndpointEntry{ endp_console_log, "/console-log", 0 },
 };
 const int num_of_esp32_entry = sizeof(esp32_table) / sizeof(EndpointEntry);

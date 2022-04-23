@@ -70,6 +70,10 @@ class Arduino{
       await this.webapi_request("/code-upload", { code: code } );
   }
 
+  async code_eval(code){
+    await this.webapi_request("/code-eval", { code: code } );
+  }
+  
   async code_download(fname){
     if( fname )
       return this.webapi_request("/code-download", {fname: fname} );

@@ -21,6 +21,7 @@ var vue_options = {
         base_url: base_url,
         ipaddress: "",
         macaddress: "",
+        exec_mode: "code",
 
         syslog_host: "",
         syslog_port: 514,
@@ -597,10 +598,14 @@ var vue_options = {
 		},
     	upload_textarea: async function(){
             try{
-                if( this.upload_mode == 'main')
+                if( this.upload_mode == 'main'){
+                    if( this.exec_mode == 'code')
                     await this.arduino.code_upload_main(this.input_text, this.chk_autoupdate);
-                else
+                    else if( this.exec_mode == 'eval')
+                        await this.arduino.code_eval(this.input_text);
+                }else{
                     await this.arduino.code_upload(this.input_text, this.module_name);
+                }
                 this.toast_show("アップロード", "アップロードしました。");
             }catch(error){
                 console.error(error);
@@ -626,13 +631,14 @@ var vue_options = {
 			a.remove();
 			URL.revokeObjectURL(url);
     	},
-		catch_tabKey: function( e ){
-			// Ctrl-sを無視
+		catch_tabKey: async function( e ){
+			// Ctrl-sをフック
  			if (e.keyCode == 83 && e.ctrlKey){
 				e.preventDefault();
 				if( !confirm("アップロードしますか？") )
 	 				return;
-	 			this.save_textarea();
+	 			await this.upload_textarea();
+                return;
  			}
 			// TABのみフック
 			if( e.keyCode != 9 )

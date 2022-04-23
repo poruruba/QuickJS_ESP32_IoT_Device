@@ -62,6 +62,7 @@
 #define FILE_LOADING_NONE     0
 #define FILE_LOADING_RESTART  1
 #define FILE_LOADING_REBOOT   2
+#define FILE_LOADING_EXEC     3
 #define FILE_LOADING_TEXT     4
 #define FILE_LOADING_PAUSE    5
 #define FILE_LOADING_START    6
@@ -70,8 +71,6 @@
 extern unsigned char g_fileloading;
 extern char g_download_buffer[FILE_BUFFER_SIZE];
 
-extern char *js_code;
-extern uint32_t js_code_size;
 extern bool g_autoupdate;
 
 extern SemaphoreHandle_t binSem;
@@ -79,7 +78,8 @@ extern SemaphoreHandle_t binSem;
 long save_jscode(const char *p_code);
 long save_module(const char* p_fname, const char *p_code);
 long delete_module(const char *p_fname);
-long load_module(const char* p_fname, char *p_buffer, uint32_t len);
+long read_module(const char* p_fname, char *p_buffer, uint32_t maxlen);
+long read_jscode(char *p_buffer, uint32_t maxlen);
 
 long read_config_long(uint16_t index, long def);
 long write_config_long(uint16_t index, long value);

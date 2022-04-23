@@ -31,8 +31,6 @@
 extern const char jscode_default[] asm("_binary_rom_default_js_start");
 extern const char jscode_epilogue[] asm("_binary_rom_epilogue_js_start");
 
-char *js_code = NULL;
-uint32_t js_code_size = 0;
 char *js_modules_code = NULL;
 bool g_autoupdate = false;
 
@@ -45,7 +43,7 @@ SemaphoreHandle_t binSem;
 
 static long m5_initialize(void);
 static long start_qjs(void);
-static long load_jscode(void);
+static char* load_jscode(void);
 static long load_all_modules(void);
 
 void notFound(AsyncWebServerRequest *request)
@@ -154,6 +152,7 @@ void loop()
 // FILE_LOADING_NONE
 // FILE_LOADING_RESTART
 // FILE_LOADING_REBOOT
+// FILE_LOADING_EXEC
 // FILE_LOADING_TEXT
 // FILE_LOADING_START
 // FILE_LOADING_STOPPING
@@ -188,6 +187,10 @@ void loop()
     }else{
       start_qjs();
     }
+  }else{
+    if( g_fileloading == FILE_LOADING_EXEC ){
+      qjs.exec(g_download_buffer);
+    }
   }
 
   delay(1);
@@ -202,16 +205,18 @@ static long start_qjs(void)
       Serial.println("[can't load module]");
     }
 
-  long ret2 = load_jscode();
-  if( ret2 == 0 ){
+  char *js_code = load_jscode();
+  if( js_code != NULL ){
     Serial.println("[executing]");
     qjs.exec(js_code);
+    free(js_code);
+    js_code = NULL;
   }else{
     Serial.println("[can't load main]");
     qjs.exec(jscode_default);
   }
 
-  return (ret2 == 0) ? ret1 : ret2;
+  return (js_code != NULL) ? ret1 : -1;
 }
 
 long save_jscode(const char *p_code)
@@ -225,40 +230,47 @@ long save_jscode(const char *p_code)
   return 0;
 }
 
-static long load_jscode(void)
+long read_jscode(char *p_buffer, uint32_t maxlen)
 {
-  if( js_code != NULL ){
-    free(js_code);
-    js_code = NULL;
+  if( !SPIFFS.exists(MAIN_FNAME) ){
+    p_buffer = '\0';
+    return 0;
+  }
+  File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
+  if( !fp )
+    return -1;
+  size_t size = fp.size();
+  if( size + 1 > maxlen ){
+    fp.close();
+    return -1;
+  }
+  fp.readBytes(p_buffer, size);
+  fp.close();
+  p_buffer[size] = '\0';
+
+  return 0;
   }
     
-  while(true){
+static char* load_jscode(void)
+{
     if( !SPIFFS.exists(MAIN_FNAME) )
-      break;
+    return NULL;
     File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
     if( !fp )
-      break;
+    return NULL;
     size_t size = fp.size();
-    js_code = (char*)malloc(size + strlen(jscode_epilogue) + 1);
+  char* js_code = (char*)malloc(size + strlen(jscode_epilogue) + 1);
     if( js_code == NULL ){
       fp.close();
-      break;
+    return NULL;
     }
     fp.readBytes(js_code, size);
     fp.close();
     js_code[size] = '\0';
-    js_code_size = strlen(js_code);
 
     strcat(js_code, jscode_epilogue);
 
-    return 0;
-  }
-
-  js_code = (char*)malloc(1);
-  js_code[0] = '\0';
-  js_code_size = 0;
-
-  return -1;
+  return js_code;
 }
 
 long save_module(const char* p_fname, const char *p_code)
@@ -278,7 +290,7 @@ long save_module(const char* p_fname, const char *p_code)
   return 0;
 }
 
-long load_module(const char* p_fname, char *p_buffer, uint32_t len)
+long read_module(const char* p_fname, char *p_buffer, uint32_t maxlen)
 {
   char filename[64];
   if( strlen(p_fname) > sizeof(filename) - strlen(MODULE_DIR) - 1)
@@ -290,7 +302,7 @@ long load_module(const char* p_fname, char *p_buffer, uint32_t len)
   if( !fp )
     return -1;
   uint32_t size = fp.size();
-  if( len < size + 1 ){
+  if( maxlen < size + 1 ){
     fp.close();
     return -1;
   }

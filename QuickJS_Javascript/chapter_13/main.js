@@ -1,4 +1,4 @@
-import * as input from "input";
+import * as input from "Input";
 import Test from "TestModule.js";
 
 var test = new Test();

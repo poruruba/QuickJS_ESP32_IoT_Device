@@ -481,14 +481,6 @@ class ESP32QuickJS {
     JS_ComputeMemoryUsage(this->rt, usage);
   }
 
-  void add_modules(JSValue global){
-    int num = sizeof(module_entries) / sizeof(JsModuleEntry);
-    for( int i = 0 ; i < num ; i++ ){
-      if( module_entries[i].addImpl != NULL )
-        module_entries[i].addImpl(ctx, global);
-    }
-  }
-
   void initialize_modules(void){
     int num = sizeof(module_entries) / sizeof(JsModuleEntry);
     for( int i = 0 ; i < num ; i++ ){
@@ -497,7 +489,21 @@ class ESP32QuickJS {
     }
   }
 
+  void add_modules(JSValue global){
+    if( rt == NULL )
+      return; 
+         
+    int num = sizeof(module_entries) / sizeof(JsModuleEntry);
+    for( int i = 0 ; i < num ; i++ ){
+      if( module_entries[i].addImpl != NULL )
+        module_entries[i].addImpl(ctx, global);
+    }
+  }
+
   void update_modules(void) {
+    if( rt == NULL )
+      return; 
+
     int num = sizeof(module_entries) / sizeof(JsModuleEntry);
     for( int i = 0 ; i < num ; i++ ){
       if( module_entries[i].loopImpl != NULL )
@@ -506,6 +512,9 @@ class ESP32QuickJS {
   }
 
   void end_modules(void){
+    if( rt == NULL )
+      return; 
+         
     int num = sizeof(module_entries) / sizeof(JsModuleEntry);
     for( int i = 0 ; i < num ; i++ ){
       if( module_entries[i].endImpl != NULL )
