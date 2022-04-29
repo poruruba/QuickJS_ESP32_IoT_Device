@@ -29,6 +29,7 @@
 #include "module_prefs.h"
 #include "module_mqtt.h"
 #include "module_env.h"
+#include "module_http.h"
 #ifdef _AUDIO_ENABLE_
 #include "module_audio.h"
 #endif
@@ -60,6 +61,7 @@ static JsModuleEntry module_entries[] = {
   prefs_module,
   mqtt_module,
   env_module,
+  http_module,
 #ifdef _AUDIO_ENABLE_
   audio_module,
 #endif

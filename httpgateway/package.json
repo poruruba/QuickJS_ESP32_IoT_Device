@@ -1,0 +1,32 @@
+{
+  "name": "amplify_template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "swagger": "node scripts/generate_swagger.js",
+    "build": "node scripts/copyall.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "jwt-decode": "^3.1.2",
+    "morgan": "^1.10.0",
+    "mqtt": "^4.2.8",
+    "multer": "^1.4.2",
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.7",
+    "path": "^0.12.7",
+    "yaml": "^1.10.0"
+  },
+  "devDependencies": {
+    "fs-extra": "^10.0.0"
+  }
+}

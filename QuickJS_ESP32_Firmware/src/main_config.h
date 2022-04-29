@@ -38,6 +38,7 @@
 #define CONFIG_FNAME  "/config.ini"
 #define CONFIG_FNAME_SYSLOG  "/syslog.ini"
 #define CONFIG_FNAME_MQTT  "/mqtt.ini"
+#define CONFIG_FNAME_GATEWAY  "/gateway.ini"
 
 #define CONFIG_INDEX_AUTOUPDATE 0
 

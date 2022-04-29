@@ -1,0 +1,46 @@
+swagger: '2.0'
+info:
+  version: 'first version'
+  title: Lambda Laboratory Server
+host: localhost:20080
+basePath: /
+
+schemes:
+  - http
+  - https
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+  tokenAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+  apikeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+#  jwtAuth:
+#    authorizationUrl: ""
+#    flow: "implicit"
+#    type: "oauth2"
+#    x-google-issuer: "https://cognito-idp.ap-northeast-1.amazonaws.com/【CognitoのプールID】"
+#    x-google-jwks_uri: "https://cognito-idp.ap-northeast-1.amazonaws.com/【CognitoのプールID】/.well-known/jwks.json"
+#    x-google-audiences: "【CognitoのアプリクライアントID】"
+
+paths: {}
+
+definitions:
+  Empty:
+    type: object
+    title: "Empty Schema"
+
+  CommonRequest:
+    type: object
+  CommonResponse:
+    type: object

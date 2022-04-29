@@ -1,0 +1,7 @@
+[
+	{
+		"enable": false,
+		"topic": "test-topic",
+		"handler": "handler"
+	}
+]

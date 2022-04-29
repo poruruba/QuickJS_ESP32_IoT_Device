@@ -1,0 +1,24 @@
+paths:
+  /swagger:
+    get:
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /cron:
+    get:
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /mqtt:
+    get:
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
