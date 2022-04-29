@@ -379,7 +379,7 @@ static JSValue esp32_lcd_createSpriteFromBmpFile(JSContext *ctx, JSValueConst js
 }
 #endif
 
-static JSValue esp32_lcd_freeSprites(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+static JSValue esp32_lcd_freeSprite(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
   uint32_t id;
   JS_ToUint32(ctx, &id, argv[0]);
@@ -561,7 +561,7 @@ static const JSCFunctionListEntry lcd_funcs[] = {
                            func : {1, JS_CFUNC_generic, esp32_lcd_createSpriteFromBmp}
                          }},
     JSCFunctionListEntry{"freeSprites", 0, JS_DEF_CFUNC, 0, {
-                           func : {1, JS_CFUNC_generic, esp32_lcd_freeSprites}
+                           func : {1, JS_CFUNC_generic, esp32_lcd_freeSprite}
                          }},
     JSCFunctionListEntry{"setPivot", 0, JS_DEF_CFUNC, 0, {
                            func : {3, JS_CFUNC_generic, esp32_lcd_setPivot}
