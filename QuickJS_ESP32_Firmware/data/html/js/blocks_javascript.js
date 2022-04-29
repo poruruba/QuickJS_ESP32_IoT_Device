@@ -735,10 +735,65 @@ Blockly.JavaScript['env_sht30_gethumidity'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
+Blockly.JavaScript['void'] = function(block) {
+  var value_value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = value_value + ';\n';
+  return code;
+};
+
 Blockly.JavaScript['wire_begin'] = function(block) {
   var value_sda = Blockly.JavaScript.valueToCode(block, 'sda', Blockly.JavaScript.ORDER_ATOMIC);
   var value_scl = Blockly.JavaScript.valueToCode(block, 'scl', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'wire.begin(' + value_sda + ', ' + value_scl + ');\n';
+  var code = 'wire.begin(' + value_sda + ', ' + value_scl + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['wire_requestfrom'] = function(block) {
+  var value_address = Blockly.JavaScript.valueToCode(block, 'address', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_count = Blockly.JavaScript.valueToCode(block, 'count', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_stop = Blockly.JavaScript.valueToCode(block, 'stop', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.requestFrom(' + value_address + ', ' + value_count + ', ' + value_stop +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['wire_begintransaction'] = function(block) {
+  var value_address = Blockly.JavaScript.valueToCode(block, 'address', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.beginTransaction(' + value_address + ');\n';
   return code;
+};
+
+Blockly.JavaScript['wire_endtransaction'] = function(block) {
+  var value_sendstop = Blockly.JavaScript.valueToCode(block, 'sendStop', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.endTransaction(' + value_sendstop + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['wire_write'] = function(block) {
+  var value_value = Blockly.JavaScript.valueToCode(block, 'value', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.write(' + value_value + ')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['wire_available'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.available()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['wire_read'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'wire.read()';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };

@@ -643,6 +643,7 @@
           </value>
         </block>
         <block type="update"></block>
+        <block type="void"></block>
       </category>
       <category name="Timer">
         <block type="millis"></block>
@@ -1134,25 +1135,19 @@
         <block type="pixels_getonoff"></block>
         <block type="pixels_setpixelcolor">
           <value name="index">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
         <block type="pixels_getpixelcolor">
           <value name="index">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
       </category>
       <category name="Udp">
         <block type="udp_recvbegin">
           <value name="port">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
         </block>
         <block type="udp_sendtext">
@@ -1162,9 +1157,7 @@
             </shadow>
           </value>
           <value name="port">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
+            <shadow type="math_number"></shadow>
           </value>
           <value name="text">
             <shadow type="text">
@@ -1180,6 +1173,8 @@
         <block type="utils_number2rgb"></block>
       </category>
       <category name="Wire">
+        <block type="void">
+          <value name="value">
         <block type="wire_begin">
           <value name="sda">
             <shadow type="math_number"></shadow>
@@ -1188,6 +1183,36 @@
             <shadow type="math_number"></shadow>
           </value>
         </block>
+          </value>
+        </block>
+        <block type="wire_requestfrom">
+          <value name="address">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="count">
+            <shadow type="math_number"></shadow>
+          </value>
+          <value name="stop">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+        </block>
+        <block type="wire_begintransaction">
+          <value name="address">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="wire_endtransaction">
+          <value name="sendStop">
+            <shadow type="logic_boolean"></shadow>
+          </value>
+        </block>
+        <block type="wire_write">
+          <value name="value">
+            <shadow type="math_number"></shadow>
+          </value>
+        </block>
+        <block type="wire_available"></block>
+        <block type="wire_read"></block>
       </category>
     </category>
 

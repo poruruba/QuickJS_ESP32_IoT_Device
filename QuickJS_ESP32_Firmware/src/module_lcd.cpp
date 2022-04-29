@@ -10,6 +10,8 @@
 #endif
 
 LGFX lcd;
+#define NUM_OF_SPRITE   5
+static LGFX_Sprite* sprites[NUM_OF_SPRITE];
 
 #define FONT_COLOR TFT_WHITE
 
@@ -330,6 +332,145 @@ static JSValue esp32_lcd_fillScreen(JSContext *ctx, JSValueConst jsThis, int arg
   return JS_UNDEFINED;
 }
 
+static JSValue esp32_lcd_createSpriteFromBmp(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  uint8_t *p_buffer;
+  uint8_t unit_size;
+  uint32_t bsize;
+  JSValue vbuffer = getArrayBuffer(ctx, argv[0], (void**)&p_buffer, &unit_size, &bsize);
+  if( JS_IsNull(vbuffer) )
+    return JS_EXCEPTION;
+  if( unit_size != 1 ){
+    JS_FreeValue(ctx, vbuffer);
+    return JS_EXCEPTION;
+  }
+
+  for( int i = 0 ; i < NUM_OF_SPRITE ; i++ ){
+    if(sprites[i] == NULL ){
+      sprites[i] = new LGFX_Sprite(&lcd);
+      sprites[i]->createFromBmp(p_buffer, bsize);
+      JS_FreeValue(ctx, vbuffer);
+      return JS_NewUint32(ctx, i);
+    }
+  }
+  JS_FreeValue(ctx, vbuffer);
+
+  return JS_EXCEPTION;
+}
+
+#ifdef _SD_ENABLE_
+static JSValue esp32_lcd_createSpriteFromBmpFile(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  const char *path = JS_ToCString(ctx, argv[0]);
+  if( path == NULL )
+    return JS_EXCEPTION;
+
+  for( int i = 0 ; i < NUM_OF_SPRITE ; i++ ){
+    if(sprites[i] == NULL ){
+      sprites[i] = new LGFX_Sprite(&lcd);
+      sprites[i]->createFromBmpFile(SD, path);
+      JS_FreeCString(ctx, path);
+      return JS_NewUint32(ctx, i);
+    }
+  }
+  JS_FreeCString(ctx, path);
+
+  return JS_EXCEPTION;
+}
+#endif
+
+static JSValue esp32_lcd_freeSprites(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  uint32_t id;
+  JS_ToUint32(ctx, &id, argv[0]);
+
+  if( id >= NUM_OF_SPRITE )
+    return JS_EXCEPTION;
+
+  if( sprites[id] == NULL )
+    return JS_UNDEFINED;
+  
+  delete sprites[id];
+  sprites[id] = NULL;
+
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_lcd_setPivot(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  uint32_t id;
+  JS_ToUint32(ctx, &id, argv[0]);
+
+  if( id >= NUM_OF_SPRITE )
+    return JS_EXCEPTION;
+
+  if( sprites[id] == NULL )
+    return JS_EXCEPTION;
+  
+  double x, y;
+  JS_ToFloat64(ctx, &x, argv[1]);
+  JS_ToFloat64(ctx, &y, argv[2]);
+
+  sprites[id]->setPivot(x, y);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_lcd_pushSprite(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  uint32_t id;
+  JS_ToUint32(ctx, &id, argv[0]);
+  
+  if( id >= NUM_OF_SPRITE )
+    return JS_EXCEPTION;
+
+  if( sprites[id] == NULL )
+    return JS_EXCEPTION;
+  
+  int32_t x, y;
+  JS_ToInt32(ctx, &x, argv[1]);
+  JS_ToInt32(ctx, &y, argv[2]);
+
+  if( argc >= 4 ){
+    uint32_t transp;
+    JS_ToUint32(ctx, &transp, argv[3]);
+    sprites[id]->pushSprite(x, y, transp);
+  }else{
+    sprites[id]->pushSprite(x, y);
+  }
+
+  return JS_UNDEFINED;
+}
+
+static JSValue esp32_lcd_pushRotateZoom(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+{
+  uint32_t id;
+  JS_ToUint32(ctx, &id, argv[0]);
+  
+  if( id >= NUM_OF_SPRITE )
+    return JS_EXCEPTION;
+
+  if( sprites[id] == NULL )
+    return JS_EXCEPTION;
+  
+  double dst_x, dst_y, angle, zoom_x, zoom_y;
+  JS_ToFloat64(ctx, &dst_x, argv[1]);
+  JS_ToFloat64(ctx, &dst_y, argv[2]);
+  JS_ToFloat64(ctx, &angle, argv[3]);
+  JS_ToFloat64(ctx, &zoom_x, argv[4]);
+  JS_ToFloat64(ctx, &zoom_y, argv[5]);
+
+  if( argc >= 7 ){
+    uint32_t transp;
+    JS_ToUint32(ctx, &transp, argv[6]);
+    sprites[id]->pushRotateZoom(dst_x, dst_y, angle, zoom_x, zoom_y, transp);
+  }else{
+    sprites[id]->pushRotateZoom(dst_x, dst_y, angle, zoom_x, zoom_y);
+  }
+
+  return JS_UNDEFINED;
+}
+
 static const JSCFunctionListEntry lcd_funcs[] = {
     JSCFunctionListEntry{"setRotation", 0, JS_DEF_CFUNC, 0, {
                            func : {1, JS_CFUNC_generic, esp32_lcd_setRotation}
@@ -411,7 +552,26 @@ static const JSCFunctionListEntry lcd_funcs[] = {
     JSCFunctionListEntry{"fontHeight", 0, JS_DEF_CFUNC, FUNC_TYPE_FONTHEIGHT, {
                            func : {0, JS_CFUNC_generic_magic, {generic_magic : esp32_lcd_getMetric}}
                          }},
-
+#ifdef _SD_ENABLE_
+    JSCFunctionListEntry{"createSpriteFromBmpFile", 0, JS_DEF_CFUNC, 0, {
+                           func : {1, JS_CFUNC_generic, esp32_lcd_createSpriteFromBmpFile}
+                         }},
+#endif
+    JSCFunctionListEntry{"createSpriteFromBmp", 0, JS_DEF_CFUNC, 0, {
+                           func : {1, JS_CFUNC_generic, esp32_lcd_createSpriteFromBmp}
+                         }},
+    JSCFunctionListEntry{"freeSprites", 0, JS_DEF_CFUNC, 0, {
+                           func : {1, JS_CFUNC_generic, esp32_lcd_freeSprites}
+                         }},
+    JSCFunctionListEntry{"setPivot", 0, JS_DEF_CFUNC, 0, {
+                           func : {3, JS_CFUNC_generic, esp32_lcd_setPivot}
+                         }},
+    JSCFunctionListEntry{"pushSprite", 0, JS_DEF_CFUNC, 0, {
+                           func : {4, JS_CFUNC_generic, esp32_lcd_pushSprite}
+                         }},
+    JSCFunctionListEntry{"pushRotateZoom", 0, JS_DEF_CFUNC, 0, {
+                           func : {7, JS_CFUNC_generic, esp32_lcd_pushRotateZoom}
+                         }},
     JSCFunctionListEntry{
         "top_left", 0, JS_DEF_PROP_INT32, 0, {
           i32 : lgfx::top_left
@@ -493,9 +653,19 @@ long initialize_lcd(void)
   return 0;
 }
 
+void endModule_lcd(void)
+{
+  for( int i = 0 ; i < NUM_OF_SPRITE ; i++ ){
+    if( sprites[i] != NULL ){
+      delete sprites[i];
+      sprites[i] = NULL;
+    }
+  }
+}
+
 JsModuleEntry lcd_module = {
   initialize_lcd,
   addModule_lcd,
   NULL,
-  NULL
+  endModule_lcd
 };

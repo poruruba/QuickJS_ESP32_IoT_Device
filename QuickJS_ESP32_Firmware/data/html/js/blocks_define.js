@@ -1700,6 +1700,19 @@ Blockly.Blocks['env_sht30_gettemperature'] = {
   }
 };
 
+Blockly.Blocks['void'] = {
+  init: function() {
+    this.appendValueInput("value")
+        .setCheck(null);
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
 Blockly.Blocks['wire_begin'] = {
   init: function() {
     this.appendDummyInput()
@@ -1713,8 +1726,104 @@ Blockly.Blocks['wire_begin'] = {
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("scl");
     this.setInputsInline(true);
+    this.setOutput(true, "Boolean");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_requestfrom'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.requestFrom");
+    this.appendValueInput("address")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("address");
+    this.appendValueInput("count")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("count");
+    this.appendValueInput("stop")
+        .setCheck("Boolean")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("stop");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_begintransaction'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.beginTransaction");
+    this.appendValueInput("address")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("address");
+    this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_endtransaction'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.endTransaction");
+    this.appendValueInput("sendStop")
+        .setCheck("Boolean")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("sendStop");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_write'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.write");
+    this.appendValueInput("value")
+        .setCheck("Number")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("value");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_available'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.available");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wire_read'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Wire.read");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
     this.setColour(230);
  this.setTooltip("");
  this.setHelpUrl("");

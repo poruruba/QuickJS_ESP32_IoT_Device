@@ -271,6 +271,10 @@ var vue_options = {
             if( files.length == 0 ){
               return;
             }
+            if( !this.sd_filename ){
+                alert('ファイル名を指定してください。');
+                return;
+            }
             var file = files[0];
 
             if( !confirm(this.sd_filename + " という名前でアップロードします。よろしいですか？") )
