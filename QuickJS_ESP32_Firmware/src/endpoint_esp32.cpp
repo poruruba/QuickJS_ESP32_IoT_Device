@@ -130,7 +130,6 @@ long endp_code_download(JsonObject request, JsonObject response, int magic)
 {
   const char *p_fname = request["fname"];
 
-  g_fileloading = FILE_LOADING_NONE;
   if( p_fname == NULL ){
     long ret = read_jscode(g_download_buffer, sizeof(g_download_buffer));
     if( ret != 0 )
