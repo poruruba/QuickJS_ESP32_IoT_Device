@@ -33,6 +33,9 @@ https://qiita.com/poruruba
   - 温湿度センサ(SHT30、DH12)の追加
 - 2022-4-29
   - LCDにスプライト表示を追加
+- 2022-5-1
+  - audioにpause/resumeを追加
+  - udpのcheckRecvの仕様を変更
   
 ## 誤記訂正
 - 2022-03-31
@@ -43,3 +46,5 @@ https://qiita.com/poruruba
   - Syslog出力を追加
   - IPアドレス指定方法を変更
   - Blocklyにおいて、Javascript出力でpressになっていたのを修正
+- 2022-5-1
+  - Audioのdispose方法を修正
