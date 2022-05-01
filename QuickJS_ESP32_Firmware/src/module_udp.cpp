@@ -105,11 +105,19 @@ static JSValue esp32_udp_checkRecvBinary(JSContext *ctx, JSValueConst jsThis, in
   JSValue value = JS_NewArrayBufferCopy(ctx, p_buffer, len);
   free(p_buffer);
 
-  return value;
+  String remoteIp = udp.remoteIP().toString();
+  uint16_t port = udp.remotePort();
+
+  JSValue obj = JS_NewObject(ctx);
+  JS_SetPropertyStr(ctx, obj, "payload", value);
+  JS_SetPropertyStr(ctx, obj, "remoteIp", JS_NewString(ctx, remoteIp.c_str()));
+  JS_SetPropertyStr(ctx, obj, "remotePort", JS_NewUint32(ctx, port));
+
+  return obj;
 }
 
 static JSValue esp32_udp_checkRecvText(JSContext *ctx, JSValueConst jsThis, int argc,
-                                      JSValueConst *argv)
+                                      JSValueConst *argv, int magic)
 {
   int packetSize = udp.parsePacket();
   if( packetSize <= 0 )
@@ -129,7 +137,19 @@ static JSValue esp32_udp_checkRecvText(JSContext *ctx, JSValueConst jsThis, int 
   JSValue value = JS_NewString(ctx, p_buffer);
   free(p_buffer);
 
-  return value;
+  if( magic == 0 ){
+  String remoteIp = udp.remoteIP().toString();
+  uint16_t port = udp.remotePort();
+
+  JSValue obj = JS_NewObject(ctx);
+  JS_SetPropertyStr(ctx, obj, "payload", value);
+  JS_SetPropertyStr(ctx, obj, "remoteIp", JS_NewString(ctx, remoteIp.c_str()));
+  JS_SetPropertyStr(ctx, obj, "remotePort", JS_NewUint32(ctx, port));
+
+  return obj;
+  }else{
+    return value;
+  }
 }
 
 
@@ -146,8 +166,13 @@ static const JSCFunctionListEntry udp_funcs[] = {
     JSCFunctionListEntry{"recvStop", 0, JS_DEF_CFUNC, 0, {
                            func : {0, JS_CFUNC_generic, esp32_udp_recvStop}
                          }},
-    JSCFunctionListEntry{"checkRecvText", 0, JS_DEF_CFUNC, 0, {
-                           func : {0, JS_CFUNC_generic, esp32_udp_checkRecvText}
+    JSCFunctionListEntry{
+        "checkRecvText", 0, JS_DEF_CFUNC, 0, {
+          func : {0, JS_CFUNC_generic_magic, {generic_magic : esp32_udp_checkRecvText}}
+        }},
+    JSCFunctionListEntry{
+        "checkRecv", 0, JS_DEF_CFUNC, 1, {
+          func : {0, JS_CFUNC_generic_magic, {generic_magic : esp32_udp_checkRecvText}}
                          }},
     JSCFunctionListEntry{"checkRecvBinary", 0, JS_DEF_CFUNC, 0, {
                            func : {0, JS_CFUNC_generic, esp32_udp_checkRecvBinary}

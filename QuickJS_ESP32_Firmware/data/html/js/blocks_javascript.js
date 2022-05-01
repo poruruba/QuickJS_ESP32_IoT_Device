@@ -222,7 +222,7 @@ Blockly.JavaScript['udp_recvstop'] = function(block) {
 
 Blockly.JavaScript['udp_checkrecvtext'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
-  var code = 'udp.checkRecvText()';
+  var code = 'udp.checkRecv()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };

@@ -278,7 +278,7 @@ static JSValue sd_isDirectory(JSContext *ctx, JSValueConst jsThis, int argc, JSV
   const char *fname = JS_ToCString(ctx, argv[0]);
   if( fname == NULL )
     return JS_EXCEPTION;
-  File file = SD.open(fname, FILE_READ);
+  File file = SD.open(fname);
   JS_FreeCString(ctx, fname);
   if( !file )
     return JS_EXCEPTION;
@@ -294,7 +294,7 @@ static JSValue sd_list(JSContext *ctx, JSValueConst jsThis, int argc, JSValueCon
   const char *fname = JS_ToCString(ctx, argv[0]);
   if( fname == NULL )
     return JS_EXCEPTION;
-  File base = SD.open(fname, FILE_READ);
+  File base = SD.open(fname);
   JS_FreeCString(ctx, fname);
   if( !base )
     return JS_EXCEPTION;

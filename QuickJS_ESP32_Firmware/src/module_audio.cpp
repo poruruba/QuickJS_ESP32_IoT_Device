@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "quickjs.h"
+#include "main_config.h"
 #include "module_type.h"
 #include "module_utils.h"
 #include "module_audio.h"
@@ -19,31 +20,44 @@ static AudioFileSourceSD *file_sd = NULL;
 static AudioFileSourceHTTPStream *file_http = NULL;
 static AudioFileSourceBuffer *buff = NULL;
 static float audio_gain = DEFAULT_AUDIO_GAIN;
+static bool audio_paused = false;
 
 #define AUDIO_BUFFER_SIZE 1024
 
 static void audio_source_dispose(void){
   if( mp3 != NULL ){
     mp3->stop();
+  }
+
+  if( buff != NULL ){
+    buff->close();
+  }
+  if( file_sd != NULL ){
+    file_sd->close();
+  }
+  if( file_http != NULL ){
+    file_http->close();
+  }
+
+  if( mp3 != NULL ){
     delete mp3;
     mp3 = NULL;
   }
 
   if( buff != NULL ){
-    buff->close();
     delete buff;
     buff = NULL;
   }
   if( file_sd != NULL ){
-    file_sd->close();
     delete file_sd;
     file_sd = NULL;
   }
   if( file_http != NULL ){
-    file_http->close();
     delete file_http;
     file_http = NULL;
   }
+
+  audio_paused = false;
 }
 
 static JSValue audio_begin(JSContext *ctx, JSValueConst jsThis, int argc,
@@ -88,12 +102,33 @@ static JSValue audio_update(JSContext *ctx, JSValueConst jsThis, int argc,
 {
   if( mp3 != NULL ){
     if (mp3->isRunning()) {
+      if( !audio_paused ){
       if (!mp3->loop())
         mp3->stop();
     }
   }
+  }
 
-  return 0;
+  return JS_UNDEFINED;
+}
+
+static JSValue audio_pause(JSContext *ctx, JSValueConst jsThis, int argc,
+                               JSValueConst *argv, int magic)
+{
+  if( mp3 != NULL ){
+    if (mp3->isRunning()) {
+      if( magic == 0 ){
+        out->SetGain(audio_gain/100.0);
+        audio_paused = false;
+      }else{
+        out->SetGain(0/100.0);
+        out->flush();
+        audio_paused = true;
+      }
+    }
+  }
+
+  return JS_UNDEFINED;
 }
 
 static JSValue audio_playUrl(JSContext *ctx, JSValueConst jsThis, int argc,
@@ -194,6 +229,14 @@ static const JSCFunctionListEntry audio_funcs[] = {
     JSCFunctionListEntry{"update", 0, JS_DEF_CFUNC, 0, {
                            func : {0, JS_CFUNC_generic, audio_update}
                          }},
+    JSCFunctionListEntry{
+        "pause", 0, JS_DEF_CFUNC, 1, {
+          func : {0, JS_CFUNC_generic_magic, {generic_magic : audio_pause}}
+        }},
+    JSCFunctionListEntry{
+        "resume", 0, JS_DEF_CFUNC, 0, {
+          func : {0, JS_CFUNC_generic_magic, {generic_magic : audio_pause}}
+        }},
     JSCFunctionListEntry{"playUrl", 0, JS_DEF_CFUNC, 0, {
                            func : {2, JS_CFUNC_generic, audio_playUrl}
                          }},
