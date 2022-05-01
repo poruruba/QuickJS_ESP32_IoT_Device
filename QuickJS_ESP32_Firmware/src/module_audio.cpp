@@ -57,8 +57,8 @@ static void audio_source_dispose(void){
     file_http = NULL;
   }
 
-  if( out != NULL )
-    out->SetGain(audio_gain/100.0);
+//  if( out != NULL )
+//    out->SetGain(audio_gain/100.0);
   audio_paused = false;
 }
 
@@ -152,6 +152,7 @@ static JSValue audio_playUrl(JSContext *ctx, JSValueConst jsThis, int argc,
   file_http = new AudioFileSourceHTTPStream(url);
   buff = new AudioFileSourceBuffer(file_http, bufsize);
   mp3 = new AudioGeneratorMP3();
+  out->SetGain(audio_gain / 100.0);
   bool ret = mp3->begin(buff, out);
 
   return JS_NewBool(ctx, ret);
@@ -176,6 +177,7 @@ static JSValue audio_playSd(JSContext *ctx, JSValueConst jsThis, int argc,
     return JS_EXCEPTION;
   }
   mp3 = new AudioGeneratorMP3();
+  out->SetGain(audio_gain / 100.0);
   bool ret = mp3->begin(file_sd, out);
 
   return JS_NewBool(ctx, ret);
