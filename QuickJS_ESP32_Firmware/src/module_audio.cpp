@@ -57,6 +57,8 @@ static void audio_source_dispose(void){
     file_http = NULL;
   }
 
+  if( out != NULL )
+    out->SetGain(audio_gain/100.0);
   audio_paused = false;
 }
 
