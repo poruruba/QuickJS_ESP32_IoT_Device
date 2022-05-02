@@ -9,11 +9,12 @@
 #include "main_config.h"
 
 #include "endpoint_types.h"
+#include "endpoint_packet.h"
+
 #include "endpoint_esp32.h"
 #include "endpoint_gpio.h"
 #include "endpoint_ledc.h"
 #include "endpoint_wire.h"
-#include "endpoint_packet.h"
 #include "endpoint_prefs.h"
 #ifdef _RTC_ENABLE_
 #include "endpoint_rtc.h"

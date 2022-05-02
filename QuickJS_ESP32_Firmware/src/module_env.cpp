@@ -6,6 +6,8 @@
 #include "SHT3X.h"
 #include "DHT12.h"
 
+#ifdef _ENV_ENABLE_
+
 static DHT12 dht12;
 static SHT3X sht30;
 
@@ -73,3 +75,5 @@ JsModuleEntry env_module = {
   NULL,
   NULL
 };
+
+#endif

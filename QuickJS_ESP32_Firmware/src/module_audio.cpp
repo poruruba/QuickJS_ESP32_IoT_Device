@@ -25,19 +25,14 @@ static bool audio_paused = false;
 #define AUDIO_BUFFER_SIZE 1024
 
 static void audio_source_dispose(void){
-  if( mp3 != NULL ){
+  if( mp3 != NULL )
     mp3->stop();
-  }
-
-  if( buff != NULL ){
+  if( buff != NULL )
     buff->close();
-  }
-  if( file_sd != NULL ){
+  if( file_sd != NULL )
     file_sd->close();
-  }
-  if( file_http != NULL ){
+  if( file_http != NULL )
     file_http->close();
-  }
 
   if( mp3 != NULL ){
     delete mp3;
@@ -57,8 +52,6 @@ static void audio_source_dispose(void){
     file_http = NULL;
   }
 
-//  if( out != NULL )
-//    out->SetGain(audio_gain/100.0);
   audio_paused = false;
 }
 

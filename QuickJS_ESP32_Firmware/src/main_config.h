@@ -4,11 +4,17 @@
 #include <Arduino.h>
 #if defined(ARDUINO_M5Stack_ATOM)
 #include <M5Atom.h>
+#define _HTTP_ENABLE_
+#define _MQTT_ENABLE_
+#define _ENV_ENABLE_
 #define _IMU_ENABLE_
 #define _AUDIO_ENABLE_
 #define MDNS_NAME "QuickJS_ESP32_M5Atom" // mDNSサービスホスト名
 #elif defined(ARDUINO_M5Stick_C)
 #include <M5StickC.h>
+#define _HTTP_ENABLE_
+#define _MQTT_ENABLE_
+#define _ENV_ENABLE_
 #define _LCD_ENABLE_
 #define _RTC_ENABLE_
 #define _IMU_ENABLE_
@@ -17,6 +23,9 @@
 #elif defined(ARDUINO_M5STACK_FIRE)
 #define M5STACK_MPU6886
 #include <M5Stack.h>
+#define _HTTP_ENABLE_
+#define _MQTT_ENABLE_
+#define _ENV_ENABLE_
 #define _LCD_ENABLE_
 #define _SD_ENABLE_
 #define _IMU_ENABLE_
@@ -24,6 +33,9 @@
 #define MDNS_NAME "QuickJS_ESP32_M5Stack" // mDNSサービスホスト名
 #elif defined(ARDUINO_M5STACK_Core2)
 #include <M5Core2.h>
+#define _HTTP_ENABLE_
+#define _MQTT_ENABLE_
+#define _ENV_ENABLE_
 #define _LCD_ENABLE_
 #define _RTC_ENABLE_
 #define _IMU_ENABLE_
