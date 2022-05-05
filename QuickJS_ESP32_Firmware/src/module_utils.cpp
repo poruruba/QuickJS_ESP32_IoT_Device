@@ -415,6 +415,52 @@ static JSValue utils_number2rgb(JSContext *ctx, JSValueConst jsThis,
   return JS_NewString(ctx, temp);
 }
 
+
+static JSValue utils_toRgb565(JSContext *ctx, JSValueConst jsThis,
+                                     int argc, JSValueConst *argv)
+{
+  int32_t red, green, blue;
+  JS_ToInt32(ctx, &red, argv[0]);
+  JS_ToInt32(ctx, &green, argv[1]);
+  JS_ToInt32(ctx, &blue, argv[2]);
+
+	uint16_t _color;
+	_color = (uint16_t)(red & 0xF8) << 8;
+	_color |= (uint16_t)(green & 0xFC) << 3;
+	_color |= (uint16_t)(blue & 0xF8) >> 3;
+
+  return JS_NewUint32(ctx, _color);
+}
+
+static JSValue utils_toRgb888(JSContext *ctx, JSValueConst jsThis,
+                                     int argc, JSValueConst *argv)
+{
+  int32_t red, green, blue;
+  JS_ToInt32(ctx, &red, argv[0]);
+  JS_ToInt32(ctx, &green, argv[1]);
+  JS_ToInt32(ctx, &blue, argv[2]);
+
+	uint32_t _color;
+	_color = (uint32_t)(red & 0xFF) << 16;
+	_color |= (uint32_t)(green & 0xFF) << 8;
+	_color |= (uint32_t)(blue & 0xFF) << 0;
+
+  return JS_NewUint32(ctx, _color);
+}
+
+static JSValue utils_rgb2Gray(JSContext *ctx, JSValueConst jsThis,
+                                     int argc, JSValueConst *argv)
+{
+  int32_t red, green, blue;
+  JS_ToInt32(ctx, &red, argv[0]);
+  JS_ToInt32(ctx, &green, argv[1]);
+  JS_ToInt32(ctx, &blue, argv[2]);
+
+	uint8_t _color = (red & 0xff) * 0.3 + (green & 0xff) * 0.59 + (blue & 0xff) * 0.11;
+
+  return JS_NewUint32(ctx, _color);
+}
+
 static const JSCFunctionListEntry utils_funcs[] = {
     JSCFunctionListEntry{"httpPostJson", 0, JS_DEF_CFUNC, 0, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json}}
@@ -443,6 +489,18 @@ static const JSCFunctionListEntry utils_funcs[] = {
     JSCFunctionListEntry{"number2Rgb", 0, JS_DEF_CFUNC, 0, {
                           func : {1, JS_CFUNC_generic, utils_number2rgb}
                         }},
+    JSCFunctionListEntry{
+                      "toRgb565", 0, JS_DEF_CFUNC, 0, {
+                        func : {3, JS_CFUNC_generic, utils_toRgb565}
+                      }},
+    JSCFunctionListEntry{
+                      "toRgb888", 0, JS_DEF_CFUNC, 0, {
+                        func : {3, JS_CFUNC_generic, utils_toRgb888}
+                      }},
+    JSCFunctionListEntry{
+                      "rgb2Gray", 0, JS_DEF_CFUNC, 0, {
+                        func : {3, JS_CFUNC_generic, utils_rgb2Gray}
+                      }},
 };
 
 JSModuleDef *addModule_utils(JSContext * ctx, JSValue global)

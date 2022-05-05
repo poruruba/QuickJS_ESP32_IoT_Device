@@ -153,13 +153,13 @@ long module_lcd_setFont(uint16_t size)
 {
   switch (size){
 //    case 8 : lcd.setFont(&fonts::lgfxJapanGothic_8); break;
-//    case 12 : lcd.setFont(&fonts::lgfxJapanGothic_12); break;
-    case 16 : lcd.setFont(&fonts::lgfxJapanGothic_16); break;
+    case 12 : lcd.setFont(&fonts::lgfxJapanGothic_12); break;
+//    case 16 : lcd.setFont(&fonts::lgfxJapanGothic_16); break;
 //    case 20 : lcd.setFont(&fonts::lgfxJapanGothic_20); break;
 //    case 24 : lcd.setFont(&fonts::lgfxJapanGothic_24); break;
 //    case 28 : lcd.setFont(&fonts::lgfxJapanGothic_28); break;
-//    case 32 : lcd.setFont(&fonts::lgfxJapanGothic_32); break;
-    case 36 : lcd.setFont(&fonts::lgfxJapanGothic_36); break;
+    case 32 : lcd.setFont(&fonts::lgfxJapanGothic_32); break;
+//    case 36 : lcd.setFont(&fonts::lgfxJapanGothic_36); break;
 //    case 40 : lcd.setFont(&fonts::lgfxJapanGothic_40); break;
   }
 

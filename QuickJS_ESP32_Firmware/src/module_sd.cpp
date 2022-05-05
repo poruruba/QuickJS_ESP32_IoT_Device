@@ -383,15 +383,8 @@ JSModuleDef *addModule_sd(JSContext *ctx, JSValue global)
   return mod;
 }
 
-long initialize_sd(void)
-{
-  bool ret = SD.begin();
-
-  return ret ? 0 : -1;
-}
-
 JsModuleEntry sd_module = {
-  initialize_sd,
+  NULL,
   addModule_sd,
   NULL,
   NULL

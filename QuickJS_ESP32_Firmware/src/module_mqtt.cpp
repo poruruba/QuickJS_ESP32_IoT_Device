@@ -10,6 +10,8 @@
 #define DEFAULT_MQTT_BUFFER_SIZE 256
 #define MQTT_CONNECT_TRY_COUNT 5
 
+#ifdef _MQTT_ENABLE_
+
 static JSContext *g_ctx = NULL;
 
 static WiFiClient wifiClient;
@@ -316,3 +318,5 @@ JsModuleEntry mqtt_module = {
   loopModule_mqtt,
   endModule_mqtt
 };
+
+#endif

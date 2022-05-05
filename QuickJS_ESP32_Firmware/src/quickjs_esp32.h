@@ -27,9 +27,27 @@
 #include "module_ir.h"
 #include "module_udp.h"
 #include "module_prefs.h"
-#include "module_mqtt.h"
-#include "module_env.h"
+#ifdef _UNIT_PBHUB_ENABLE_
+#include "module_unit_pbhub.h"
+#endif
+#ifdef _UNIT_GAS_ENABLE_
+#include "module_unit_gas.h"
+#endif
+#ifdef _UNIT_GESTURE_ENABLE_
+#include "module_unit_gesture.h"
+#endif
+#ifdef _UNIT_COLOR_ENABLE_
+#include "module_unit_color.h"
+#endif
+#ifdef _HTTP_ENABLE_
 #include "module_http.h"
+#endif
+#ifdef _MQTT_ENABLE_
+#include "module_mqtt.h"
+#endif
+#ifdef _ENV_ENABLE_
+#include "module_env.h"
+#endif
 #ifdef _AUDIO_ENABLE_
 #include "module_audio.h"
 #endif
@@ -59,9 +77,27 @@ static JsModuleEntry module_entries[] = {
   ir_module,
   udp_module,
   prefs_module,
-  mqtt_module,
-  env_module,
+#ifdef _UNIT_PBHUB_ENABLE_
+  unit_pbhub_module,
+#endif
+#ifdef _UNIT_GAS_ENABLE_
+  unit_gas_module,
+#endif
+#ifdef _UNIT_GESTURE_ENABLE_
+  unit_gesture_module,
+#endif
+#ifdef _UNIT_COLOR_ENABLE_
+  unit_color_module,
+#endif
+#ifdef _HTTP_ENABLE_
   http_module,
+#endif
+#ifdef _MQTT_ENABLE_
+  mqtt_module,
+#endif
+#ifdef _ENV_ENABLE_
+  env_module,
+#endif
 #ifdef _AUDIO_ENABLE_
   audio_module,
 #endif
