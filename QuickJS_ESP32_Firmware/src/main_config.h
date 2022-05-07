@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #define _UNIT_COLOR_ENABLE_
+#define _UNIT_SONICIO_ENABLE_
 #define _UNIT_GAS_ENABLE_
 #define _UNIT_GESTURE_ENABLE_
 #define _UNIT_PBHUB_ENABLE_

@@ -36,7 +36,7 @@ static const JSCFunctionListEntry unit_gas_funcs[] = {
           func : {0, JS_CFUNC_generic, unit_gas_begin}
         }},
     JSCFunctionListEntry{
-        "IAQmeature", 0, JS_DEF_CFUNC, 0, {
+        "IAQmeasure", 0, JS_DEF_CFUNC, 0, {
           func : {0, JS_CFUNC_generic, unit_gas_iaqMeature}
         }},
 };
