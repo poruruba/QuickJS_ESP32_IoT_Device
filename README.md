@@ -36,6 +36,8 @@ https://qiita.com/poruruba
 - 2022-5-1
   - audioにpause/resumeを追加
   - udpのcheckRecvの仕様を変更
+- 2022-5-7
+  - 各種M5ユニット用ライブラリを追加
   
 ## 誤記訂正
 - 2022-03-31
