@@ -492,10 +492,10 @@ Blockly.Blocks['udp_recvstop'] = {
   }
 };
 
-Blockly.Blocks['udp_checkrecvtext'] = {
+Blockly.Blocks['udp_checkrecv'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Udp.checkRecvText");
+        .appendField("Udp.checkRecv");
     this.setInputsInline(true);
     this.setOutput(true, "String");
     this.setColour(230);
@@ -600,11 +600,11 @@ Blockly.Blocks['lcd_settextsize'] = {
 Blockly.Blocks['lcd_settextdatum'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Lcd.setDatum");
+        .appendField("Lcd.setTextDatum");
     this.appendDummyInput()
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("datum")
-        .appendField(new Blockly.FieldDropdown([["top_left","lcd.top_left"], ["top_center","lcd.top_center"], ["lcd_right","lcd.lcd_right"], ["middle_left","lcd.middle_left"], ["middle_center","lcd.middle_center"], ["middle_right","lcd.middle_right"], ["bottom_left","lcd.bottom_left"], ["bottom_center","lcd.bottom_center"], ["bottom_right","lcd.bottom_right"], ["baseline_left","lcd.baseline_left"], ["baseline_center","lcd.baseline_center"], ["baseline_right","lcd.baseline_right"]]), "datum");
+        .appendField(new Blockly.FieldDropdown([["top_left","lcd.top_left"], ["top_center","lcd.top_center"], ["top_right","lcd.top_right"], ["middle_left","lcd.middle_left"], ["middle_center","lcd.middle_center"], ["middle_right","lcd.middle_right"], ["bottom_left","lcd.bottom_left"], ["bottom_center","lcd.bottom_center"], ["bottom_right","lcd.bottom_right"], ["baseline_left","lcd.baseline_left"], ["baseline_center","lcd.baseline_center"], ["baseline_right","lcd.baseline_right"]]), "datum");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
