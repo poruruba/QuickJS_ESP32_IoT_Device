@@ -118,6 +118,11 @@ static JSValue utils_http_text(JSContext *ctx, JSValueConst jsThis, int argc, JS
       Serial.println(url);
       http.begin(url); //HTTP
     }
+  }else if( magic == 2){
+    // HTTP POST UrlEncoded
+    Serial.println(url);
+    http.begin(url); //HTTP
+    http.addHeader("Content-Type", "application/www-form-urlencoded");
   }else{
     JS_FreeCString(ctx, url);
     return JS_EXCEPTION;
@@ -125,6 +130,7 @@ static JSValue utils_http_text(JSContext *ctx, JSValueConst jsThis, int argc, JS
   JS_FreeCString(ctx, url);
 
   if( argc >= 3 && argv[2] != JS_UNDEFINED ){
+    // append headers
     JSPropertyEnum *atoms;
     uint32_t len;
     int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[2], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
@@ -175,9 +181,50 @@ static JSValue utils_http_text(JSContext *ctx, JSValueConst jsThis, int argc, JS
     }else{
       status_code = http.POST("{}");
     }
-  }else{
+  }else if( magic == 1 ){
     // HTTP GET
     status_code = http.GET();
+  }else if( magic == 2 ){
+    // HTTP POST UrlEncoded
+    if( argc >= 2 && argv[1] != JS_UNDEFINED ){
+      JSPropertyEnum *atoms;
+      uint32_t len;
+      int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[1], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
+      if (ret != 0){
+        return JS_EXCEPTION;
+      }
+
+      String param_str = String("");
+      bool first = true;
+      for (int i = 0; i < len; i++){
+        JSAtom atom = atoms[i].atom;
+        const char *name = JS_AtomToCString(ctx, atom);
+        if( name != NULL ){
+          JSValue value = JS_GetPropertyStr(ctx, argv[1], name);
+          const char *str = JS_ToCString(ctx, value);
+          if( str != NULL ){
+            Serial.printf("%s=%s\n", name, str);
+
+            if( first ){
+              first = false;
+            }else{
+              param_str += "&";
+            }
+            param_str += name;
+            param_str += "=";
+            param_str += urlencode(str);
+            JS_FreeCString(ctx, str);
+          }
+          JS_FreeCString(ctx, name);
+        }
+        JS_FreeAtom(ctx, atom);
+      }
+      status_code = http.POST(param_str);
+    }else{
+      status_code = http.POST("");
+    }
+  }else{
+    goto end;
   }
 
   if (status_code == 200){
@@ -249,6 +296,11 @@ static JSValue utils_http_json(JSContext *ctx, JSValueConst jsThis, int argc, JS
       Serial.println(url);
       http.begin(url); //HTTP
     }
+  }else if( magic == 2){
+    // HTTP POST UrlEncoded
+    Serial.println(url);
+    http.begin(url); //HTTP
+    http.addHeader("Content-Type", "application/www-form-urlencoded");
   }else{
     JS_FreeCString(ctx, url);
     return JS_EXCEPTION;
@@ -256,6 +308,7 @@ static JSValue utils_http_json(JSContext *ctx, JSValueConst jsThis, int argc, JS
   JS_FreeCString(ctx, url);
 
   if( argc >= 3 && argv[2] != JS_UNDEFINED ){
+    // append headers
     JSPropertyEnum *atoms;
     uint32_t len;
     int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[2], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
@@ -306,9 +359,50 @@ static JSValue utils_http_json(JSContext *ctx, JSValueConst jsThis, int argc, JS
       }else{
         status_code = http.POST("{}");
       }
-    }else{
+  }else if( magic == 1 ){
       // HTTP GET
       status_code = http.GET();
+  }else if( magic == 2 ){
+    // HTTP POST UrlEncoded
+    if( argc >= 2 && argv[1] != JS_UNDEFINED ){
+      JSPropertyEnum *atoms;
+      uint32_t len;
+      int ret = JS_GetOwnPropertyNames(ctx, &atoms, &len, argv[1], JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK);
+      if (ret != 0){
+        return JS_EXCEPTION;
+      }
+
+      String param_str = String("");
+      bool first = true;
+      for (int i = 0; i < len; i++){
+        JSAtom atom = atoms[i].atom;
+        const char *name = JS_AtomToCString(ctx, atom);
+        if( name != NULL ){
+          JSValue value = JS_GetPropertyStr(ctx, argv[1], name);
+          const char *str = JS_ToCString(ctx, value);
+          if( str != NULL ){
+            Serial.printf("%s=%s\n", name, str);
+
+            if( first ){
+              first = false;
+            }else{
+              param_str += "&";
+            }
+            param_str += name;
+            param_str += "=";
+            param_str += urlencode(str);
+            JS_FreeCString(ctx, str);
+          }
+          JS_FreeCString(ctx, name);
+        }
+        JS_FreeAtom(ctx, atom);
+      }
+      status_code = http.POST(param_str);
+    }else{
+      status_code = http.POST("");
+    }
+  }else{
+    goto end;
     }
 
   if (status_code == 200){
@@ -468,10 +562,16 @@ static const JSCFunctionListEntry utils_funcs[] = {
     JSCFunctionListEntry{"httpGetJson", 0, JS_DEF_CFUNC, 1, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json}}
                          }},
+    JSCFunctionListEntry{"httpUrlEncodedJson", 0, JS_DEF_CFUNC, 2, {
+                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_json}}
+                         }},
     JSCFunctionListEntry{"httpPostText", 0, JS_DEF_CFUNC, 0, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_text}}
                          }},
     JSCFunctionListEntry{"httpGetText", 0, JS_DEF_CFUNC, 1, {
+                           func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_text}}
+                         }},
+    JSCFunctionListEntry{"httpUrlEncodedText", 0, JS_DEF_CFUNC, 2, {
                            func : {3, JS_CFUNC_generic_magic, {generic_magic : utils_http_text}}
                          }},
     JSCFunctionListEntry{"urlencode", 0, JS_DEF_CFUNC, 0, {

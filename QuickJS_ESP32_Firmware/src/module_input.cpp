@@ -29,7 +29,7 @@ bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1
       switch(value0){
         case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
         case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
-        case INPUT_BUTTON_C: result = (M5.Axp.GetBtnPress() == 1); break;
+        case INPUT_BUTTON_C: result = (M5.Axp.GetBtnPress() == 2); break;
       }
       break;
     }

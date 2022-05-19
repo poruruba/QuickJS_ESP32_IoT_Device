@@ -1,8 +1,5 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <AsyncJson.h>
+#include <WiFi.h>
 #include <SPIFFS.h>
 
 #include "quickjs_esp32.h"
@@ -10,24 +7,6 @@
 
 #include "endpoint_types.h"
 #include "endpoint_packet.h"
-
-#include "endpoint_esp32.h"
-#include "endpoint_gpio.h"
-#include "endpoint_ledc.h"
-#include "endpoint_wire.h"
-#include "endpoint_prefs.h"
-#ifdef _RTC_ENABLE_
-#include "endpoint_rtc.h"
-#endif
-#ifdef _IMU_ENABLE_
-#include "endpoint_imu.h"
-#endif
-#ifdef _SD_ENABLE_
-#include "endpoint_sd.h"
-#endif
-#ifdef _LCD_ENABLE_
-#include "endpoint_lcd.h"
-#endif
 
 extern const char jscode_default[] asm("_binary_rom_default_js_start");
 extern const char jscode_epilogue[] asm("_binary_rom_epilogue_js_start");
@@ -39,22 +18,12 @@ char g_download_buffer[FILE_BUFFER_SIZE];
 unsigned char g_fileloading = FILE_LOADING_NONE;
 
 ESP32QuickJS qjs;
-AsyncWebServer server(HTTP_PORT);
 SemaphoreHandle_t binSem;
 
 static long m5_initialize(void);
 static long start_qjs(void);
 static char* load_jscode(void);
 static long load_all_modules(void);
-
-void notFound(AsyncWebServerRequest *request)
-{
-  if (request->method() == HTTP_OPTIONS){
-    request->send(200);
-  }else{
-    request->send(404);
-  }
-}
 
 void setup()
 {
@@ -84,53 +53,9 @@ void setup()
   long ret;
   ret = m5_initialize();
   if( ret == 0 ){
-    packet_initialize();
-    packet_appendEntry(esp32_table, num_of_esp32_entry);
-    packet_appendEntry(gpio_table, num_of_gpio_entry);
-    packet_appendEntry(wire_table, num_of_wire_entry);
-    packet_appendEntry(ledc_table, num_of_ledc_entry);
-    packet_appendEntry(prefs_table, num_of_prefs_entry);
-#ifdef _RTC_ENABLE_
-    packet_appendEntry(rtc_table, num_of_rtc_entry);
-#endif
-#ifdef _IMU_ENABLE_
-    packet_appendEntry(imu_table, num_of_imu_entry);
-#endif
-#ifdef _SD_ENABLE_
-    packet_appendEntry(sd_table, num_of_sd_entry);
-#endif
-#ifdef _LCD_ENABLE_
-    packet_appendEntry(lcd_table, num_of_lcd_entry);
-#endif
-
-    if( is_wifi_connected() ){
-      AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/endpoint", [](AsyncWebServerRequest *request, JsonVariant &json) {
-        JsonObject jsonObj = json.as<JsonObject>();
-        const char *endpoint = jsonObj["endpoint"];
-        AsyncJsonResponse *response = new AsyncJsonResponse(false, PACKET_JSON_DOCUMENT_SIZE);
-        JsonObject responseResult = response->getRoot();
-  		  responseResult["status"] = "OK";
-        responseResult["endpoint"] = (char*)endpoint;
-        bool sem = xSemaphoreTake(binSem, portMAX_DELAY);
-        long ret = packet_execute(endpoint, jsonObj["params"], responseResult);
-        if( sem )
-          xSemaphoreGive(binSem);
+    ret = packet_initialize();
         if( ret != 0 ){
-          responseResult.clear();
-          responseResult["status"] = "NG";
-          responseResult["endpoint"] = (char*)endpoint;
-          responseResult["message"] = "unknown";
-        }
-        response->setLength();
-        request->send(response);
-      });
-      server.addHandler(handler);
-
-      DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
-      DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
-//      server.serveStatic("/", SPIFFS, "/html/").setDefaultFile("index.html");
-      server.onNotFound(notFound);
-      server.begin();
+      Serial.println("packet_initialize error");
     }
   }
 
