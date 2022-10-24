@@ -159,7 +159,7 @@ long save_jscode(const char *p_code)
 long read_jscode(char *p_buffer, uint32_t maxlen)
 {
   if( !SPIFFS.exists(MAIN_FNAME) ){
-    p_buffer = '\0';
+    p_buffer[0] = '\0';
     return 0;
   }
   File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
