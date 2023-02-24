@@ -13,7 +13,11 @@
 #include "AudioFileSourceSD.h"
 
 #define DEFAULT_AUDIO_GAIN  40.0
+#if defined(ARDUINO_ESP32C3_DEV)
+#define DEFAULT_AUDIO_PORT  I2S_NUM_0
+#else
 #define DEFAULT_AUDIO_PORT  I2S_NUM_1
+#endif
 
 static AudioOutputI2S *out = NULL;
 static AudioGeneratorMP3 *mp3 = NULL;

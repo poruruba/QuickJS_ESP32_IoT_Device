@@ -22,6 +22,7 @@
 #define MODEL_M5Tough       7
 #define MODEL_M5StickC      8
 #define MODEL_M5Atom        9
+#define MODEL_M5StampC3     10
 
 static WiFiUDP syslog_udp;
 static Syslog g_syslog(syslog_udp);
@@ -121,6 +122,8 @@ static JSValue esp32_get_deviceModel(JSContext *ctx, JSValueConst jsThis, int ar
   model = MODEL_M5Tough;
 #elif defined(ARDUINO_M5Stack_ATOM) // M5Atom
   model = MODEL_M5Atom;
+#elif defined(ARDUINO_ESP32C3_DEV) // M5StampC3
+  model = MODEL_M5StampC3;
 #endif
   return JS_NewUint32(ctx, model);
 }

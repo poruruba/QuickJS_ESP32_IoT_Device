@@ -54,8 +54,3 @@ https://qiita.com/poruruba
   - Blocklyにおいて、Javascript出力でpressになっていたのを修正
 - 2022-5-1
   - Audioのdispose方法を修正
-
-## 補足
-- 2023-2-24 コンパイル時に「I2S: register I2S object to platform failed」と表示される場合は、以下を修正してください。
-  - ファイル：QuickJS_ESP32_IoT_Device\QuickJS_ESP32_Firmware\.pio\libdeps\XXXXXX\ESP Async WebServer\src\WebAuthentication.cpp
-  - 74行目付近の「mbedtls_md5_starts(&_ctx);」をコメントアウト
