@@ -1,0 +1,15 @@
+[M5Core2]
+esptool.py --chip esp32 --port "COM3" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 16MB 0x1000 XXX\.platformio\packages\framework-arduinoespressif32\tools\sdk\esp32\bin\bootloader_dio_40m.bin 0x8000 XXX\.pio\build\m5stack-core2\partitions.bin 0xe000 XXX\.platformio\packages\framework-arduinoespressif32\tools\partitions\boot_app0.bin 0x10000 .pio\build\m5stack-core2\firmware.bin
+
+[M5StickC]
+esptool.py --chip esp32 --port "COM4" --baud 1500000 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 XXX\.platformio\packages\framework-arduinoespressif32\tools\sdk\esp32\bin\bootloader_dio_40m.bin 0x8000 XXX\.pio\build\m5stick-c\partitions.bin 0xe000 XXX\.platformio\packages\framework-arduinoespressif32\tools\partitions\boot_app0.bin 0x10000 .pio\build\m5stick-c\firmware.bin
+
+[M5Atom]
+esptool.py --chip esp32 --port "COM8" --baud 1500000 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 XXX\.platformio\packages\framework-arduinoespressif32\tools\sdk\esp32\bin\bootloader_dio_40m.bin 0x8000 XXX\.pio\build\m5stack-atom\partitions.bin 0xe000 XXX\.platformio\packages\framework-arduinoespressif32\tools\partitions\boot_app0.bin 0x10000 .pio\build\m5stack-atom\firmware.bin
+
+[M5Stack-Fire]
+esptool.py" --chip esp32 --port "COM12" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 16MB 0x1000 XXX\.platformio\packages\framework-arduinoespressif32\tools\sdk\esp32\bin\bootloader_dio_40m.bin 0x8000 XXX\.pio\build\m5stack-fire\partitions.bin 0xe000 XXX\.platformio\packages\framework-arduinoespressif32\tools\partitions\boot_app0.bin 0x10000 .pio\build\m5stack-fire\firmware.bin
+
+[M5StampC3]
+esptool.py --chip esp32c3 --port "COM7" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 XXX\.platformio\packages\framework-arduinoespressif32\tools\sdk\esp32c3\bin\bootloader_qio_80m.bin 0x8000 XXX\.pio\build\esp32-c3-devkitm-1\partitions.bin 0xe000 XXX\.platformio\packages\framework-arduinoespressif32\tools\partitions\boot_app0.bin 0x10000 .pio\build\esp32-c3-devkitm-1\firmware.bin
+
