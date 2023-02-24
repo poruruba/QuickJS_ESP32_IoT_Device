@@ -69,7 +69,7 @@ static JSValue audio_begin(JSContext *ctx, JSValueConst jsThis, int argc,
   if( argc >= 1 )
     JS_ToInt32(ctx, &output_mode, argv[0]);
 
-  out = new AudioOutputI2S(I2S_NUM_0, output_mode);
+  out = new AudioOutputI2S(I2S_NUM_1, output_mode);
   out->SetOutputModeMono(true);
   out->SetGain(audio_gain / 100.0);
   
