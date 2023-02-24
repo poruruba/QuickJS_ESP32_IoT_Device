@@ -6,7 +6,7 @@ https://poruruba.booth.pm/items/3735175
 <br>
 <br>
 以下のQiitaでも適時機能拡張を紹介しています！<br>
-https://qiita.com/poruruba
+https://qiita.com/poruruba<br>
 https://github.com/poruruba/QuickJS_ESP32_IoT_Console
 
 ## 更新履歴
