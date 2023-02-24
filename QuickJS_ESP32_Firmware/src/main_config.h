@@ -8,6 +8,7 @@
 #define _UNIT_GAS_ENABLE_
 #define _UNIT_GESTURE_ENABLE_
 #define _UNIT_PBHUB_ENABLE_
+#define _UNIT_ANGLE8_ENABLE_
 #define _HTTP_ENABLE_
 #define _MQTT_ENABLE_
 #define _ENV_ENABLE_
@@ -40,6 +41,8 @@
 #define _SD_ENABLE_
 #define _AUDIO_ENABLE_
 #define MDNS_NAME "QuickJS_ESP32_M5Core2" // mDNSサービスホスト名
+#elif defined(ARDUINO_ESP32C3_DEV)
+#define MDNS_NAME "QuickJS_ESP32_M5StampC3" // mDNSサービスホスト名
 #endif
 
 #define DUMMY_FNAME  "/dummy"

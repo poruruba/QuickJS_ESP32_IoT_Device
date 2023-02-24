@@ -13,6 +13,7 @@
 #include "AudioFileSourceSD.h"
 
 #define DEFAULT_AUDIO_GAIN  40.0
+#define DEFAULT_AUDIO_PORT  I2S_NUM_1
 
 static AudioOutputI2S *out = NULL;
 static AudioGeneratorMP3 *mp3 = NULL;
@@ -69,7 +70,7 @@ static JSValue audio_begin(JSContext *ctx, JSValueConst jsThis, int argc,
   if( argc >= 1 )
     JS_ToInt32(ctx, &output_mode, argv[0]);
 
-  out = new AudioOutputI2S(I2S_NUM_0, output_mode);
+  out = new AudioOutputI2S(DEFAULT_AUDIO_PORT, output_mode);
   out->SetOutputModeMono(true);
   out->SetGain(audio_gain / 100.0);
   

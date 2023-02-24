@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "main_config.h"
 
+#ifdef _LCD_ENABLE_
+
 #ifdef _SD_ENABLE_
 #include <SD.h>
 #endif
@@ -288,3 +290,5 @@ EndpointEntry lcd_table[] = {
 };
 
 const int num_of_lcd_entry = sizeof(lcd_table) / sizeof(EndpointEntry);
+
+#endif

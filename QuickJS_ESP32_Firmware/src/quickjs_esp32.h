@@ -42,6 +42,9 @@
 #ifdef _UNIT_COLOR_ENABLE_
 #include "module_unit_color.h"
 #endif
+#ifdef _UNIT_ANGLE8_ENABLE_
+#include "module_unit_angle8.h"
+#endif
 #ifdef _HTTP_ENABLE_
 #include "module_http.h"
 #endif
@@ -94,6 +97,9 @@ static JsModuleEntry module_entries[] = {
 #endif
 #ifdef _UNIT_COLOR_ENABLE_
   unit_color_module,
+#endif
+#ifdef _UNIT_ANGLE8_ENABLE_
+  unit_angle8_module,
 #endif
 #ifdef _HTTP_ENABLE_
   http_module,
@@ -639,6 +645,7 @@ protected:
     ESP32QuickJS *qjs = (ESP32QuickJS *)JS_GetContextOpaque(ctx);
     uint32_t t;
     JS_ToUint32(ctx, &t, argv[1]);
+    if( t < 10 ) t = 10;
     uint32_t id =
         qjs->timer.RegisterTimer(JS_DupValue(ctx, argv[0]), millis() + t, t);
     return JS_NewUint32(ctx, id);

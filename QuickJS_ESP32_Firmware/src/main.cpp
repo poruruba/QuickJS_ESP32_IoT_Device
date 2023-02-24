@@ -124,7 +124,7 @@ void loop()
 
 static long start_qjs(void)
 {
-    qjs.begin();
+  qjs.begin();
 
   long ret1 = load_all_modules();
   if( ret1 != 0 ){
@@ -159,7 +159,7 @@ long save_jscode(const char *p_code)
 long read_jscode(char *p_buffer, uint32_t maxlen)
 {
   if( !SPIFFS.exists(MAIN_FNAME) ){
-    p_buffer = '\0';
+    p_buffer[0] = '\0';
     return 0;
   }
   File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
@@ -179,22 +179,22 @@ long read_jscode(char *p_buffer, uint32_t maxlen)
     
 static char* load_jscode(void)
 {
-    if( !SPIFFS.exists(MAIN_FNAME) )
+  if( !SPIFFS.exists(MAIN_FNAME) )
     return NULL;
-    File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
-    if( !fp )
+  File fp = SPIFFS.open(MAIN_FNAME, FILE_READ);
+  if( !fp )
     return NULL;
-    size_t size = fp.size();
+  size_t size = fp.size();
   char* js_code = (char*)malloc(size + strlen(jscode_epilogue) + 1);
-    if( js_code == NULL ){
-      fp.close();
-    return NULL;
-    }
-    fp.readBytes(js_code, size);
+  if( js_code == NULL ){
     fp.close();
-    js_code[size] = '\0';
+    return NULL;
+  }
+  fp.readBytes(js_code, size);
+  fp.close();
+  js_code[size] = '\0';
 
-    strcat(js_code, jscode_epilogue);
+  strcat(js_code, jscode_epilogue);
 
   return js_code;
 }
@@ -210,7 +210,7 @@ long save_module(const char* p_fname, const char *p_code)
   File fp = SPIFFS.open(filename, FILE_WRITE);
   if( !fp )
     return -1;
-  fp.write((uint8_t*)p_code, strlen(p_code));
+  fp.write((uint8_t*)p_code, strlen(p_code) + 1);
   fp.close();
 
   return 0;
@@ -359,6 +359,8 @@ static long m5_initialize(void)
 #elif defined(ARDUINO_M5STACK_Core2)
   M5.begin(true, true, true, true);
   M5.Axp.SetSpkEnable(true);
+#elif defined(ARDUINO_ESP32C3_DEV)
+  Serial.begin(115200);
 #endif
 //  Serial.begin(115200);
   Serial.println("[initializing]");

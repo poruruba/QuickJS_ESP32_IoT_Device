@@ -398,7 +398,10 @@ long initialize_esp32(void)
 
 void loopModule_esp32(void)
 {
+#if defined(ARDUINO_ESP32C3_DEV)
+#else
   M5.update();
+#endif
 }
 
 JsModuleEntry esp32_module = {

@@ -199,7 +199,10 @@ var vue_options = {
         },
         sd_remove: async function(){
             try{
-                var result = await this.Sd.remove(this.sd_target_file);
+                var dir = this.sd_filename;
+                if( !dir.endsWith('/') )
+                    dir += '/';
+                var result = await this.Sd.remove(dir + this.sd_target_file);
                 this.sd_remove_result = result;
                 console.log(result);
             }catch(error){
@@ -209,7 +212,10 @@ var vue_options = {
         },
         sd_rmdir: async function(){
             try{
-                var result = await this.Sd.rmdir(this.sd_target_file);
+                var dir = this.sd_filename;
+                if( !dir.endsWith('/') )
+                    dir += '/';
+                var result = await this.Sd.rmdir(dir + this.sd_target_file);
                 this.sd_rmdir_result = result;
                 console.log(result);
             }catch(error){
@@ -219,7 +225,10 @@ var vue_options = {
         },
         sd_size: async function(){
             try{
-                var result = await this.Sd.size(this.sd_target_file);
+                var dir = this.sd_filename;
+                if( !dir.endsWith('/') )
+                    dir += '/';
+                var result = await this.Sd.size(dir + this.sd_target_file);
                 this.sd_size_result = result;
                 console.log(result);
             }catch(error){
@@ -229,7 +238,10 @@ var vue_options = {
         },
         sd_readText: async function(){
             try{
-                var result = await this.Sd.readText(this.sd_target_file);
+                var dir = this.sd_filename;
+                if( !dir.endsWith('/') )
+                    dir += '/';
+                var result = await this.Sd.readText(dir + this.sd_target_file);
                 this.sd_readText_result = result;
                 console.log(result);
             }catch(error){

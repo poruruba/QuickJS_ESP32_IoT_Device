@@ -3,6 +3,8 @@
 
 #include "module_type.h"
 
+#ifdef _LCD_ENABLE_
+
 #define LGFX_USE_V1
 #define LGFX_AUTODETECT
 #include <LovyanGFX.hpp>
@@ -24,5 +26,7 @@ extern JsModuleEntry lcd_module;
 #define FUNC_TYPE_FILLCIRCLE  5
 
 long module_lcd_setFont(uint16_t size);
+
+#endif
 
 #endif

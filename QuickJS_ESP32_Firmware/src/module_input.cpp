@@ -5,6 +5,11 @@
 #include "module_input.h"
 #include "quickjs_esp32.h"
 
+#if defined(ARDUINO_ESP32C3_DEV)
+#include "CustomButton.h"
+static CustomButton Btn = CustomButton(3, true, 10);
+#endif
+
 bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1)
 {
   bool result = false;
@@ -63,64 +68,6 @@ bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1
     }
   }
 #elif defined(ARDUINO_M5STACK_Core2)
-  switch(type){
-    case FUNC_TYPE_IS_PRESSED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.isPressed(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_IS_RELEASED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.isReleased(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_WAS_PRESSED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.wasPressed(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_WAS_RELEASED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.wasReleased(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_PRESSED_FOR: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_RELEASED_FOR: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_WAS_RELEASE_FOR: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
-      }
-      break;
-    }
-  }
   switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
@@ -238,64 +185,6 @@ bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1
       break;
     }
   }
-  switch(type){
-    case FUNC_TYPE_IS_PRESSED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.isPressed(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.isPressed(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.isPressed(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_IS_RELEASED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.isReleased(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.isReleased(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.isReleased(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_WAS_PRESSED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.wasPressed(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.wasPressed(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.wasPressed(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_WAS_RELEASED: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.wasReleased(); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.wasReleased(); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.wasReleased(); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_PRESSED_FOR: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.pressedFor(value1); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.pressedFor(value1); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.pressedFor(value1); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_RELEASED_FOR: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.releasedFor(value1); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.releasedFor(value1); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.releasedFor(value1); break;
-      }
-      break;
-    }
-    case FUNC_TYPE_WAS_RELEASE_FOR: {
-      switch(value0){
-        case INPUT_BUTTON_A: result = M5.BtnA.wasReleasefor(value1); break;
-        case INPUT_BUTTON_B: result = M5.BtnB.wasReleasefor(value1); break;
-        case INPUT_BUTTON_C: result = M5.BtnC.wasReleasefor(value1); break;
-      }
-      break;
-    }
-  }
 #elif defined(ARDUINO_M5Stack_ATOM)
   switch(type){
     case FUNC_TYPE_IS_PRESSED: {
@@ -337,6 +226,51 @@ bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1
     case FUNC_TYPE_WAS_RELEASE_FOR: {
       switch(value0){
         case INPUT_BUTTON_A: result = M5.Btn.wasReleasefor(value1); break;
+      }
+      break;
+    }
+  }
+#elif defined(ARDUINO_ESP32C3_DEV)
+  switch(type){
+    case FUNC_TYPE_IS_PRESSED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.isPressed(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_IS_RELEASED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.isReleased(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_PRESSED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.wasPressed(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_RELEASED: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.wasReleased(); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_PRESSED_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.pressedFor(value1); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_RELEASED_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.releasedFor(value1); break;
+      }
+      break;
+    }
+    case FUNC_TYPE_WAS_RELEASE_FOR: {
+      switch(value0){
+        case INPUT_BUTTON_A: result = Btn.wasReleasefor(value1); break;
       }
       break;
     }
@@ -446,9 +380,15 @@ JSModuleDef *addModule_input(JSContext *ctx, JSValue global)
   return mod;
 }
 
+void loopModule_input(void){
+#if defined(ARDUINO_ESP32C3_DEV)
+  Btn.read();
+#endif
+}
+
 JsModuleEntry input_module = {
   NULL,
   addModule_input,
-  NULL,
+  loopModule_input,
   NULL
 };

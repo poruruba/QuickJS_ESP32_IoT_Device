@@ -5,6 +5,8 @@
 #include "module_utils.h"
 #include "module_type.h"
 
+#ifdef _LCD_ENABLE_
+
 #ifdef _SD_ENABLE_
 #include <SD.h>
 #endif
@@ -669,3 +671,5 @@ JsModuleEntry lcd_module = {
   NULL,
   endModule_lcd
 };
+
+#endif

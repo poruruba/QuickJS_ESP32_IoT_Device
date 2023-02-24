@@ -24,11 +24,10 @@ static JSValue esp32_wire_begin(JSContext *ctx, JSValueConst jsThis,
     JS_ToInt32(ctx, &scl, argv[1]);
   if( argc > 2)
     JS_ToUint32(ctx, &frequency, argv[2]);
-  bool ret = wire->begin((uint8_t)sda, (uint8_t)scl, frequency);
+  bool ret = wire->begin(sda, scl, frequency);
 
   return JS_NewBool(ctx, ret);
 }
-
 
 static JSValue esp32_wire_requestFrom(JSContext *ctx, JSValueConst jsThis,
                                       int argc, JSValueConst *argv, int magic)

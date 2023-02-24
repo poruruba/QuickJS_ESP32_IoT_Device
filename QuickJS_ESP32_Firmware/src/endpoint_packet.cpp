@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <SPIFFS.h>
 #include <ESPmDNS.h>
 #include <ArduinoJson.h>
 #include <unordered_map> 
