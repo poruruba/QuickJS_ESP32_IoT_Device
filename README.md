@@ -54,6 +54,6 @@ https://qiita.com/poruruba
   - Audioのdispose方法を修正
 
 ## 補足
-- 「I2S: register I2S object to platform failed」と表示される場合は、以下を修正してください。
+- コンパイル時に「I2S: register I2S object to platform failed」と表示される場合は、以下を修正してください。
   - ファイル：QuickJS_ESP32_IoT_Device\QuickJS_ESP32_Firmware\.pio\libdeps\XXXXXX\ESP Async WebServer\src\WebAuthentication.cpp
   - 74行目付近の「mbedtls_md5_starts(&_ctx);」をコメントアウト
