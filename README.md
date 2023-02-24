@@ -38,6 +38,8 @@ https://qiita.com/poruruba
   - udpのcheckRecvの仕様を変更
 - 2022-5-7
   - 各種M5ユニット用ライブラリを追加
+- 2023-2-24
+  - AudioのI2SポートをI2S_NUM_1に変更
   
 ## 誤記訂正
 - 2022-03-31
@@ -50,3 +52,8 @@ https://qiita.com/poruruba
   - Blocklyにおいて、Javascript出力でpressになっていたのを修正
 - 2022-5-1
   - Audioのdispose方法を修正
+
+## 補足
+- 「I2S: register I2S object to platform failed」と表示される場合は、以下を修正してください。
+  - ファイル：QuickJS_ESP32_IoT_Device\QuickJS_ESP32_Firmware\.pio\libdeps\XXXXXX\ESP Async WebServer\src\WebAuthentication.cpp
+  - 74行目付近の「mbedtls_md5_starts(&_ctx);」をコメントアウト
