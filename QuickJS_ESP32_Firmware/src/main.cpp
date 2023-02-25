@@ -46,7 +46,8 @@ void setup()
       Serial.println("SPIFFS FORMAT END");
 
       fp = SPIFFS.open(DUMMY_FNAME, FILE_WRITE);
-      fp.close();
+      if( fp )
+        fp.close();
     }else{
       fp.close();
     }
