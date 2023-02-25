@@ -42,7 +42,7 @@ https://github.com/poruruba/QuickJS_ESP32_IoT_Console
 - 2023-2-24
   - AudioのI2SポートをI2S_NUM_1に変更
   - 8ポテンショメータユニットを追加
-  - M5StampC3を追加
+  - M5StampC3・M5StampC3Uを追加
 
 ## 誤記訂正
 - 2022-03-31
