@@ -23,6 +23,7 @@
 #define MODEL_M5StickC      8
 #define MODEL_M5Atom        9
 #define MODEL_M5StampC3     10
+#define MODEL_M5StampC3U    11
 
 static WiFiUDP syslog_udp;
 static Syslog g_syslog(syslog_udp);
@@ -124,6 +125,8 @@ static JSValue esp32_get_deviceModel(JSContext *ctx, JSValueConst jsThis, int ar
   model = MODEL_M5Atom;
 #elif defined(ARDUINO_ESP32C3_DEV) // M5StampC3
   model = MODEL_M5StampC3;
+#elif defined(ARDUINO_ESP32C3U_DEV) // M5StampC3U
+  model = MODEL_M5StampC3U;
 #endif
   return JS_NewUint32(ctx, model);
 }
@@ -359,6 +362,14 @@ static const JSCFunctionListEntry esp32_funcs[] = {
         "MODEL_M5Atom", 0, JS_DEF_PROP_INT32, 0, {
           i32 : MODEL_M5Atom
         }},
+    JSCFunctionListEntry{
+        "MODEL_M5StampC3", 0, JS_DEF_PROP_INT32, 0, {
+          i32 : MODEL_M5StampC3
+        }},
+    JSCFunctionListEntry{
+        "MODEL_M5StampC3U", 0, JS_DEF_PROP_INT32, 0, {
+          i32 : MODEL_M5StampC3U
+        }},
 };
 
 JSModuleDef *addModule_esp32(JSContext *ctx, JSValue global)
@@ -402,6 +413,8 @@ long initialize_esp32(void)
 void loopModule_esp32(void)
 {
 #if defined(ARDUINO_ESP32C3_DEV)
+#elif defined(ARDUINO_ESP32C3U_DEV)
+#elif defined(ARDUINO_ESP32S3_DEV)
 #else
   M5.update();
 #endif
