@@ -21,43 +21,49 @@ ESP32QuickJS qjs;
 SemaphoreHandle_t binSem;
 
 static long m5_initialize(void);
+static long m5_connect(void);
 static long start_qjs(void);
 static char* load_jscode(void);
 static long load_all_modules(void);
 
 void setup()
 {
-  SPIFFS.begin();
+  long ret;
+  ret = m5_initialize();
+  if( ret != 0 )
+    Serial.println("m5_initialize failed");
+
+  if( !SPIFFS.begin() )
+    Serial.println("SPIFFS begin failed");
   delay(100);
 
   if( !SPIFFS.exists(DUMMY_FNAME) ){
     File fp = SPIFFS.open(DUMMY_FNAME, FILE_WRITE);
     if( !fp ){
       Serial.println("SPIFFS FORMAT START");
-      SPIFFS.format();
+      if( !SPIFFS.format() )
+        Serial.println("SPIFFS format failed");
       Serial.println("SPIFFS FORMAT END");
 
-      File fp = SPIFFS.open(DUMMY_FNAME, FILE_WRITE);
+      fp = SPIFFS.open(DUMMY_FNAME, FILE_WRITE);
       fp.close();
     }else{
       fp.close();
     }
   }
-  if( !SPIFFS.exists(MODULE_DIR) ){
-      SPIFFS.mkdir(MODULE_DIR);
-  }
+  if( !SPIFFS.exists(MODULE_DIR) )
+    SPIFFS.mkdir(MODULE_DIR);
+
+  ret = m5_connect();
+  if( ret != 0 )
+    Serial.println("m5_connect error");
 
   binSem = xSemaphoreCreateBinary();
   xSemaphoreGive(binSem);
 
-  long ret;
-  ret = m5_initialize();
-  if( ret == 0 ){
-    ret = packet_initialize();
-        if( ret != 0 ){
-      Serial.println("packet_initialize error");
-    }
-  }
+  ret = packet_initialize();
+  if( ret != 0 )
+    Serial.println("packet_initialize error");
 
   long conf = read_config_long(CONFIG_INDEX_AUTOUPDATE, 0);
   g_autoupdate = (conf != 0) ? true : false;
@@ -126,10 +132,10 @@ static long start_qjs(void)
 {
   qjs.begin();
 
-  long ret1 = load_all_modules();
-  if( ret1 != 0 ){
-      Serial.println("[can't load module]");
-    }
+  long ret = load_all_modules();
+  if( ret != 0 ){
+    Serial.println("[can't load module]");
+  }
 
   char *js_code = load_jscode();
   if( js_code != NULL ){
@@ -142,7 +148,7 @@ static long start_qjs(void)
     qjs.exec(jscode_default);
   }
 
-  return (js_code != NULL) ? ret1 : -1;
+  return (js_code != NULL) ? ret : -1;
 }
 
 long save_jscode(const char *p_code)
@@ -361,10 +367,20 @@ static long m5_initialize(void)
   M5.Axp.SetSpkEnable(true);
 #elif defined(ARDUINO_ESP32C3_DEV)
   Serial.begin(115200);
+#elif defined(ARDUINO_ESP32C3U_DEV)
+  Serial.begin(115200);
+#elif defined(ARDUINO_ESP32S3_DEV)
+  Serial.begin(115200);
 #endif
 //  Serial.begin(115200);
+  delay(500);
   Serial.println("[initializing]");
 
+  return 0;
+}
+
+static long m5_connect(void)
+{
   long ret = wifi_connect(WIFI_SSID, WIFI_PASSWORD, WIFI_TIMEOUT);
   if( ret != 0 ){
     char ssid[32 + 1] = {'\0'};
