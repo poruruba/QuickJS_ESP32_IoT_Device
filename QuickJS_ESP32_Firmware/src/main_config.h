@@ -43,6 +43,11 @@
 #define MDNS_NAME "QuickJS_ESP32_M5Core2" // mDNSサービスホスト名
 #elif defined(ARDUINO_ESP32C3_DEV)
 #define MDNS_NAME "QuickJS_ESP32_M5StampC3" // mDNSサービスホスト名
+#elif defined(ARDUINO_ESP32C3U_DEV)
+#define MDNS_NAME "QuickJS_ESP32_M5StampC3U" // mDNSサービスホスト名
+#elif defined(ARDUINO_ESP32S3_DEV)
+#define _LCD_ENABLE_
+#define MDNS_NAME "QuickJS_ESP32_M5AtomS3" // mDNSサービスホスト名
 #endif
 
 #define DUMMY_FNAME  "/dummy"
