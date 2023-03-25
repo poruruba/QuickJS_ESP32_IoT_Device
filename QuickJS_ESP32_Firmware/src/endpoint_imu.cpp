@@ -32,10 +32,10 @@ long endp_imu_getGyroData(JsonObject request, JsonObject response, int magic)
 
 long endp_imu_getTempData(JsonObject request, JsonObject response, int magic)
 {
-  uint8_t channel = request["channel"];
-  uint32_t duty = request["duty"];
-
-  ledcWrite(channel, duty);
+  float t;  
+  M5.IMU.getTempData(&t);
+  
+  response["result"] = t;
 
   return 0;
 }
