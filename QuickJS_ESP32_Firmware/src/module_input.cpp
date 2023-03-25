@@ -480,7 +480,7 @@ void loopModule_input(void){
   Btn.read();
 #elif defined(ARDUINO_ESP32S3_DEV)
   Btn.read();
-#elif defined(ARDUINO_ESP32S3U_DEV)
+#elif defined(ARDUINO_ESP32C3U_DEV)
   Btn.read();
 #endif
 }
