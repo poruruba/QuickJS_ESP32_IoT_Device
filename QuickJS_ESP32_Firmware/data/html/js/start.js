@@ -140,7 +140,7 @@ var vue_options = {
         // Rtc
         rtc_set_time: async function(){
             try{
-                var result = await this.Rtc.setTime(this.rtc_time);
+                var result = await this.Rtc.setTime(this.rtc_time.Hours, this.rtc_time.Minutes, this.rtc_time.Seconds);
                 console.log(result);
             }catch(error){
                 console.error(error);
@@ -159,7 +159,7 @@ var vue_options = {
         },
         rtc_set_date: async function(){
             try{
-                var result = await this.Rtc.setDate(this.rtc_date);
+                var result = await this.Rtc.setDate(this.rtc_date.Year, this.rtc_date.Month, this.rtc_date.Date, this.rtc_date.WeekDay);
                 console.log(result);
             }catch(error){
                 console.error(error);
