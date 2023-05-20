@@ -159,7 +159,7 @@ var vue_options = {
         },
         rtc_set_date: async function(){
             try{
-                var result = await this.Rtc.setDate(this.rtc_date.Year, this.rtc_date.Month, this.rtc_date.Date, this.rtc_date.WeekDay);
+                var result = await this.Rtc.setDate(this.rtc_date.Year, this.rtc_date.Month, this.rtc_date.Date, 0);
                 console.log(result);
             }catch(error){
                 console.error(error);
