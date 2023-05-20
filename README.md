@@ -1,5 +1,10 @@
 # QuickJS_ESP32_IoT_Device
 
+以降は、以下のリポジトリに変更しました。
+https://github.com/poruruba/QuickJS_ESP32_IoT_Device_M5Unified
+
+***********************
+
 電子書籍「M5StackとJavascriptではじめるIoTデバイス制御」のサポートサイトです。<br>
 https://poruruba.booth.pm/items/3735175
 <br>
