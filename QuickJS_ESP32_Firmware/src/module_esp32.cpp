@@ -24,6 +24,7 @@
 #define MODEL_M5Atom        9
 #define MODEL_M5StampC3     10
 #define MODEL_M5StampC3U    11
+#define MODEL_M5StampS3     12
 
 static WiFiUDP syslog_udp;
 static Syslog g_syslog(syslog_udp);
@@ -127,6 +128,8 @@ static JSValue esp32_get_deviceModel(JSContext *ctx, JSValueConst jsThis, int ar
   model = MODEL_M5StampC3;
 #elif defined(ARDUINO_ESP32C3U_DEV) // M5StampC3U
   model = MODEL_M5StampC3U;
+#elif defined(ARDUINO_ESP32S3_DEV) // M5StampS3
+  model = MODEL_M5StampS3;
 #endif
   return JS_NewUint32(ctx, model);
 }
@@ -370,6 +373,10 @@ static const JSCFunctionListEntry esp32_funcs[] = {
         "MODEL_M5StampC3U", 0, JS_DEF_PROP_INT32, 0, {
           i32 : MODEL_M5StampC3U
         }},
+    JSCFunctionListEntry{
+        "MODEL_M5StampS3", 0, JS_DEF_PROP_INT32, 0, {
+          i32 : MODEL_M5StampS3
+        }},
 };
 
 JSModuleDef *addModule_esp32(JSContext *ctx, JSValue global)
@@ -410,20 +417,10 @@ long initialize_esp32(void)
   return 0;
 }
 
-void loopModule_esp32(void)
-{
-#if defined(ARDUINO_ESP32C3_DEV)
-#elif defined(ARDUINO_ESP32C3U_DEV)
-#elif defined(ARDUINO_ESP32S3_DEV)
-#else
-  M5.update();
-#endif
-}
-
 JsModuleEntry esp32_module = {
   initialize_esp32,
   addModule_esp32,
-  loopModule_esp32,
+  NULL,
   NULL
 };
 
@@ -433,3 +430,39 @@ JsModuleEntry console_module = {
   NULL,
   NULL
 };
+
+
+long esp32_initialize(void)
+{
+#if defined(ARDUINO_M5Stick_C)
+  M5.begin(true, true, true);
+#elif defined(ARDUINO_M5Stack_ATOM)
+  M5.begin(true, true, false);
+#elif defined(ARDUINO_M5STACK_FIRE)
+  M5.begin(true, true, true, true);
+#elif defined(ARDUINO_M5STACK_Core2)
+  M5.begin(true, true, true, true);
+  M5.Axp.SetSpkEnable(true);
+#elif defined(ARDUINO_ESP32C3_DEV)
+  Serial.begin(115200);
+#elif defined(ARDUINO_ESP32C3U_DEV)
+  Serial.begin(115200);
+#elif defined(ARDUINO_ESP32S3_DEV)
+  Serial.begin(115200);
+#endif
+//  Serial.begin(115200);
+  delay(500);
+  Serial.println("[initializing]");
+
+  return 0;
+}
+
+void esp32_update(void)
+{
+#if defined(ARDUINO_ESP32C3_DEV)
+#elif defined(ARDUINO_ESP32C3U_DEV)
+#elif defined(ARDUINO_ESP32S3_DEV)
+#else
+  M5.update();
+#endif
+}

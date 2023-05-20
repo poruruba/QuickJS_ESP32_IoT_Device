@@ -20,7 +20,6 @@ unsigned char g_fileloading = FILE_LOADING_NONE;
 ESP32QuickJS qjs;
 SemaphoreHandle_t binSem;
 
-static long m5_initialize(void);
 static long m5_connect(void);
 static long start_qjs(void);
 static char* load_jscode(void);
@@ -29,9 +28,9 @@ static long load_all_modules(void);
 void setup()
 {
   long ret;
-  ret = m5_initialize();
+  ret = esp32_initialize();
   if( ret != 0 )
-    Serial.println("m5_initialize failed");
+    Serial.println("esp32_initialize failed");
 
   if( !SPIFFS.begin() )
     Serial.println("SPIFFS begin failed");
@@ -351,31 +350,6 @@ static long wifi_connect(const char *ssid, const char *password, unsigned long t
   Serial.print(WiFi.localIP());
   Serial.print(" Mac=");
   Serial.println(WiFi.macAddress());
-
-  return 0;
-}
-
-static long m5_initialize(void)
-{
-#if defined(ARDUINO_M5Stick_C)
-  M5.begin(true, true, true);
-#elif defined(ARDUINO_M5Stack_ATOM)
-  M5.begin(true, true, false);
-#elif defined(ARDUINO_M5STACK_FIRE)
-  M5.begin(true, true, true, true);
-#elif defined(ARDUINO_M5STACK_Core2)
-  M5.begin(true, true, true, true);
-  M5.Axp.SetSpkEnable(true);
-#elif defined(ARDUINO_ESP32C3_DEV)
-  Serial.begin(115200);
-#elif defined(ARDUINO_ESP32C3U_DEV)
-  Serial.begin(115200);
-#elif defined(ARDUINO_ESP32S3_DEV)
-  Serial.begin(115200);
-#endif
-//  Serial.begin(115200);
-  delay(500);
-  Serial.println("[initializing]");
 
   return 0;
 }

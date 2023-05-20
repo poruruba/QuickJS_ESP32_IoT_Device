@@ -9,7 +9,11 @@
 long endp_imu_getAccelData(JsonObject request, JsonObject response, int magic)
 {
   float ax, ay, az;
+#if defined(ARDUINO_ESP32S3_DEV)
+  M5.IMU.getAccel(&ax, &ay, &az);
+#else
   M5.IMU.getAccelData(&ax, &ay, &az);
+#endif
 
   response["result"]["x"] = ax;
   response["result"]["y"] = ay;
@@ -21,7 +25,11 @@ long endp_imu_getAccelData(JsonObject request, JsonObject response, int magic)
 long endp_imu_getGyroData(JsonObject request, JsonObject response, int magic)
 {
   float gx, gy, gz;
+#if defined(ARDUINO_ESP32S3_DEV)
+  M5.IMU.getGyro(&gx, &gy, &gz);
+#else
   M5.IMU.getGyroData(&gx, &gy, &gz);
+#endif
 
   response["result"]["x"] = gx;
   response["result"]["y"] = gy;
@@ -33,7 +41,11 @@ long endp_imu_getGyroData(JsonObject request, JsonObject response, int magic)
 long endp_imu_getTempData(JsonObject request, JsonObject response, int magic)
 {
   float t;  
+#if defined(ARDUINO_ESP32S3_DEV)
+  M5.IMU.getTemp(&t);
+#else
   M5.IMU.getTempData(&t);
+#endif
   
   response["result"] = t;
 

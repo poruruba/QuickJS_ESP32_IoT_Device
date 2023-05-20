@@ -11,9 +11,6 @@ static CustomButton Btn = CustomButton(3, true, 10);
 #elif defined(ARDUINO_ESP32C3U_DEV)
 #include "CustomButton.h"
 static CustomButton Btn = CustomButton(9, true, 10);
-#elif defined(ARDUINO_ESP32S3_DEV)
-#include "CustomButton.h"
-static CustomButton Btn = CustomButton(41, true, 10);
 #endif
 
 bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1)
@@ -330,43 +327,43 @@ bool module_input_checkButtonState(uint8_t type, uint8_t value0, uint32_t value1
   switch(type){
     case FUNC_TYPE_IS_PRESSED: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.isPressed(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.isPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_IS_RELEASED: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.isReleased(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.isReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_PRESSED: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.wasPressed(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.wasPressed(); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASED: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.wasReleased(); break;
+        case INPUT_BUTTON_A: result = M5.Btn.wasReleased(); break;
       }
       break;
     }
     case FUNC_TYPE_PRESSED_FOR: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.pressedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.Btn.pressedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_RELEASED_FOR: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.releasedFor(value1); break;
+        case INPUT_BUTTON_A: result = M5.Btn.releasedFor(value1); break;
       }
       break;
     }
     case FUNC_TYPE_WAS_RELEASE_FOR: {
       switch(value0){
-        case INPUT_BUTTON_A: result = Btn.wasReleasefor(value1); break;
+//        case INPUT_BUTTON_A: result = M5.Btn.wasReleasefor(value1); break;
       }
       break;
     }
@@ -477,8 +474,6 @@ JSModuleDef *addModule_input(JSContext *ctx, JSValue global)
 
 void loopModule_input(void){
 #if defined(ARDUINO_ESP32C3_DEV)
-  Btn.read();
-#elif defined(ARDUINO_ESP32S3_DEV)
   Btn.read();
 #elif defined(ARDUINO_ESP32C3U_DEV)
   Btn.read();

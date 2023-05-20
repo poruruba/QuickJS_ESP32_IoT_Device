@@ -554,6 +554,8 @@ class ESP32QuickJS {
     if( rt == NULL )
       return; 
 
+    esp32_update();
+
     int num = sizeof(module_entries) / sizeof(JsModuleEntry);
     for( int i = 0 ; i < num ; i++ ){
       if( module_entries[i].loopImpl != NULL )
