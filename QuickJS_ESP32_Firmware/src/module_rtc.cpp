@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include "main_config.h"
-#include "module_type.h"
-#include "quickjs.h"
 
 #ifdef _RTC_ENABLE_
+
+#include "module_type.h"
+#include "quickjs.h"
 
 static JSValue esp32_rtc_SetTime(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {

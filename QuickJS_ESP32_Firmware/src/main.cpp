@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include <SPIFFS.h>
 
-#include "quickjs_esp32.h"
 #include "main_config.h"
+#include "quickjs_esp32.h"
 
 #include "endpoint_types.h"
 #include "endpoint_packet.h"
@@ -125,7 +125,7 @@ void loop()
     }
   }
 
-  delay(1);
+//  delay(1);
 }
 
 static long start_qjs(void)

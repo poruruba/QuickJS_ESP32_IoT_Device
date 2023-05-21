@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "main_config.h"
-#include "quickjs.h"
 
 #ifdef _UNIT_COLOR_ENABLE_
 
+#include "quickjs.h"
 #include "module_unit_color.h"
 #include "Adafruit_TCS34725.h"
 

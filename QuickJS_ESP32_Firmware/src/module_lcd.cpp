@@ -1,15 +1,16 @@
 #include <Arduino.h>
-#include "quickjs.h"
 #include "main_config.h"
-#include "module_lcd.h"
-#include "module_utils.h"
-#include "module_type.h"
 
 #ifdef _LCD_ENABLE_
 
 #ifdef _SD_ENABLE_
 #include <SD.h>
 #endif
+
+#include "quickjs.h"
+#include "module_lcd.h"
+#include "module_utils.h"
+#include "module_type.h"
 
 LGFX lcd;
 #define NUM_OF_SPRITE   5

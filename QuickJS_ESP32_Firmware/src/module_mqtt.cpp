@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include "main_config.h"
+
+#ifdef _MQTT_ENABLE_
+
 #include <WiFi.h>
 #include "quickjs.h"
 #include "quickjs_esp32.h"
@@ -10,7 +14,6 @@
 #define DEFAULT_MQTT_BUFFER_SIZE 256
 #define MQTT_CONNECT_TRY_COUNT 5
 
-#ifdef _MQTT_ENABLE_
 
 static JSContext *g_ctx = NULL;
 

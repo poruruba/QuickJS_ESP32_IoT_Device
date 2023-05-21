@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "main_config.h"
-#include "quickjs.h"
 
 #ifdef _UNIT_GAS_ENABLE_
 
+#include "quickjs.h"
 #include "module_unit_gas.h"
 #include "Adafruit_SGP30.h"
 

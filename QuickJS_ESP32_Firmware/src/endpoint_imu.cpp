@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include "main_config.h"
 
+#ifdef _IMU_ENABLE_
+
 #include "endpoint_types.h"
 #include "endpoint_imu.h"
-
-#ifdef _IMU_ENABLE_
 
 long endp_imu_getAccelData(JsonObject request, JsonObject response, int magic)
 {

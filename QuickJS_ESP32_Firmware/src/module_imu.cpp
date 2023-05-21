@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include "main_config.h"
-#include "quickjs.h"
-#include "module_imu.h"
 
 #ifdef _IMU_ENABLE_
+
+#include "quickjs.h"
+#include "module_imu.h"
 
 static JSValue esp32_imu_getAccelData(JSContext *ctx, JSValueConst jsThis,
                                       int argc, JSValueConst *argv)

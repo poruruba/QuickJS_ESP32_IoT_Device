@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "main_config.h"
-#include "quickjs.h"
 
 #ifdef _UNIT_SONICIO_ENABLE_
 
+#include "quickjs.h"
 #include "module_unit_sonicio.h"
 #include "SONIC_IO.h"
 

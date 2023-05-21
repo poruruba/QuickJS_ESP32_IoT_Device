@@ -1,12 +1,13 @@
 #include <Arduino.h>
 #include "main_config.h"
+
+#ifdef _ENV_ENABLE_
+
 #include "quickjs.h"
 #include "module_env.h"
 
 #include "SHT3X.h"
 #include "DHT12.h"
-
-#ifdef _ENV_ENABLE_
 
 static DHT12 dht12;
 static SHT3X sht30;

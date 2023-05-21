@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "main_config.h"
-#include "quickjs.h"
 
 #ifdef _UNIT_ANGLE8_ENABLE_
 
+#include "quickjs.h"
 #include "module_unit_angle8.h"
 #include "M5_ANGLE8.h"
 

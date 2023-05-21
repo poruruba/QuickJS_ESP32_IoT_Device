@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include "main_config.h"
 
+#ifdef _RTC_ENABLE_
+
 #include "endpoint_types.h"
 #include "endpoint_rtc.h"
-
-#ifdef _RTC_ENABLE_
 
 long endp_rtc_setTime(JsonObject request, JsonObject response, int magic)
 {
